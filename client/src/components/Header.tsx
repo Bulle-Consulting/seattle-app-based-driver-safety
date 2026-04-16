@@ -15,15 +15,15 @@ export default function Header({ title, subtitle }: HeaderProps) {
   const dateFmt = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
   return (
-    <header className="sticky top-0 z-30 bg-white border-b border-[#D3E0E8] px-5 py-2.5 flex items-center justify-between">
+    <header className="sticky top-0 z-30 bg-[#1e293b] border-b border-[#334155] px-5 py-2.5 flex items-center justify-between">
       <div>
-        <h1 className="text-[13px] font-semibold text-[#231F20]">{title}</h1>
-        {subtitle && <p className="text-[10px] text-[#939598] mt-0.5">{subtitle}</p>}
+        <h1 className="text-[13px] font-semibold text-[#e2e8f0]">{title}</h1>
+        {subtitle && <p className="text-[10px] text-[#94a3b8] mt-0.5">{subtitle}</p>}
       </div>
       <div className="flex items-center gap-3">
-        <span className="hidden md:block text-[10px] text-[#B5B8BC] tabular-nums">{dateFmt(time)} · {fmt(time)}</span>
-        <span className="hidden sm:block text-[8px] text-[#939598] border border-[#D3E0E8] px-2 py-1 rounded">Seattle Metro · 2024–Present</span>
-        <button data-testid="button-refresh" onClick={handleRefresh} className="p-1.5 rounded text-[#B5B8BC] hover:text-[#939598] transition-colors">
+        <span className="hidden md:block text-[10px] text-[#64748b] tabular-nums">{dateFmt(time)} · {fmt(time)}</span>
+        <span className="hidden sm:block text-[8px] text-[#64748b] border border-[#334155] px-2 py-1 rounded">Seattle Metro · 2024–Present</span>
+        <button data-testid="button-refresh" onClick={handleRefresh} className="p-1.5 rounded text-[#64748b] hover:text-[#94a3b8] transition-colors">
           <RefreshCw size={11} className={refreshing ? "animate-spin" : ""} />
         </button>
       </div>

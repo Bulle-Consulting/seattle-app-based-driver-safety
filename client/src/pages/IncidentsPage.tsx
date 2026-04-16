@@ -7,7 +7,7 @@ import { useState, useMemo } from "react";
 import { Search, Download } from "lucide-react";
 import type { Incident } from "@shared/schema";
 
-const BLUE = "#0046AD";
+const TEAL = "#0d9488";
 
 export default function IncidentsPage() {
   const [search, setSearch]       = useState("");
@@ -33,7 +33,7 @@ export default function IncidentsPage() {
 
   const download = () => {
     const h = ["Date","Type","Severity","Neighborhood","Address","Platform","Victim","Description","Status","Source"];
-    const rows = filtered.map(i => [i.date,i.type,i.severity,i.neighborhood,i.address,i.platform,i.victim??"",'\"'+i.description.replace(/"/g,"'")+'"',i.status,i.source].join(","));
+    const rows = filtered.map(i => [i.date,i.type,i.severity,i.neighborhood,i.address,i.platform,i.victim??"",'\"'+i.description.replace(/"/g,"'")+'\"',i.status,i.source].join(","));
     const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(new Blob([[h.join(","),...rows].join("\n")], { type: "text/csv" })), download: "ridewatch.csv" }); a.click();
   };
 
@@ -41,14 +41,14 @@ export default function IncidentsPage() {
     <div className="dashboard-layout">
       <Sidebar />
       <div className="main-content">
-        <Header title="All Incidents" subtitle="Complete Incident Database · Bulle Cloud" />
+        <Header title="All Incidents" subtitle="Complete Incident Database · Bulle Cloud · Safety Steward" />
         <main className="flex-1 p-4 flex flex-col gap-3 min-h-0">
 
-          <div className="bg-white border border-[#E5E7EB] rounded-md px-4 py-2.5 flex items-center gap-3 flex-wrap">
+          <div className="bg-[#1e293b] border border-[#334155] rounded-md px-4 py-2.5 flex items-center gap-3 flex-wrap">
             <div className="relative flex-1 min-w-[180px]">
-              <Search size={11} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#D1D5DB]" />
+              <Search size={11} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#475569]" />
               <input data-testid="input-search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search…"
-                className="w-full pl-7 pr-2 py-1.5 bg-[#F9FAFB] border border-[#E5E7EB] rounded text-[10px] text-[#3B3F4A] placeholder:text-[#D1D5DB] focus:outline-none focus:border-[#0046AD]/40" />
+                className="w-full pl-7 pr-2 py-1.5 bg-[#0f172a] border border-[#334155] rounded text-[10px] text-[#e2e8f0] placeholder:text-[#475569] focus:outline-none focus:border-[#0d9488]/60" />
             </div>
             {[
               { label: "Platform", opts: ["All","Uber","Lyft","DoorDash","Amazon Flex"], val: platform, set: setPlatform },
@@ -58,39 +58,39 @@ export default function IncidentsPage() {
               <div key={label} className="flex items-center gap-1">
                 <span className="section-label">{label}</span>
                 <select value={val} onChange={e => set(e.target.value)}
-                  className="text-[10px] bg-white border border-[#E5E7EB] text-[#3B3F4A] rounded px-1.5 py-1 capitalize focus:outline-none hover:border-[#D1D5DB]">
+                  className="text-[10px] bg-[#0f172a] border border-[#334155] text-[#e2e8f0] rounded px-1.5 py-1 capitalize focus:outline-none hover:border-[#475569]">
                   {opts.map(o => <option key={o} value={o}>{o}</option>)}
                 </select>
               </div>
             ))}
-            <button onClick={() => setSortDir(d => d === "desc" ? "asc" : "desc")} className="text-[10px] text-[#6B7280] border border-[#E5E7EB] px-2 py-1 rounded hover:border-[#D1D5DB]">Date {sortDir === "desc" ? "↓" : "↑"}</button>
-            <button data-testid="button-export" onClick={download} className="flex items-center gap-1 text-[10px] text-[#6B7280] border border-[#E5E7EB] px-2 py-1 rounded hover:border-[#D1D5DB]"><Download size={10} /> CSV</button>
-            <span className="text-[10px] text-[#D1D5DB] tabular-nums ml-auto">{filtered.length}</span>
+            <button onClick={() => setSortDir(d => d === "desc" ? "asc" : "desc")} className="text-[10px] text-[#94a3b8] border border-[#334155] px-2 py-1 rounded hover:border-[#475569]">Date {sortDir === "desc" ? "↓" : "↑"}</button>
+            <button data-testid="button-export" onClick={download} className="flex items-center gap-1 text-[10px] text-[#94a3b8] border border-[#334155] px-2 py-1 rounded hover:border-[#475569]"><Download size={10} /> CSV</button>
+            <span className="text-[10px] text-[#64748b] tabular-nums ml-auto">{filtered.length}</span>
           </div>
 
-          <div className="flex-1 bg-white border border-[#E5E7EB] rounded-md overflow-hidden flex flex-col min-h-0">
+          <div className="flex-1 bg-[#1e293b] border border-[#334155] rounded-md overflow-hidden flex flex-col min-h-0">
             <div className="overflow-y-auto flex-1">
               <table className="w-full text-[11px]">
                 <thead className="sticky top-0 z-10">
-                  <tr className="bg-[#F9FAFB] border-b border-[#E5E7EB]">
+                  <tr className="bg-[#0f172a] border-b border-[#334155]">
                     {["Date","Type","Severity","Neighborhood","Platform","Victim","Status","Source"].map(h => (
-                      <th key={h} className="px-4 py-2 text-left text-[9px] font-medium text-[#9CA3AF] uppercase tracking-wider">{h}</th>
+                      <th key={h} className="px-4 py-2 text-left text-[9px] font-medium text-[#64748b] uppercase tracking-wider">{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#F4F5F7]">
-                  {isLoading ? Array(8).fill(0).map((_, i) => <tr key={i}>{Array(8).fill(0).map((_, j) => <td key={j} className="px-4 py-3"><div className="h-3 bg-[#F4F5F7] rounded animate-pulse w-16" /></td>)}</tr>)
-                    : !filtered.length ? <tr><td colSpan={8} className="px-4 py-12 text-center text-[#9CA3AF] text-[11px]">No results.</td></tr>
+                <tbody className="divide-y divide-[#334155]">
+                  {isLoading ? Array(8).fill(0).map((_, i) => <tr key={i}>{Array(8).fill(0).map((_, j) => <td key={j} className="px-4 py-3"><div className="h-3 bg-[#334155] rounded animate-pulse w-16" /></td>)}</tr>)
+                    : !filtered.length ? <tr><td colSpan={8} className="px-4 py-12 text-center text-[#64748b] text-[11px]">No results.</td></tr>
                     : filtered.map(inc => (
-                      <tr key={inc.id} data-testid={`row-incident-${inc.id}`} className="hover:bg-[#F9FAFB] transition-colors">
-                        <td className="px-4 py-2.5 tabular-nums text-[#9CA3AF] whitespace-nowrap">{new Date(inc.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</td>
-                        <td className="px-4 py-2.5 font-medium text-[#3B3F4A] max-w-[130px] truncate">{inc.type}</td>
+                      <tr key={inc.id} data-testid={`row-incident-${inc.id}`} className="hover:bg-[#0f172a] transition-colors">
+                        <td className="px-4 py-2.5 tabular-nums text-[#94a3b8] whitespace-nowrap">{new Date(inc.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</td>
+                        <td className="px-4 py-2.5 font-medium text-[#e2e8f0] max-w-[130px] truncate">{inc.type}</td>
                         <td className="px-4 py-2.5"><SeverityBadge severity={inc.severity} /></td>
-                        <td className="px-4 py-2.5 text-[#6B7280]">{inc.neighborhood}</td>
-                        <td className="px-4 py-2.5 text-[#6B7280]">{inc.platform}</td>
-                        <td className="px-4 py-2.5 text-[#6B7280] max-w-[100px] truncate">{inc.victim ?? "—"}</td>
+                        <td className="px-4 py-2.5 text-[#94a3b8]">{inc.neighborhood}</td>
+                        <td className="px-4 py-2.5 text-[#94a3b8]">{inc.platform}</td>
+                        <td className="px-4 py-2.5 text-[#94a3b8] max-w-[100px] truncate">{inc.victim ?? "—"}</td>
                         <td className="px-4 py-2.5"><StatusBadge status={inc.status} /></td>
-                        <td className="px-4 py-2.5 text-[#D1D5DB] max-w-[100px] truncate text-[9px]">{inc.source}</td>
+                        <td className="px-4 py-2.5 text-[#64748b] max-w-[100px] truncate text-[9px]">{inc.source}</td>
                       </tr>
                     ))
                   }

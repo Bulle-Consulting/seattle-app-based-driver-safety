@@ -4,52 +4,56 @@
 
 @layer base {
   :root {
-    /* ── City of Seattle · Office of Labor Standards ──
-       Seattle Blue:  #0046AD / #232EC1
-       Light Blue:    #8BC9EE
-       Warm Red:      #F15B46  (alerts/fatal ONLY)
-       Dark Gray:     #231F20  (text)
-       Medium Gray:   #939598  (metadata)
-       Light Gray:    #D3E0E8  (backgrounds/borders)
+    /* ── App-Based Driver Safety Steward · Bulle Cloud ──
+       Dark Slate Theme
+       Body/main:   #0f172a (slate-900)
+       Card/sidebar:#1e293b (slate-800)
+       Deep panels: #0f172a
+       Primary:     #0d9488 (teal-600)
+       Secondary:   #2dd4bf (teal-400)
+       Text primary:#e2e8f0 (slate-200)
+       Text secondary:#94a3b8 (slate-400)
+       Text muted:  #64748b (slate-500)
+       Borders:     #334155 (slate-700)
     ─────────────────────────────────────────────── */
 
-    --background:        210 18% 94%;   /* #EBF0F4 derived from light gray */
-    --foreground:        0 1% 12%;      /* #231F20 dark gray */
+    --background:        215 28% 11%;  /* #0f172a slate-900 */
+    --foreground:        214 32% 91%;  /* #e2e8f0 slate-200 */
 
-    --card:              0 0% 100%;
-    --card-foreground:   0 1% 12%;
+    --card:              215 25% 16%;  /* #1e293b slate-800 */
+    --card-foreground:   214 32% 91%;
 
-    --popover:           0 0% 100%;
-    --popover-foreground:0 1% 12%;
+    --popover:           215 25% 16%;
+    --popover-foreground:214 32% 91%;
 
-    /* Seattle Blue primary */
-    --primary:           216 100% 34%;  /* #0046AD */
+    /* Teal primary */
+    --primary:           174 72% 31%;  /* #0d9488 */
     --primary-foreground:0 0% 100%;
 
-    --secondary:         210 25% 94%;   /* #E8EEF3 */
-    --secondary-foreground: 0 0% 38%;
+    --secondary:         215 25% 16%;
+    --secondary-foreground: 214 20% 70%;
 
-    --muted:             210 18% 94%;
-    --muted-foreground:  0 0% 58%;      /* #939598 */
+    --muted:             215 28% 11%;
+    --muted-foreground:  213 19% 56%; /* #94a3b8 */
 
-    --accent:            201 77% 74%;   /* #8BC9EE light blue */
-    --accent-foreground: 216 100% 28%;
+    --accent:            173 80% 50%;  /* #2dd4bf */
+    --accent-foreground: 215 28% 11%;
 
-    --destructive:       8 87% 61%;     /* #F15B46 warm red — fatal only */
-    --destructive-foreground: 0 0% 100%;
+    --destructive:       38 92% 50%;   /* #f59e0b amber — fatal */
+    --destructive-foreground: 215 28% 11%;
 
-    --border:            206 29% 85%;   /* #D3E0E8 */
-    --input:             206 29% 85%;
-    --ring:              216 100% 34%;
+    --border:            215 20% 27%;  /* #334155 slate-700 */
+    --input:             215 20% 27%;
+    --ring:              174 72% 31%;
 
     --radius: 6px;
     --sidebar-width: 224px;
 
-    /* Severity — warm red for fatal ONLY */
-    --sev-fatal:   #F15B46;
-    --sev-injury:  #E07A2F;
-    --sev-robbery: #6D5AC5;
-    --sev-assault: #2E7DAF;
+    /* Severity */
+    --sev-fatal:   #f59e0b;
+    --sev-injury:  #f97316;
+    --sev-robbery: #8b5cf6;
+    --sev-assault: #3b82f6;
   }
 }
 
@@ -57,9 +61,9 @@
 
 html, body {
   height: 100%; overflow: hidden; margin: 0; padding: 0;
-  background: #EBF0F4;
-  color: #231F20;
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: 'DM Sans', 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px; line-height: 1.5;
 }
@@ -68,35 +72,35 @@ html, body {
 
 /* ── Layout ── */
 .dashboard-layout { display: grid; grid-template-columns: var(--sidebar-width) 1fr; height: 100dvh; }
-.sidebar { overflow-y: auto; overscroll-behavior: contain; background: #F5F8FA; border-right: 1px solid #D3E0E8; }
-.main-content { grid-column: 2; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; background: #EBF0F4; }
+.sidebar { overflow-y: auto; overscroll-behavior: contain; background: #1e293b; border-right: 1px solid #334155; }
+.main-content { grid-column: 2; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; background: #0f172a; }
 
 /* ── Map ── */
 .map-container { border-radius: var(--radius); overflow: hidden; position: relative; }
-.leaflet-container { height: 100%; width: 100%; background: #e8edf2 !important; }
+.leaflet-container { height: 100%; width: 100%; background: #0f172a !important; }
 
 /* ── Tabular nums ── */
 .tabular-nums { font-variant-numeric: tabular-nums lining-nums; font-feature-settings: 'tnum'; }
 
-/* ── Badges — desaturated, small ── */
-.badge-fatal    { background: #FEEAE7; color: #B23525; font-size: 9px; }
-.badge-injury   { background: #FEF0E1; color: #9A5B1A; font-size: 9px; }
-.badge-robbery  { background: #EEEBFA; color: #4A3A8F; font-size: 9px; }
-.badge-assault  { background: #E3F0F8; color: #1B5C82; font-size: 9px; }
-.badge-other    { background: #F0F1F3; color: #6B6B6D; font-size: 9px; }
+/* ── Badges — dark-tinted ── */
+.badge-fatal    { background: rgba(245,158,11,0.15); color: #f59e0b; font-size: 9px; }
+.badge-injury   { background: rgba(249,115,22,0.15); color: #f97316; font-size: 9px; }
+.badge-robbery  { background: rgba(139,92,246,0.15); color: #a78bfa; font-size: 9px; }
+.badge-assault  { background: rgba(59,130,246,0.15); color: #60a5fa; font-size: 9px; }
+.badge-other    { background: rgba(100,116,139,0.15); color: #94a3b8; font-size: 9px; }
 
-.status-resolved            { background: #E6F5EC; color: #1A6B3E; font-size: 9px; }
-.status-under-investigation { background: #FFF8E1; color: #8B6914; font-size: 9px; }
-.status-active              { background: #FEF0E1; color: #9A5B1A; font-size: 9px; }
+.status-resolved            { background: rgba(13,148,136,0.15); color: #2dd4bf; font-size: 9px; }
+.status-under-investigation { background: rgba(245,158,11,0.15);  color: #fbbf24; font-size: 9px; }
+.status-active              { background: rgba(249,115,22,0.15);  color: #fb923c; font-size: 9px; }
 
-/* ── Seattle Blue accent line ── */
-.seattle-accent { height: 2px; background: linear-gradient(90deg, #0046AD 0%, #8BC9EE 60%, transparent 100%); opacity: 0.6; }
+/* ── Teal accent line ── */
+.seattle-accent { height: 2px; background: linear-gradient(90deg, #0d9488 0%, #2dd4bf 60%, transparent 100%); opacity: 0.7; }
 
-/* ── Pulse dot — Seattle Blue ── */
+/* ── Pulse dot — teal ── */
 @keyframes pulse-dot { 0%,100% { opacity:1; } 50% { opacity:.3; } }
 .pulse-dot {
   width: 5px; height: 5px; border-radius: 50%;
-  background: #0046AD; opacity: 0.6;
+  background: #0d9488; opacity: 0.8;
   animation: pulse-dot 3s ease-in-out infinite;
   display: inline-block; flex-shrink: 0;
 }
@@ -105,35 +109,35 @@ html, body {
 @keyframes slide-in { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
 .live-item-enter { animation: slide-in 0.3s ease-out forwards; }
 
-/* ── Scrollbar ── */
+/* ── Scrollbar — thin dark ── */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #D3E0E8; border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
 
 /* ── Tooltip ── */
 .chart-tooltip {
-  background: white; border: 1px solid #D3E0E8; padding: 8px 12px;
-  border-radius: 4px; font-size: 11px; color: #231F20;
-  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  background: #1e293b; border: 1px solid #334155; padding: 8px 12px;
+  border-radius: 4px; font-size: 11px; color: #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0,0,0,.4);
 }
 
-/* ── Leaflet popups ── */
-.leaflet-popup-content-wrapper { background: white !important; color: #231F20 !important; border: 1px solid #D3E0E8 !important; border-radius: 6px !important; box-shadow: 0 4px 16px rgba(0,0,0,.08) !important; }
-.leaflet-popup-tip { background: white !important; }
-.leaflet-popup-close-button { color: #939598 !important; }
+/* ── Leaflet popups — dark ── */
+.leaflet-popup-content-wrapper { background: #1e293b !important; color: #e2e8f0 !important; border: 1px solid #334155 !important; border-radius: 6px !important; box-shadow: 0 4px 16px rgba(0,0,0,.5) !important; }
+.leaflet-popup-tip { background: #1e293b !important; }
+.leaflet-popup-close-button { color: #64748b !important; }
 
 /* ── KPI ── */
 .kpi-card { transition: border-color 0.15s ease; }
-.kpi-card:hover { border-color: #B0C4D3; }
-.kpi-card.active-filter { border-color: #0046AD; background: #EDF4FC; }
+.kpi-card:hover { border-color: #475569; }
+.kpi-card.active-filter { border-color: #0d9488; background: rgba(13,148,136,0.1); }
 
 /* ── Incident row ── */
 .incident-row { transition: background 0.1s ease; }
-.incident-row.selected { background: #EDF4FC; border-left: 2px solid #0046AD; }
+.incident-row.selected { background: rgba(13,148,136,0.1); border-left: 2px solid #0d9488; }
 
 /* ── Bar fill ── */
 @keyframes fill-bar { from { width: 0%; } to { width: var(--target-width); } }
 .bar-fill { animation: fill-bar 0.7s ease-out forwards; }
 
 /* ── Section label ── */
-.section-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: #939598; }
+.section-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; }
