@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import Database from "better-sqlite3";
-import { incidents, type Incident, type InsertIncident } from "@shared/schema";
+import { incidents, submissions, alertSubscriptions, type Incident, type InsertIncident, type Submission, type InsertSubmission, type AlertSubscription, type InsertAlert } from "@shared/schema";
 import { eq } from "drizzle-orm";
 
 const sqlite = new Database("ridewatch.db");
@@ -22,7 +22,39 @@ sqlite.exec(`
     description TEXT NOT NULL,
     source TEXT NOT NULL,
     source_url TEXT,
-    status TEXT NOT NULL
+    status TEXT NOT NULL,
+    time_of_day TEXT,
+    has_video INTEGER DEFAULT 0,
+    suspect_name TEXT,
+    case_number TEXT,
+    case_status TEXT,
+    sentence_info TEXT
+  )
+`);
+
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS submissions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    submitted_at TEXT NOT NULL,
+    date TEXT NOT NULL,
+    type TEXT NOT NULL,
+    neighborhood TEXT NOT NULL,
+    address TEXT NOT NULL,
+    platform TEXT NOT NULL,
+    description TEXT NOT NULL,
+    contact_email TEXT,
+    contact_phone TEXT,
+    status TEXT NOT NULL DEFAULT 'pending'
+  )
+`);
+
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS alert_subscriptions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT,
+    phone TEXT,
+    neighborhoods TEXT,
+    created_at TEXT NOT NULL
   )
 `);
 
@@ -31,6 +63,15 @@ export interface IStorage {
   getIncidentById(id: number): Incident | undefined;
   createIncident(data: InsertIncident): Incident;
   seedIfEmpty(): void;
+
+  // Submissions
+  getAllSubmissions(): Submission[];
+  createSubmission(data: InsertSubmission): Submission;
+  updateSubmissionStatus(id: number, status: string): void;
+
+  // Alerts
+  createAlert(data: InsertAlert): AlertSubscription;
+  getAllAlerts(): AlertSubscription[];
 }
 
 const SEED_DATA: InsertIncident[] = [
@@ -53,6 +94,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "KOMO News / Cascade PBS / Fox 13",
     sourceUrl: "https://komonews.com/news/local/alex-waggoner-edmonds-2nd-amendment-videos-youtube-20-years-prison-31-year-old-abdikadir-gedi-shariiff-rideshare-driver-shot-killed-murder-sentence",
     status: "resolved",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: "Alex Waggoner",
+    caseNumber: null,
+    caseStatus: "sentenced",
   },
   {
     date: "2024-02-06",
@@ -69,6 +115,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "KOMO News",
     sourceUrl: "https://komonews.com/news/local/seattle-uber-driver-rideshare-driver-rainier-beach-neighborhood-spd-police-department-drivers-association-violence-shooting-crime",
     status: "under investigation",
+    timeOfDay: "00:40",
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2024-03-28",
@@ -85,6 +136,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "Fox 13 Seattle",
     sourceUrl: null,
     status: "under investigation",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2024-04-01",
@@ -101,6 +157,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "KIRO 7 / SPD Blotter",
     sourceUrl: "https://www.kiro7.com/news/local/police-passengers-assault-rob-uber-driver-rainier-beach/UHPPDJ3NUJE4DPK7LSX54GR7PY/",
     status: "under investigation",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2024-06-15",
@@ -117,6 +178,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "KOMO News / Thurston County",
     sourceUrl: null,
     status: "resolved",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: "Ahmed Hassan Ali",
+    caseNumber: null,
+    caseStatus: "charged",
   },
   {
     date: "2024-08-12",
@@ -133,6 +199,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "SPD Blotter",
     sourceUrl: null,
     status: "resolved",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2024-09-19",
@@ -149,6 +220,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "SPD Blotter",
     sourceUrl: null,
     status: "under investigation",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2024-10-04",
@@ -165,6 +241,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "SPD Blotter",
     sourceUrl: null,
     status: "resolved",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2024-11-14",
@@ -181,6 +262,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "SPD Blotter",
     sourceUrl: null,
     status: "resolved",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2024-12-02",
@@ -197,6 +283,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "SPD Blotter",
     sourceUrl: null,
     status: "under investigation",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2025-01-08",
@@ -213,6 +304,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "SPD Blotter",
     sourceUrl: null,
     status: "under investigation",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2025-02-16",
@@ -229,6 +325,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "Fox 13 Seattle / Bellevue PD",
     sourceUrl: "https://www.fox13seattle.com/news/uber-driver-bellevue-sexual-assault",
     status: "under investigation",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: "Martin Njoki",
+    caseNumber: null,
+    caseStatus: "arraigned",
   },
   {
     date: "2025-02-19",
@@ -245,6 +346,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "SPD Blotter",
     sourceUrl: null,
     status: "under investigation",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2025-03-11",
@@ -261,6 +367,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "SPD Blotter / KIRO 7",
     sourceUrl: null,
     status: "under investigation",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2025-04-22",
@@ -277,6 +388,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "SPD Blotter",
     sourceUrl: null,
     status: "under investigation",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2025-05-23",
@@ -293,6 +409,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "KIRO 7 / Fox 13",
     sourceUrl: "https://www.kiro7.com/news/local/everett-rideshare-driver-recovers-after-brutal-knife-attack/H6X475OTUNATFE2BBSEH3NQAKA/",
     status: "resolved",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: "arrested",
   },
   {
     date: "2025-06-07",
@@ -309,6 +430,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "SPD Blotter",
     sourceUrl: null,
     status: "resolved",
+    timeOfDay: "02:00",
+    hasVideo: 1,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2025-06-28",
@@ -325,6 +451,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "KIRO 7",
     sourceUrl: null,
     status: "under investigation",
+    timeOfDay: null,
+    hasVideo: 1,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2025-08-09",
@@ -341,6 +472,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "KOMO News",
     sourceUrl: "https://komonews.com/news/local/police-investigate-west-seattle-armed-robberies-involving-truck-and-masked-suspects-crime-robbery-theft-uber-money-danger-community-alert-warning-witness",
     status: "under investigation",
+    timeOfDay: "02:17",
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2025-09-29",
@@ -357,6 +493,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "SPD Blotter",
     sourceUrl: null,
     status: "resolved",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2025-10-15",
@@ -373,6 +514,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "SPD Blotter",
     sourceUrl: null,
     status: "under investigation",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2025-11-15",
@@ -389,6 +535,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "KIRO 7",
     sourceUrl: null,
     status: "under investigation",
+    timeOfDay: null,
+    hasVideo: 1,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2025-11-23",
@@ -405,6 +556,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "SPD Blotter",
     sourceUrl: null,
     status: "under investigation",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2026-01-09",
@@ -421,6 +577,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "SPD Blotter",
     sourceUrl: null,
     status: "under investigation",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2026-02-14",
@@ -437,6 +598,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "SPD / King 5",
     sourceUrl: null,
     status: "resolved",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2026-02-26",
@@ -453,6 +619,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "SPD Blotter / KIRO 7",
     sourceUrl: "https://spdblotter.seattle.gov/2026/02/26/teen-arrested-for-shooting-up-pizza-parlor-attempted-carjacking/",
     status: "resolved",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: "2026-54557",
+    caseStatus: "arrested",
   },
   {
     date: "2026-03-05",
@@ -469,6 +640,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "SPD Blotter",
     sourceUrl: null,
     status: "under investigation",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2026-03-20",
@@ -485,6 +661,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "SPD Blotter",
     sourceUrl: null,
     status: "under investigation",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2026-03-27",
@@ -501,6 +682,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "Fox 13 / KOMO / KIRO 7 / King Co. Prosecutors",
     sourceUrl: "https://www.fox13seattle.com/news/seattle-woman-sentenced-killing-rideshare-driver",
     status: "resolved",
+    timeOfDay: "03:30",
+    hasVideo: 0,
+    suspectName: "Ne'iana Allen-Bailey",
+    caseNumber: null,
+    caseStatus: "sentenced",
   },
 
   // ═══════════════════════════════════════════════════
@@ -522,6 +708,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "Fox 13 Seattle / NYT / Fox News",
     sourceUrl: "https://www.fox13seattle.com/news/uber-hot-seat-after-probe-finds-violent-offenders-were-cleared-drive-passengers-report",
     status: "resolved",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: null,
+    caseStatus: null,
   },
   {
     date: "2026-03-04",
@@ -538,6 +729,11 @@ const SEED_DATA: InsertIncident[] = [
     source: "City of Seattle OLS / Ninth Circuit",
     sourceUrl: "https://content.govdelivery.com/accounts/WASEATTLE/bulletins/40d161e",
     status: "resolved",
+    timeOfDay: null,
+    hasVideo: 0,
+    suspectName: null,
+    caseNumber: "25-231",
+    caseStatus: "resolved",
   },
 ];
 
@@ -563,4 +759,10 @@ export const storage: IStorage = {
       console.log(`Seeded ${SEED_DATA.length} incidents`);
     }
   },
+
+  getAllSubmissions() { return db.select().from(submissions).all(); },
+  createSubmission(data) { return db.insert(submissions).values(data).returning().get(); },
+  updateSubmissionStatus(id, status) { db.update(submissions).set({ status }).where(eq(submissions.id, id)).run(); },
+  createAlert(data) { return db.insert(alertSubscriptions).values(data).returning().get(); },
+  getAllAlerts() { return db.select().from(alertSubscriptions).all(); },
 };

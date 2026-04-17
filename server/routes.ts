@@ -21,7 +21,6 @@ export function registerRoutes(httpServer: Server, app: Express): Server {
     const all = storage.getAllIncidents();
     const total = all.length;
 
-    // Crime incidents only — exclude policy_regulatory and legal_sentencing from severity KPIs
     const crimeOnly = all.filter(i => i.category === "crime");
     const fatal   = crimeOnly.filter(i => i.severity === "fatal").length;
     const injury  = crimeOnly.filter(i => i.severity === "injury").length;
@@ -32,6 +31,12 @@ export function registerRoutes(httpServer: Server, app: Express): Server {
 
     const resolved = all.filter(i => i.status === "resolved").length;
     const underInvestigation = all.filter(i => i.status === "under investigation").length;
+
+    // Video evidence count
+    const withVideo = all.filter(i => i.hasVideo === 1).length;
+
+    // Cases with named suspects
+    const withSuspect = all.filter(i => i.suspectName).length;
 
     const byPlatform: Record<string, number> = {};
     for (const i of crimeOnly) byPlatform[i.platform] = (byPlatform[i.platform] || 0) + 1;
@@ -45,13 +50,81 @@ export function registerRoutes(httpServer: Server, app: Express): Server {
       byMonth[month] = (byMonth[month] || 0) + 1;
     }
 
+    // Time of day distribution (24 hours)
+    const byHour: Record<number, number> = {};
+    for (let h = 0; h < 24; h++) byHour[h] = 0;
+    for (const i of crimeOnly) {
+      if (i.timeOfDay) {
+        const hour = parseInt(i.timeOfDay.split(":")[0]);
+        if (!isNaN(hour)) byHour[hour]++;
+      }
+    }
+
+    // Repeat locations (neighborhoods with 2+ incidents)
+    const repeatLocations = Object.entries(byNeighborhood)
+      .filter(([, v]) => v >= 2)
+      .sort(([, a], [, b]) => b - a);
+
+    // Quarterly trend for forecasting
+    const byQuarter: Record<string, number> = {};
+    for (const i of crimeOnly) {
+      const y = i.date.substring(0, 4);
+      const m = parseInt(i.date.substring(5, 7));
+      const q = Math.ceil(m / 3);
+      const key = `${y} Q${q}`;
+      byQuarter[key] = (byQuarter[key] || 0) + 1;
+    }
+
+    // Case status breakdown
+    const caseStatuses: Record<string, number> = {};
+    for (const i of all) {
+      if (i.caseStatus) {
+        caseStatuses[i.caseStatus] = (caseStatuses[i.caseStatus] || 0) + 1;
+      }
+    }
+
     res.json({
       total, fatal, injury, robbery, assault, policyCount, legalCount,
       crimeTotal: crimeOnly.length,
       resolved, underInvestigation,
-      byPlatform, byNeighborhood, byMonth,
+      withVideo, withSuspect,
+      byPlatform, byNeighborhood, byMonth, byHour,
+      repeatLocations, byQuarter, caseStatuses,
       lastVerified: "2026-04-17",
     });
+  });
+
+  // Submissions
+  app.get("/api/submissions", (_req, res) => {
+    res.json(storage.getAllSubmissions());
+  });
+
+  app.post("/api/submissions", (req, res) => {
+    try {
+      const data = {
+        ...req.body,
+        submittedAt: new Date().toISOString(),
+        status: "pending",
+      };
+      const submission = storage.createSubmission(data);
+      res.status(201).json(submission);
+    } catch (err: any) {
+      res.status(400).json({ error: err.message });
+    }
+  });
+
+  // Alert subscriptions
+  app.post("/api/alerts", (req, res) => {
+    try {
+      const data = {
+        ...req.body,
+        createdAt: new Date().toISOString(),
+      };
+      const alert = storage.createAlert(data);
+      res.status(201).json(alert);
+    } catch (err: any) {
+      res.status(400).json({ error: err.message });
+    }
   });
 
   // SPD Blotter RSS proxy
@@ -60,7 +133,6 @@ export function registerRoutes(httpServer: Server, app: Express): Server {
       const response = await fetch("https://spdblotter.seattle.gov/feed/");
       if (!response.ok) throw new Error(`SPD Blotter returned ${response.status}`);
       const xml = await response.text();
-      // Parse basic RSS items
       const items: Array<{ title: string; link: string; pubDate: string; description: string }> = [];
       const itemRegex = /<item>([\s\S]*?)<\/item>/g;
       let match;

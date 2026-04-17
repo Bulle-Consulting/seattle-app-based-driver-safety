@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { useHashLocation } from "wouter/use-hash-location";
-import { LayoutDashboard, Map, List, Radio, Shield, BookOpen } from "lucide-react";
+import { LayoutDashboard, Map, List, Radio, Shield, BookOpen, BarChart3, Calculator, FileUp, Bell, Code } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const nav = [
@@ -10,6 +10,11 @@ const nav = [
   { href: "/live", label: "Live Feed", icon: Radio },
   { href: "/worker-rights", label: "OLS Data", icon: Shield },
   { href: "/resources", label: "Resources", icon: BookOpen },
+  { href: "/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/tools", label: "Tools", icon: Calculator },
+  { href: "/submit", label: "Report", icon: FileUp },
+  { href: "/alerts", label: "Alerts", icon: Bell },
+  { href: "/api-docs", label: "API Docs", icon: Code },
 ];
 
 export default function Sidebar() {

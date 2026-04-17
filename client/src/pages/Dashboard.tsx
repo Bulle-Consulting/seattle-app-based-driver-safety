@@ -9,7 +9,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line, CartesianGrid,
 } from "recharts";
-import { X, ChevronRight, ExternalLink, Filter } from "lucide-react";
+import { X, ChevronRight, ExternalLink, Filter, Printer } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import type { Incident } from "@shared/schema";
 
@@ -352,7 +352,12 @@ export default function Dashboard() {
           <div className="text-[9px] text-[#8B95A8] pb-2 space-y-1">
             <div className="flex items-center justify-between">
               <span>bullecloud.com</span>
-              <span>Data sources last verified: {stats?.lastVerified ?? "—"}</span>
+              <div className="flex items-center gap-2">
+                <span>Data sources last verified: {stats?.lastVerified ?? "—"}</span>
+                <button onClick={() => window.print()} className="btn-secondary flex items-center gap-1.5" data-testid="btn-print">
+                  <Printer size={11} /> Print Report
+                </button>
+              </div>
             </div>
             <div className="text-[8px] text-[#8B95A8] leading-relaxed">
               Incidents sourced from SPD Blotter are based on general crime data. Individual rideshare connection may not be independently verified for all entries.

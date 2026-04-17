@@ -224,3 +224,28 @@ html, body {
   transition: border-color 0.15s ease, color 0.15s ease;
 }
 .btn-secondary:hover { border-color: hsl(var(--border-lite)); color: hsl(var(--text-primary)); }
+
+/* ── Mobile responsive ── */
+@media (max-width: 768px) {
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .kpi-card { padding: 14px; }
+  .kpi-card .tabular-nums { font-size: 22px; }
+}
+
+/* ── Print styles ── */
+@media print {
+  .sidebar, header, .pulse-dot, button { display: none !important; }
+  .dashboard-layout { grid-template-columns: 1fr; }
+  .main-content { overflow: visible; }
+  body { background: white; color: black; }
+  .kpi-card, .card { border: 1px solid #ddd; background: white; }
+  .tabular-nums { color: black; }
+}
