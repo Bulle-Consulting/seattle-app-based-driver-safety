@@ -29,10 +29,10 @@ export default function Sidebar() {
             <div className="text-[13px] font-semibold text-[#F5F5F5] leading-tight">Safety Steward</div>
           </div>
         </div>
-        <div className="mt-4 text-[10px] text-[#4D5666]">
+        <div className="mt-4 text-[10px] text-[#8B95A8]">
           App-Based Driver Safety
         </div>
-        <div className="mt-1 text-[10px] text-[#4D5666]">
+        <div className="mt-1 text-[10px] text-[#8B95A8]">
           Data current as of Apr 17, 2026
         </div>
       </div>
@@ -51,11 +51,11 @@ export default function Sidebar() {
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-150 text-[12.5px] select-none",
                   active
                     ? "text-white font-medium"
-                    : "text-[#6D7A8F] hover:text-[#A3AEC0] hover:bg-white/[0.03]"
+                    : "text-[#8B95A8] hover:text-[#A3AEC0] hover:bg-white/[0.03]"
                 )}
                 style={active ? { background: "hsl(176 50% 15%)", color: "hsl(176 65% 55%)" } : {}}
               >
-                <Icon size={15} strokeWidth={active ? 2 : 1.5} className={active ? "" : "text-[#4D5666]"} style={active ? { color: "hsl(176 65% 55%)" } : {}} />
+                <Icon size={15} strokeWidth={active ? 2 : 1.5} className={active ? "" : "text-[#8B95A8]"} style={active ? { color: "hsl(176 65% 55%)" } : {}} />
                 {label}
                 {label === "Live Feed" && <span className="ml-auto pulse-dot" />}
               </div>
@@ -67,10 +67,10 @@ export default function Sidebar() {
       {/* Footer */}
       <div className="px-5 pb-5 pt-3">
         <div className="h-px mb-3" style={{ background: "hsl(220 25% 16%)" }} />
-        <div className="text-[9px] text-[#4D5666] leading-relaxed space-y-1">
+        <div className="text-[9px] text-[#8B95A8] leading-relaxed space-y-1">
           <div>SPD Open Data · SPD Blotter · Cascade PBS · KOMO · KIRO 7 · Fox 13 · King Co. Prosecutors</div>
           <div>2024–Present · Seattle Metro</div>
-          <div className="mt-2" style={{ color: "hsl(176 45% 35%)" }}>bullecloud.com</div>
+          <div className="mt-2" style={{ color: "hsl(176 55% 45%)" }}>bullecloud.com</div>
         </div>
       </div>
     </aside>

@@ -67,8 +67,8 @@ export default function SeattleMap({ incidents, selectedId, onSelectIncident, sh
             <div style="font-size:10.5px;color:#A3AEC0;margin-bottom:8px">${inc.description.length > 100 ? inc.description.substring(0,100)+"…" : inc.description}</div>
             <div style="display:flex;gap:5px;font-size:9px">
               <span style="background:${c}20;color:${c};padding:2px 7px;border-radius:4px">${inc.severity}</span>
-              <span style="background:rgba(255,255,255,0.05);color:#6D7A8F;padding:2px 7px;border-radius:4px">${inc.platform}</span>
-              <span style="background:rgba(255,255,255,0.05);color:#6D7A8F;padding:2px 7px;border-radius:4px">${d}</span>
+              <span style="background:rgba(255,255,255,0.05);color:#8B95A8;padding:2px 7px;border-radius:4px">${inc.platform}</span>
+              <span style="background:rgba(255,255,255,0.05);color:#8B95A8;padding:2px 7px;border-radius:4px">${d}</span>
             </div>
           </div>
         `, { maxWidth: 280 });

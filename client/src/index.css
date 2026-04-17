@@ -18,8 +18,8 @@
     /* Text hierarchy — 4 levels */
     --text-primary:    0 0% 96%;   /* #F5F5F5 */
     --text-secondary:  215 15% 70%; /* #A3AEC0 */
-    --text-tertiary:   215 12% 50%; /* #6D7A8F */
-    --text-quaternary: 215 10% 35%; /* #4D5666 */
+    --text-tertiary: 215 16% 60%; /* #6D7A8F */
+    --text-quaternary: 215 14% 52%; /* #4D5666 */
 
     /* System accent — restrained teal */
     --accent:     176 65% 42%;     /* #26A69A */
@@ -192,7 +192,7 @@ html, body {
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: hsl(var(--text-quaternary));
+  color: hsl(var(--text-tertiary));
 }
 
 /* ── Focus ring — accessible ── */

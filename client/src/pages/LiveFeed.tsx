@@ -59,7 +59,7 @@ export default function LiveFeed() {
           <div className="flex items-center gap-2 text-[10px] text-[#A3AEC0]">
             <span className="pulse-dot" />
             <span>Data current as of Apr 14, 2026 · Real-Time Incident Tracking · updated every 5 minutes</span>
-            <span className="ml-auto tabular-nums text-[#6D7A8F]">{stats?.crimeTotal ?? "—"} crime incidents + {stats?.policyCount ?? "—"} policy entries</span>
+            <span className="ml-auto tabular-nums text-[#8B95A8]">{stats?.crimeTotal ?? "—"} crime incidents + {stats?.policyCount ?? "—"} policy entries</span>
           </div>
 
           {/* KPIs */}
@@ -70,14 +70,14 @@ export default function LiveFeed() {
                 <div className="text-[12px] font-semibold text-[#F5F5F5]">{mostRecent.neighborhood}</div>
                 <div className="text-[10px] text-[#A3AEC0]">{mostRecent.type}</div>
                 <div className="tabular-nums text-[9px] mt-1" style={{ color: TEAL }}>{new Date(mostRecent.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</div>
-              </> : <div className="text-[#6D7A8F] text-[10px]">—</div>}
+              </> : <div className="text-[#8B95A8] text-[10px]">—</div>}
             </div>
             <div className="bg-[#151d2e] border border-[#1F2937] rounded-md p-3">
               <div className="text-[9px] font-medium text-[#A3AEC0] mb-1">Highest Risk</div>
               {topHood ? <>
                 <div className="text-[12px] font-semibold text-[#F5F5F5]">{topHood[0]}</div>
                 <div className="text-[10px] text-[#A3AEC0]">{topHood[1]} incidents</div>
-              </> : <div className="text-[#6D7A8F] text-[10px]">—</div>}
+              </> : <div className="text-[#8B95A8] text-[10px]">—</div>}
             </div>
             <div className="bg-[#151d2e] border border-[#1F2937] rounded-md p-3">
               <div className="text-[9px] font-medium text-[#A3AEC0] mb-1">Open</div>
@@ -113,8 +113,8 @@ export default function LiveFeed() {
                         </div>
                         <div className="text-[10px] font-medium text-[#F5F5F5]">{inc.type}</div>
                         <div className="text-[9px] text-[#A3AEC0]">{inc.neighborhood} · {inc.platform}</div>
-                        <div className="text-[9px] text-[#6D7A8F] mt-0.5 line-clamp-2 leading-relaxed">{inc.description}</div>
-                        <div className="flex items-center gap-2 text-[8px] text-[#4D5666] mt-1">
+                        <div className="text-[9px] text-[#8B95A8] mt-0.5 line-clamp-2 leading-relaxed">{inc.description}</div>
+                        <div className="flex items-center gap-2 text-[8px] text-[#8B95A8] mt-1">
                           <span className="tabular-nums">{new Date(inc.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
                           {inc.sourceUrl ? (
                             <a href={inc.sourceUrl} target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-0.5" style={{ color: TEAL }}>{inc.source} <ExternalLink size={7} /></a>
@@ -132,7 +132,7 @@ export default function LiveFeed() {
                   <Rss size={11} style={{ color: "#26A69A" }} />
                   <span className="text-[11px] font-medium text-[#F5F5F5]">Live Incident Activity</span>
                   {blotter?.fetchedAt && (
-                    <span className="ml-auto text-[8px] text-[#6D7A8F] tabular-nums">
+                    <span className="ml-auto text-[8px] text-[#8B95A8] tabular-nums">
                       Fetched {new Date(blotter.fetchedAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
                     </span>
                   )}
@@ -145,7 +145,7 @@ export default function LiveFeed() {
                       className="block px-4 py-2.5 hover:bg-[#0b1120] transition-colors">
                       <div className="text-[10px] font-medium text-[#F5F5F5]">{item.title}</div>
                       <div className="text-[9px] text-[#A3AEC0] mt-0.5 line-clamp-2">{item.description?.replace(/<[^>]*>/g, '').substring(0, 150)}</div>
-                      <div className="text-[8px] text-[#6D7A8F] mt-0.5 tabular-nums">
+                      <div className="text-[8px] text-[#8B95A8] mt-0.5 tabular-nums">
                         {item.pubDate ? new Date(item.pubDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : ""}
                       </div>
                     </a>
@@ -158,7 +158,7 @@ export default function LiveFeed() {
             <div className="flex flex-col gap-3">
               <div className="bg-[#151d2e] border border-[#1F2937] rounded-md p-4">
                 <div className="flex items-center gap-1.5 text-[11px] font-medium text-[#F5F5F5] mb-3">
-                  <TrendingUp size={12} className="text-[#6D7A8F]" /> Seattle Crime Context (2024)
+                  <TrendingUp size={12} className="text-[#8B95A8]" /> Seattle Crime Context (2024)
                 </div>
                 <div className="space-y-1.5 text-[10px]">
                   {[
@@ -172,7 +172,7 @@ export default function LiveFeed() {
                   ].map(({ l, v, s }) => (
                     <div key={l} className="flex items-center justify-between py-1 border-b border-[#1F2937] last:border-0">
                       <span className="text-[#A3AEC0]">{l}</span>
-                      <div className="text-right"><span className="tabular-nums font-medium text-[#F5F5F5]">{v}</span><div className="text-[8px] text-[#6D7A8F]">{s}</div></div>
+                      <div className="text-right"><span className="tabular-nums font-medium text-[#F5F5F5]">{v}</span><div className="text-[8px] text-[#8B95A8]">{s}</div></div>
                     </div>
                   ))}
                 </div>
@@ -190,7 +190,7 @@ export default function LiveFeed() {
                 </div>
               </div>
 
-              <div className="bg-[#101827] border border-[#1F2937] rounded-md p-3 text-[9px] text-[#6D7A8F] leading-relaxed">
+              <div className="bg-[#101827] border border-[#1F2937] rounded-md p-3 text-[9px] text-[#8B95A8] leading-relaxed">
                 <div className="font-medium text-[#A3AEC0] mb-0.5">About this data</div>
                 Incidents are manually verified against SPD Blotter, news sources (KOMO, KIRO 7, Fox 13, Cascade PBS), and King County court records. The SPD Blotter RSS panel above shows live posts from <span className="font-medium">spdblotter.seattle.gov</span>. Source links are provided for each verified incident. Data sources last checked: {stats?.lastVerified ?? "—"}.
               </div>

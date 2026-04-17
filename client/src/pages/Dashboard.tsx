@@ -61,7 +61,7 @@ function Modal({ incident: inc, onClose }: { incident: Incident; onClose: () => 
             <div className="text-[13px] font-semibold text-[#F5F5F5]">{inc.type}</div>
             <div className="text-[12px] font-medium" style={{ color: TEAL }}>{inc.neighborhood}</div>
           </div>
-          <button onClick={onClose} className="text-[#1F2937] hover:text-[#6D7A8F] p-1 rounded transition-colors"><X size={14} /></button>
+          <button onClick={onClose} className="text-[#8B95A8] hover:text-[#8B95A8] p-1 rounded transition-colors"><X size={14} /></button>
         </div>
         <div className="space-y-2.5 text-[11px]">
           <div className="bg-[#101827] rounded p-3"><div className="section-label mb-1">Description</div><p className="text-[#F5F5F5] leading-relaxed">{inc.description}</p></div>
@@ -70,7 +70,7 @@ function Modal({ incident: inc, onClose }: { incident: Incident; onClose: () => 
             <div className="bg-[#101827] rounded p-2.5"><div className="section-label mb-0.5">Platform</div><div className="text-[#F5F5F5]">{inc.platform}</div></div>
           </div>
           {inc.victim && <div className="bg-[#101827] rounded p-2.5"><div className="section-label mb-0.5">Victim</div><div className="text-[#F5F5F5]">{inc.victim}</div></div>}
-          <div className="bg-[#101827] rounded p-2.5"><div className="section-label mb-0.5">Location</div><div className="text-[#A3AEC0] text-[10px]">{inc.address}</div><div className="tabular-nums text-[9px] text-[#6D7A8F] mt-0.5">{inc.lat.toFixed(5)}, {inc.lng.toFixed(5)}</div></div>
+          <div className="bg-[#101827] rounded p-2.5"><div className="section-label mb-0.5">Location</div><div className="text-[#A3AEC0] text-[10px]">{inc.address}</div><div className="tabular-nums text-[9px] text-[#8B95A8] mt-0.5">{inc.lat.toFixed(5)}, {inc.lng.toFixed(5)}</div></div>
           <div className="bg-[#101827] rounded p-2.5"><div className="section-label mb-0.5">Source</div>
             {inc.sourceUrl ? (
               <a href={inc.sourceUrl} target="_blank" rel="noopener noreferrer" className="hover:underline text-[10px] flex items-center gap-1" style={{ color: TEAL }}>{inc.source} <ExternalLink size={9} /></a>
@@ -134,10 +134,10 @@ export default function Dashboard() {
 
           {(sevFilter || yearFilter !== "All") && (
             <div className="flex items-center gap-2 text-[10px] text-[#A3AEC0]">
-              <Filter size={10} className="text-[#6D7A8F]" />
+              <Filter size={10} className="text-[#8B95A8]" />
               {sevFilter && <button onClick={() => setSevFilter(null)} className="flex items-center gap-1 border border-[#1F2937] bg-[#151d2e] px-2 py-0.5 rounded hover:bg-[#1F2937]">{sevFilter} <X size={8} /></button>}
               {yearFilter !== "All" && <button onClick={() => setYearFilter("All")} className="flex items-center gap-1 border border-[#1F2937] bg-[#151d2e] px-2 py-0.5 rounded hover:bg-[#1F2937]">{yearFilter} <X size={8} /></button>}
-              <button onClick={() => { setSevFilter(null); setYearFilter("All"); }} className="text-[#6D7A8F] hover:text-[#A3AEC0] ml-1">Clear</button>
+              <button onClick={() => { setSevFilter(null); setYearFilter("All"); }} className="text-[#8B95A8] hover:text-[#A3AEC0] ml-1">Clear</button>
             </div>
           )}
 
@@ -150,13 +150,13 @@ export default function Dashboard() {
               </button>
             ))}
             <div className="ml-auto flex items-center gap-2">
-              <span className="text-[10px] text-[#6D7A8F]">Heatmap</span>
+              <span className="text-[10px] text-[#8B95A8]">Heatmap</span>
               <button onClick={() => setShowHeatmap(h => !h)}
                 className="w-7 h-3.5 rounded-full transition-colors relative border"
                 style={{ background: showHeatmap ? TEAL : "#1F2937", borderColor: showHeatmap ? TEAL : "#475569" }}>
                 <span className={`absolute top-px w-2.5 h-2.5 rounded-full bg-white shadow-sm transition-transform ${showHeatmap ? "left-3.5" : "left-0.5"}`} />
               </button>
-              <span className="text-[10px] text-[#6D7A8F] tabular-nums">{filtered.length}</span>
+              <span className="text-[10px] text-[#8B95A8] tabular-nums">{filtered.length}</span>
             </div>
           </div>
 
@@ -173,7 +173,7 @@ export default function Dashboard() {
               <div key={label} data-testid={`kpi-${label.toLowerCase().replace(/\s+/g,'-')}`}
                 onClick={sev ? () => toggleSev(sev) : undefined}
                 className={`kpi-card bg-[#151d2e] border border-[#1F2937] rounded-md p-4 ${sev ? "cursor-pointer" : ""} ${sevFilter === sev ? "active-filter" : ""}`}>
-                <div className="text-[10px] font-medium text-[#4D5666] mb-1">{label}</div>
+                <div className="text-[10px] font-medium text-[#8B95A8] mb-1">{label}</div>
                 <div className="tabular-nums text-[26px] font-semibold leading-none" style={{ color }}><Num value={value} loading={stL} /></div>
                 {sev && sevFilter === sev && <div className="text-[8px] mt-1.5 font-medium" style={{ color: TEAL }}>Filtering ×</div>}
               </div>
@@ -181,7 +181,7 @@ export default function Dashboard() {
           </div>
 
           {(stats?.policyCount > 0 || stats?.legalCount > 0) && (
-            <div className="text-[9px] text-[#6D7A8F]">
+            <div className="text-[9px] text-[#8B95A8]">
               + {(stats?.policyCount ?? 0) + (stats?.legalCount ?? 0)} non-crime entries tracked separately (policy/regulatory, legal/sentencing — not included in crime severity counts)
             </div>
           )}
@@ -191,7 +191,7 @@ export default function Dashboard() {
             <div className="xl:col-span-2 bg-[#151d2e] border border-[#1F2937] rounded-md overflow-hidden">
               <div className="flex items-center justify-between px-4 py-2 border-b border-[#1F2937]">
                 <span className="text-[11px] font-medium text-[#F5F5F5]">Incident Map</span>
-                <div className="flex items-center gap-3 text-[9px] text-[#6D7A8F]">
+                <div className="flex items-center gap-3 text-[9px] text-[#8B95A8]">
                   {Object.entries(SEV).filter(([k]) => k !== "policy").map(([k, v]) => (
                     <button key={k} onClick={() => toggleSev(k)}
                       className={`flex items-center gap-1 capitalize transition-opacity ${sevFilter && sevFilter !== k ? "opacity-25" : ""}`}>
@@ -202,7 +202,7 @@ export default function Dashboard() {
               </div>
               <SeattleMap incidents={filtered.filter(i => i.category === "crime")} selectedId={selectedId}
                 onSelectIncident={id => { setSelectedId(id); const i = incidents.find(x => x.id === id); if (i) setModal(i); }}
-                showHeatmap={showHeatmap} height="400px" />
+                showHeatmap={showHeatmap} height="320px" />
             </div>
 
             <div className="bg-[#151d2e] border border-[#1F2937] rounded-md flex flex-col">
@@ -219,13 +219,13 @@ export default function Dashboard() {
                       <div className="flex items-center justify-between mb-0.5">
                         <div className="flex items-center gap-1">
                           <SeverityBadge severity={inc.severity} />
-                          {(inc.category === "policy_regulatory" || inc.category === "legal_sentencing") && <span className="text-[7px] bg-[#1F2937] text-[#6D7A8F] px-1 rounded">{inc.category === "policy_regulatory" ? "Policy" : "Legal"}</span>}
+                          {(inc.category === "policy_regulatory" || inc.category === "legal_sentencing") && <span className="text-[7px] bg-[#1F2937] text-[#8B95A8] px-1 rounded">{inc.category === "policy_regulatory" ? "Policy" : "Legal"}</span>}
                         </div>
-                        <span className="text-[9px] text-[#6D7A8F] tabular-nums">{new Date(inc.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+                        <span className="text-[9px] text-[#8B95A8] tabular-nums">{new Date(inc.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <div><div className="text-[11px] font-medium text-[#F5F5F5]">{inc.type}</div><div className="text-[9px] text-[#A3AEC0]">{inc.neighborhood} · {inc.platform}</div></div>
-                        <ChevronRight size={10} className="text-[#1F2937]" />
+                        <ChevronRight size={10} className="text-[#8B95A8]" />
                       </div>
                     </div>
                   ))
@@ -239,13 +239,13 @@ export default function Dashboard() {
             <div className="md:col-span-2 bg-[#151d2e] border border-[#1F2937] rounded-md p-4">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-[11px] font-medium text-[#F5F5F5]">Monthly Trend (crime only)</span>
-                <span className="text-[9px] text-[#6D7A8F]">Jan 2024 – Present</span>
+                <span className="text-[9px] text-[#8B95A8]">Jan 2024 – Present</span>
               </div>
-              <ResponsiveContainer width="100%" height={155}>
+              <ResponsiveContainer width="100%" height={130}>
                 <LineChart data={moData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#1F2937" />
-                  <XAxis dataKey="month" tick={{ fontSize: 9, fill: "#4D5666" }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 9, fill: "#4D5666" }} axisLine={false} tickLine={false} width={18} />
+                  <XAxis dataKey="month" tick={{ fontSize: 9, fill: "#8B95A8" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 9, fill: "#8B95A8" }} axisLine={false} tickLine={false} width={18} />
                   <Tooltip content={<Tip />} />
                   <Line type="monotone" dataKey="incidents" stroke="#26A69A" strokeWidth={1.5} dot={{ fill: "#26A69A", r: 2.5, strokeWidth: 0 }} activeDot={{ r: 4, fill: "#E8A317", stroke: "#151d2e", strokeWidth: 1.5 }} name="Incidents" />
                 </LineChart>
@@ -254,7 +254,7 @@ export default function Dashboard() {
 
             <div className="bg-[#151d2e] border border-[#1F2937] rounded-md p-4">
               <span className="text-[11px] font-medium text-[#F5F5F5]">By Severity</span>
-              <ResponsiveContainer width="100%" height={100} className="mt-2">
+              <ResponsiveContainer width="100%" height={90} className="mt-2">
                 <PieChart><Pie data={sevData} cx="50%" cy="50%" innerRadius={28} outerRadius={44} dataKey="value" paddingAngle={2} onClick={d => toggleSev(d.name.toLowerCase())} style={{ cursor: "pointer" }}>
                   {sevData.map((e, i) => <Cell key={i} fill={e.color} opacity={sevFilter && sevFilter !== e.name.toLowerCase() ? 0.2 : 0.8} />)}
                 </Pie><Tooltip content={<Tip />} /></PieChart>
@@ -271,10 +271,10 @@ export default function Dashboard() {
 
             <div className="bg-[#151d2e] border border-[#1F2937] rounded-md p-4">
               <span className="text-[11px] font-medium text-[#F5F5F5]">By Platform</span>
-              <ResponsiveContainer width="100%" height={100} className="mt-2">
+              <ResponsiveContainer width="100%" height={90} className="mt-2">
                 <BarChart data={pltData} layout="vertical">
-                  <XAxis type="number" tick={{ fontSize: 8, fill: "#4D5666" }} axisLine={false} tickLine={false} />
-                  <YAxis dataKey="name" type="category" tick={{ fontSize: 9, fill: "#4D5666" }} axisLine={false} tickLine={false} width={60} />
+                  <XAxis type="number" tick={{ fontSize: 8, fill: "#8B95A8" }} axisLine={false} tickLine={false} />
+                  <YAxis dataKey="name" type="category" tick={{ fontSize: 9, fill: "#8B95A8" }} axisLine={false} tickLine={false} width={60} />
                   <Tooltip content={<Tip />} />
                   <Bar dataKey="value" radius={[0, 2, 2, 0]}>{pltData.map((e, i) => <Cell key={i} fill={e.fill} opacity={0.7} />)}</Bar>
                 </BarChart>
@@ -286,7 +286,7 @@ export default function Dashboard() {
           <div className="bg-[#151d2e] border border-[#1F2937] rounded-md p-4">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[11px] font-medium text-[#F5F5F5]">Hotspot Neighborhoods</span>
-              <span className="text-[9px] text-[#6D7A8F]">Crime incidents only</span>
+              <span className="text-[9px] text-[#8B95A8]">Crime incidents only</span>
             </div>
             <div className="space-y-2.5">
               {nbData.map((n, i) => {
@@ -296,7 +296,7 @@ export default function Dashboard() {
                   <div key={n.name}>
                     <div className="flex items-center justify-between text-[10px] mb-1">
                       <span className={i === 0 ? "font-medium text-[#F5F5F5]" : "text-[#A3AEC0]"}>{n.name}</span>
-                      <span className="tabular-nums font-medium" style={{ color: i === 0 ? SEV.fatal : "#6D7A8F" }}>{n.value}</span>
+                      <span className="tabular-nums font-medium" style={{ color: i === 0 ? SEV.fatal : "#8B95A8" }}>{n.value}</span>
                     </div>
                     <div className="h-1 rounded-full bg-[#1F2937]">
                       <div className="h-full rounded-full bar-fill" style={{ "--target-width": `${pct}%`, width: `${pct}%`, background: i === 0 ? SEV.fatal : "#475569" } as any} />
@@ -310,15 +310,15 @@ export default function Dashboard() {
           {/* Table with source links */}
           <div className="bg-[#151d2e] border border-[#1F2937] rounded-md overflow-hidden">
             <div className="px-4 py-2.5 border-b border-[#1F2937] flex items-center justify-between">
-              <span className="text-[11px] font-medium text-[#F5F5F5]">All Incidents <span className="text-[#6D7A8F] tabular-nums font-normal ml-1">{filtered.length}</span></span>
-              <span className="text-[9px] text-[#6D7A8F]">Click row for details · linked sources open in new tab</span>
+              <span className="text-[11px] font-medium text-[#F5F5F5]">All Incidents <span className="text-[#8B95A8] tabular-nums font-normal ml-1">{filtered.length}</span></span>
+              <span className="text-[9px] text-[#8B95A8]">Click row for details · linked sources open in new tab</span>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-[11px]">
                 <thead>
                   <tr className="bg-[#0b1120] border-b border-[#1F2937]">
                     {["Date", "Type", "Category", "Severity", "Neighborhood", "Platform", "Status", "Source"].map(h => (
-                      <th key={h} className="px-4 py-2 text-left text-[9px] font-medium text-[#6D7A8F] uppercase tracking-wider">{h}</th>
+                      <th key={h} className="px-4 py-2 text-left text-[9px] font-medium text-[#8B95A8] uppercase tracking-wider">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -339,7 +339,7 @@ export default function Dashboard() {
                           {inc.sourceUrl ? (
                             <a href={inc.sourceUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
                               className="hover:underline text-[9px] flex items-center gap-0.5" style={{ color: TEAL }}>{inc.source} <ExternalLink size={8} /></a>
-                          ) : <span className="text-[#6D7A8F] text-[9px]">{inc.source}</span>}
+                          ) : <span className="text-[#8B95A8] text-[9px]">{inc.source}</span>}
                         </td>
                       </tr>
                     ))
@@ -349,12 +349,12 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="text-[9px] text-[#4D5666] pb-2 space-y-1">
+          <div className="text-[9px] text-[#8B95A8] pb-2 space-y-1">
             <div className="flex items-center justify-between">
               <span>bullecloud.com</span>
               <span>Data sources last verified: {stats?.lastVerified ?? "—"}</span>
             </div>
-            <div className="text-[8px] text-[#4D5666] leading-relaxed">
+            <div className="text-[8px] text-[#8B95A8] leading-relaxed">
               Incidents sourced from SPD Blotter are based on general crime data. Individual rideshare connection may not be independently verified for all entries.
             </div>
           </div>

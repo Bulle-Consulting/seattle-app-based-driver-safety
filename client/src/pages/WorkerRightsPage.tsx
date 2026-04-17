@@ -10,10 +10,10 @@ function RateTable({ rates }: { rates: { year: string; perMin: string; perMile: 
       <table className="w-full text-[11px]">
         <thead>
           <tr className="bg-[#101827] border-b border-[#1F2937]">
-            <th className="px-3 py-2 text-left text-[9px] font-medium text-[#6D7A8F] uppercase tracking-wider">Year</th>
-            <th className="px-3 py-2 text-left text-[9px] font-medium text-[#6D7A8F] uppercase tracking-wider">Per Minute</th>
-            <th className="px-3 py-2 text-left text-[9px] font-medium text-[#6D7A8F] uppercase tracking-wider">Per Mile</th>
-            <th className="px-3 py-2 text-left text-[9px] font-medium text-[#6D7A8F] uppercase tracking-wider">Per Offer Min.</th>
+            <th className="px-3 py-2 text-left text-[9px] font-medium text-[#8B95A8] uppercase tracking-wider">Year</th>
+            <th className="px-3 py-2 text-left text-[9px] font-medium text-[#8B95A8] uppercase tracking-wider">Per Minute</th>
+            <th className="px-3 py-2 text-left text-[9px] font-medium text-[#8B95A8] uppercase tracking-wider">Per Mile</th>
+            <th className="px-3 py-2 text-left text-[9px] font-medium text-[#8B95A8] uppercase tracking-wider">Per Offer Min.</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-[#1F2937]">
@@ -80,7 +80,7 @@ export default function WorkerRightsPage() {
                 </div>
                 <div className="tabular-nums text-[26px] font-bold text-[#26A69A] leading-none mb-1">24,700+</div>
                 <div className="text-[9px] text-[#A3AEC0] leading-relaxed">
-                  Active Uber drivers in Seattle (<span className="text-[#6D7A8F]">Seattle Times 2024</span>). Thousands more on Lyft, DoorDash, Amazon Flex. Growing workforce.
+                  Active Uber drivers in Seattle (<span className="text-[#8B95A8]">Seattle Times 2024</span>). Thousands more on Lyft, DoorDash, Amazon Flex. Growing workforce.
                 </div>
               </div>
 
@@ -102,7 +102,7 @@ export default function WorkerRightsPage() {
                     </div>
                   ))}
                 </div>
-                <div className="text-[8px] text-[#6D7A8F] mt-2">Source: SMC 8.37</div>
+                <div className="text-[8px] text-[#8B95A8] mt-2">Source: SMC 8.37</div>
               </div>
 
               {/* Worker Demographics */}
@@ -113,7 +113,7 @@ export default function WorkerRightsPage() {
                 </div>
                 <div className="text-[10px] text-[#A3AEC0] leading-relaxed space-y-1.5">
                   <div>Disproportionately immigrants and communities of color.</div>
-                  <div><span className="text-[#F5F5F5] font-medium">~16%</span> of Americans have done app-based work <span className="text-[#6D7A8F]">(HRW 2025)</span>.</div>
+                  <div><span className="text-[#F5F5F5] font-medium">~16%</span> of Americans have done app-based work <span className="text-[#8B95A8]">(HRW 2025)</span>.</div>
                   <div>Somali, Ethiopian, and East African drivers are among the largest demographic groups in Seattle.</div>
                 </div>
               </div>
@@ -144,8 +144,8 @@ export default function WorkerRightsPage() {
               <div className="px-4 py-3 border-b border-[#1F2937]" style={{ background: "rgba(38,166,154,0.08)" }}>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-[8px] font-semibold bg-[#26A69A]/20 text-[#26A69A] px-1.5 py-0.5 rounded uppercase tracking-wider">SMC 8.37</span>
-                  <Clock size={11} className="text-[#6D7A8F]" />
-                  <span className="text-[9px] text-[#6D7A8F]">Effective Jan 13, 2024</span>
+                  <Clock size={11} className="text-[#8B95A8]" />
+                  <span className="text-[9px] text-[#8B95A8]">Effective Jan 13, 2024</span>
                 </div>
                 <h2 className="text-[13px] font-semibold text-[#F5F5F5]">Minimum Payment Ordinance</h2>
                 <p className="text-[10px] text-[#A3AEC0] mt-0.5">Minimum pay, transparency & flexibility rights</p>
@@ -175,8 +175,8 @@ export default function WorkerRightsPage() {
               <div className="px-4 py-3 border-b border-[#1F2937]" style={{ background: "rgba(38,166,154,0.08)" }}>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-[8px] font-semibold bg-[#26A69A]/20 text-[#26A69A] px-1.5 py-0.5 rounded uppercase tracking-wider">SMC 8.39</span>
-                  <Clock size={11} className="text-[#6D7A8F]" />
-                  <span className="text-[9px] text-[#6D7A8F]">Effective May 1, 2023 / Jan 13, 2024</span>
+                  <Clock size={11} className="text-[#8B95A8]" />
+                  <span className="text-[9px] text-[#8B95A8]">Effective May 1, 2023 / Jan 13, 2024</span>
                 </div>
                 <h2 className="text-[13px] font-semibold text-[#F5F5F5]">Paid Sick & Safe Time</h2>
                 <p className="text-[10px] text-[#A3AEC0] mt-0.5">Paid leave for health, safety, and family needs</p>
@@ -213,7 +213,7 @@ export default function WorkerRightsPage() {
                   <Right icon={CheckCircle} text="School or childcare closures due to public health emergency" />
                   <Right icon={CheckCircle} text="Safety needs related to domestic violence situations" />
                 </div>
-                <div className="mt-3 text-[9px] text-[#6D7A8F]">Effective May 1, 2023 for food delivery workers; Jan 13, 2024 for all app-based workers. Applies to companies with 250+ workers worldwide.</div>
+                <div className="mt-3 text-[9px] text-[#8B95A8]">Effective May 1, 2023 for food delivery workers; Jan 13, 2024 for all app-based workers. Applies to companies with 250+ workers worldwide.</div>
               </div>
             </div>
 
@@ -222,8 +222,8 @@ export default function WorkerRightsPage() {
               <div className="px-4 py-3 border-b border-[#1F2937]" style={{ background: "rgba(38,166,154,0.08)" }}>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-[8px] font-semibold bg-[#26A69A]/20 text-[#26A69A] px-1.5 py-0.5 rounded uppercase tracking-wider">SMC 8.40</span>
-                  <Clock size={11} className="text-[#6D7A8F]" />
-                  <span className="text-[9px] text-[#6D7A8F]">Effective Jan 1, 2025</span>
+                  <Clock size={11} className="text-[#8B95A8]" />
+                  <span className="text-[9px] text-[#8B95A8]">Effective Jan 1, 2025</span>
                 </div>
                 <h2 className="text-[13px] font-semibold text-[#F5F5F5]">Deactivation Rights Ordinance</h2>
                 <p className="text-[10px] text-[#A3AEC0] mt-0.5">Protection from unfair platform deactivation</p>
@@ -281,28 +281,28 @@ export default function WorkerRightsPage() {
               <div className="flex items-start gap-2.5">
                 <Phone size={13} className="text-[#26A69A] mt-0.5 flex-shrink-0" />
                 <div>
-                  <div className="text-[9px] text-[#6D7A8F] uppercase tracking-wide mb-0.5">Phone</div>
+                  <div className="text-[9px] text-[#8B95A8] uppercase tracking-wide mb-0.5">Phone</div>
                   <a href="tel:206-256-5297" className="text-[11px] text-[#F5F5F5] hover:text-[#26A69A] transition-colors">206-256-5297</a>
                 </div>
               </div>
               <div className="flex items-start gap-2.5">
                 <Mail size={13} className="text-[#26A69A] mt-0.5 flex-shrink-0" />
                 <div>
-                  <div className="text-[9px] text-[#6D7A8F] uppercase tracking-wide mb-0.5">Email</div>
+                  <div className="text-[9px] text-[#8B95A8] uppercase tracking-wide mb-0.5">Email</div>
                   <a href="mailto:laborstandards@seattle.gov" className="text-[11px] text-[#26A69A] hover:underline">laborstandards@seattle.gov</a>
                 </div>
               </div>
               <div className="flex items-start gap-2.5">
                 <Globe size={13} className="text-[#26A69A] mt-0.5 flex-shrink-0" />
                 <div>
-                  <div className="text-[9px] text-[#6D7A8F] uppercase tracking-wide mb-0.5">Web</div>
+                  <div className="text-[9px] text-[#8B95A8] uppercase tracking-wide mb-0.5">Web</div>
                   <a href="https://seattle.gov/laborstandards" target="_blank" rel="noopener noreferrer" className="text-[11px] text-[#26A69A] hover:underline">seattle.gov/laborstandards</a>
                 </div>
               </div>
               <div className="flex items-start gap-2.5">
                 <MapPin size={13} className="text-[#26A69A] mt-0.5 flex-shrink-0" />
                 <div>
-                  <div className="text-[9px] text-[#6D7A8F] uppercase tracking-wide mb-0.5">Address</div>
+                  <div className="text-[9px] text-[#8B95A8] uppercase tracking-wide mb-0.5">Address</div>
                   <div className="text-[11px] text-[#A3AEC0] leading-relaxed">810 3rd Avenue, Suite 375<br />Seattle, WA 98104</div>
                 </div>
               </div>
@@ -338,7 +338,7 @@ export default function WorkerRightsPage() {
             </div>
           </div>
 
-          <div className="text-[9px] text-[#6D7A8F] pb-2">
+          <div className="text-[9px] text-[#8B95A8] pb-2">
             Information sourced from Seattle Office of Labor Standards ordinances SMC 8.37, 8.39, 8.40. Rates updated annually. bullecloud.com
           </div>
         </main>

@@ -54,19 +54,19 @@ export default function MapPage() {
             <span className="section-label">Severity</span>
             <div className="flex gap-1">{SEVERITIES.map(s => <Btn key={s} label={s} active={fSev === s} onClick={() => setFSev(s)} />)}</div>
             <div className="ml-auto flex items-center gap-2">
-              <span className="text-[10px] text-[#6D7A8F]">Heatmap</span>
+              <span className="text-[10px] text-[#8B95A8]">Heatmap</span>
               <button onClick={() => setHeatmap(h => !h)}
                 className="w-7 h-3.5 rounded-full transition-colors relative border"
                 style={{ background: heatmap ? TEAL : "#1F2937", borderColor: heatmap ? TEAL : "#475569" }}>
                 <span className={`absolute top-px w-2.5 h-2.5 rounded-full bg-white shadow-sm transition-transform ${heatmap ? "left-3.5" : "left-0.5"}`} />
               </button>
-              <span className="text-[10px] text-[#6D7A8F] tabular-nums">{filtered.length}</span>
+              <span className="text-[10px] text-[#8B95A8] tabular-nums">{filtered.length}</span>
             </div>
           </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-3 flex-1" style={{ minHeight: 0 }}>
             <div className="xl:col-span-2 bg-[#151d2e] border border-[#1F2937] rounded-md overflow-hidden">
-              <SeattleMap incidents={filtered} selectedId={selId} onSelectIncident={setSelId} showHeatmap={heatmap} height="520px" />
+              <SeattleMap incidents={filtered} selectedId={selId} onSelectIncident={setSelId} showHeatmap={heatmap} height="400px" />
             </div>
 
             <div className="bg-[#151d2e] border border-[#1F2937] rounded-md flex flex-col overflow-hidden" style={{ minHeight: 0 }}>
@@ -78,7 +78,7 @@ export default function MapPage() {
                       <div className="text-[12px] font-semibold text-[#F5F5F5]">{sel.type}</div>
                       <div className="text-[11px] font-medium" style={{ color: TEAL }}>{sel.neighborhood}</div>
                     </div>
-                    <button onClick={() => setSelId(null)} className="text-[#1F2937] hover:text-[#6D7A8F] p-1"><X size={12} /></button>
+                    <button onClick={() => setSelId(null)} className="text-[#8B95A8] hover:text-[#8B95A8] p-1"><X size={12} /></button>
                   </div>
                   <div className="space-y-2 text-[10px]">
                     <div className="bg-[#101827] rounded p-2.5"><div className="section-label mb-0.5">Description</div><p className="text-[#F5F5F5] leading-relaxed">{sel.description}</p></div>
@@ -98,11 +98,11 @@ export default function MapPage() {
                 </div>
               ) : (
                 <div className="flex flex-col h-full" style={{ minHeight: 0 }}>
-                  <div className="px-4 py-2 border-b border-[#1F2937] text-[10px] text-[#6D7A8F]">Click a pin for details</div>
+                  <div className="px-4 py-2 border-b border-[#1F2937] text-[10px] text-[#8B95A8]">Click a pin for details</div>
                   <div className="flex-1 overflow-y-auto divide-y divide-[#1F2937]">
                     {filtered.slice().sort((a, b) => b.date.localeCompare(a.date)).map(inc => (
                       <div key={inc.id} onClick={() => setSelId(inc.id!)} className="px-4 py-2.5 cursor-pointer hover:bg-[#0b1120] transition-colors">
-                        <div className="flex items-center justify-between mb-0.5"><SeverityBadge severity={inc.severity} /><span className="text-[8px] text-[#6D7A8F] tabular-nums">{new Date(inc.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span></div>
+                        <div className="flex items-center justify-between mb-0.5"><SeverityBadge severity={inc.severity} /><span className="text-[8px] text-[#8B95A8] tabular-nums">{new Date(inc.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span></div>
                         <div className="text-[10px] font-medium text-[#F5F5F5]">{inc.neighborhood}</div>
                         <div className="text-[9px] text-[#A3AEC0]">{inc.type} · {inc.platform}</div>
                       </div>
@@ -113,7 +113,7 @@ export default function MapPage() {
             </div>
           </div>
 
-          <div className="bg-[#151d2e] border border-[#1F2937] rounded-md px-4 py-2 flex items-center gap-4 text-[9px] text-[#6D7A8F]">
+          <div className="bg-[#151d2e] border border-[#1F2937] rounded-md px-4 py-2 flex items-center gap-4 text-[9px] text-[#8B95A8]">
             <span className="font-medium text-[#A3AEC0]">Legend</span>
             {Object.entries(SEV).map(([k, v]) => (
               <span key={k} className="flex items-center gap-1 capitalize"><span className="w-1.5 h-1.5 rounded-full" style={{ background: v }} />{k}</span>

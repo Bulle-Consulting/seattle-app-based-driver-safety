@@ -65,7 +65,7 @@ export default function ResourcesPage() {
               <BulletItem>Paid sick leave: <span className="text-[#F5F5F5] font-medium">1 hour per 40 hours worked</span></BulletItem>
               <BulletItem>Deactivation appeal rights with just-cause standard</BulletItem>
               <BulletItem>Anti-retaliation protections</BulletItem>
-              <div className="pt-1 text-[9px] text-[#6D7A8F]">
+              <div className="pt-1 text-[9px] text-[#8B95A8]">
                 Sources:{" "}
                 <ExtLink href="https://ogletree.com/insights/washington-state-rideshare-law/">ogletree.com</ExtLink>
                 {" · "}
@@ -76,7 +76,7 @@ export default function ResourcesPage() {
             {/* Federal Legislation */}
             <SectionCard icon={Globe} title="Federal Legislation">
               <div className="text-[10px] font-semibold text-[#26A69A] mb-1">Empowering App-Based Workers Act</div>
-              <div className="text-[9px] text-[#6D7A8F] mb-2">Introduced July 2025 (Senate) · Dec 2025 (House)</div>
+              <div className="text-[9px] text-[#8B95A8] mb-2">Introduced July 2025 (Senate) · Dec 2025 (House)</div>
               <div className="text-[10px] text-[#A3AEC0] mb-1.5">
                 Sponsors: Sen. Schatz, Sen. Murphy, Rep. Omar, Rep. Jayapal, Rep. Norcross
               </div>
@@ -85,7 +85,7 @@ export default function ResourcesPage() {
               <BulletItem>Disclosure of electronic monitoring and algorithmic decisions</BulletItem>
               <BulletItem>Equal pay for equal work provisions</BulletItem>
               <BulletItem>Strong enforcement with money damages</BulletItem>
-              <div className="pt-1 text-[9px] text-[#6D7A8F]">
+              <div className="pt-1 text-[9px] text-[#8B95A8]">
                 Sources:{" "}
                 <ExtLink href="https://www.nelp.org/research/empowering-app-based-workers-act/">nelp.org</ExtLink>
                 {" · "}
@@ -178,13 +178,13 @@ export default function ResourcesPage() {
                   </div>
                 ))}
               </div>
-              <div className="mt-3 text-[9px] text-[#6D7A8F]">
+              <div className="mt-3 text-[9px] text-[#8B95A8]">
                 App workers are disproportionately Black, immigrant, and workers of color (<a href="https://www.nelp.org" target="_blank" rel="noopener noreferrer" className="text-[#26A69A] hover:underline">NELP</a>).
               </div>
             </div>
           </div>
 
-          <div className="text-[9px] text-[#6D7A8F] pb-2">
+          <div className="text-[9px] text-[#8B95A8] pb-2">
             Sources: NELP (nelp.org) · HRW (hrw.org) · Ogletree (ogletree.com) · Jackson Lewis (jacksonlewis.com) · omar.house.gov · drivers-united.org · workplacefairness.org. bullecloud.com
           </div>
         </main>

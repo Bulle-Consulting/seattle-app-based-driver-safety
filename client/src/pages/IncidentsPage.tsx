@@ -48,7 +48,7 @@ export default function IncidentsPage() {
             <div className="relative flex-1 min-w-[180px]">
               <Search size={11} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#475569]" />
               <input data-testid="input-search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search…"
-                className="w-full pl-7 pr-2 py-1.5 bg-[#101827] border border-[#1F2937] rounded text-[10px] text-[#F5F5F5] placeholder:text-[#4D5666] focus:outline-none focus:border-[#26A69A]/60" />
+                className="w-full pl-7 pr-2 py-1.5 bg-[#101827] border border-[#1F2937] rounded text-[10px] text-[#F5F5F5] placeholder:text-[#8B95A8] focus:outline-none focus:border-[#26A69A]/60" />
             </div>
             {[
               { label: "Platform", opts: ["All","Uber","Lyft","DoorDash","Amazon Flex"], val: platform, set: setPlatform },
@@ -65,7 +65,7 @@ export default function IncidentsPage() {
             ))}
             <button onClick={() => setSortDir(d => d === "desc" ? "asc" : "desc")} className="text-[10px] text-[#A3AEC0] border border-[#1F2937] px-2 py-1 rounded hover:border-[#475569]">Date {sortDir === "desc" ? "↓" : "↑"}</button>
             <button data-testid="button-export" onClick={download} className="flex items-center gap-1 text-[10px] text-[#A3AEC0] border border-[#1F2937] px-2 py-1 rounded hover:border-[#475569]"><Download size={10} /> CSV</button>
-            <span className="text-[10px] text-[#6D7A8F] tabular-nums ml-auto">{filtered.length}</span>
+            <span className="text-[10px] text-[#8B95A8] tabular-nums ml-auto">{filtered.length}</span>
           </div>
 
           <div className="flex-1 bg-[#151d2e] border border-[#1F2937] rounded-md overflow-hidden flex flex-col min-h-0">
@@ -74,13 +74,13 @@ export default function IncidentsPage() {
                 <thead className="sticky top-0 z-10">
                   <tr className="bg-[#0b1120] border-b border-[#1F2937]">
                     {["Date","Type","Severity","Neighborhood","Platform","Victim","Status","Source"].map(h => (
-                      <th key={h} className="px-4 py-2 text-left text-[9px] font-medium text-[#6D7A8F] uppercase tracking-wider">{h}</th>
+                      <th key={h} className="px-4 py-2 text-left text-[9px] font-medium text-[#8B95A8] uppercase tracking-wider">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#1F2937]">
                   {isLoading ? Array(8).fill(0).map((_, i) => <tr key={i}>{Array(8).fill(0).map((_, j) => <td key={j} className="px-4 py-3"><div className="h-3 bg-[#1F2937] rounded animate-pulse w-16" /></td>)}</tr>)
-                    : !filtered.length ? <tr><td colSpan={8} className="px-4 py-12 text-center text-[#6D7A8F] text-[11px]">No results.</td></tr>
+                    : !filtered.length ? <tr><td colSpan={8} className="px-4 py-12 text-center text-[#8B95A8] text-[11px]">No results.</td></tr>
                     : filtered.map(inc => (
                       <tr key={inc.id} data-testid={`row-incident-${inc.id}`} className="hover:bg-[#0b1120] transition-colors">
                         <td className="px-4 py-2.5 tabular-nums text-[#A3AEC0] whitespace-nowrap">{new Date(inc.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</td>
@@ -90,7 +90,7 @@ export default function IncidentsPage() {
                         <td className="px-4 py-2.5 text-[#A3AEC0]">{inc.platform}</td>
                         <td className="px-4 py-2.5 text-[#A3AEC0] max-w-[100px] truncate">{inc.victim ?? "—"}</td>
                         <td className="px-4 py-2.5"><StatusBadge status={inc.status} /></td>
-                        <td className="px-4 py-2.5 text-[#6D7A8F] max-w-[100px] truncate text-[9px]">{inc.source}</td>
+                        <td className="px-4 py-2.5 text-[#8B95A8] max-w-[100px] truncate text-[9px]">{inc.source}</td>
                       </tr>
                     ))
                   }
