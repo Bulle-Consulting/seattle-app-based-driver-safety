@@ -1,6 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
-import { Shield, Phone, Mail, Globe, MapPin, AlertTriangle, CheckCircle, Clock } from "lucide-react";
+import { Shield, Phone, Mail, Globe, MapPin, AlertTriangle, CheckCircle, Clock, Users, DollarSign, BarChart2, TrendingUp } from "lucide-react";
 
 function RateTable({ rates }: { rates: { year: string; perMin: string; perMile: string; perOffer: string }[] }) {
   return (
@@ -39,11 +41,16 @@ function Right({ icon: Icon, text }: { icon: any; text: string }) {
 }
 
 export default function WorkerRightsPage() {
+  const { data: stats } = useQuery<any>({
+    queryKey: ["/api/stats"],
+    queryFn: () => apiRequest("GET", "/api/stats").then(r => r.json()),
+  });
+
   return (
     <div className="dashboard-layout">
       <Sidebar />
       <div className="main-content">
-        <Header title="Worker Rights" subtitle="Seattle Office of Labor Standards · App-Based Worker Protections" />
+        <Header title="OLS Data" subtitle="Seattle Office of Labor Standards · App-Based Worker Data & Rights" />
         <main className="flex-1 p-5 space-y-5 overflow-y-auto">
 
           {/* Intro */}
@@ -55,6 +62,79 @@ export default function WorkerRightsPage() {
             <p className="text-[11px] text-[#94a3b8] leading-relaxed">
               The City of Seattle has enacted three landmark ordinances protecting app-based workers — including rideshare drivers and delivery workers — on platforms like Uber, Lyft, DoorDash, and Amazon Flex. These laws apply to companies with 250+ workers worldwide.
             </p>
+          </div>
+
+          {/* Seattle App-Based Driver Data */}
+          <div>
+            <div className="text-[11px] font-semibold text-[#e2e8f0] mb-3 flex items-center gap-2">
+              <BarChart2 size={13} className="text-[#0d9488]" />
+              Seattle App-Based Driver Data
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+
+              {/* Active Drivers */}
+              <div className="bg-[#1e293b] border border-[#334155] rounded-md p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Users size={13} className="text-[#0d9488]" />
+                  <span className="text-[10px] font-semibold text-[#e2e8f0]">Active Drivers</span>
+                </div>
+                <div className="tabular-nums text-[26px] font-bold text-[#2dd4bf] leading-none mb-1">24,700+</div>
+                <div className="text-[9px] text-[#94a3b8] leading-relaxed">
+                  Active Uber drivers in Seattle (<span className="text-[#64748b]">Seattle Times 2024</span>). Thousands more on Lyft, DoorDash, Amazon Flex. Growing workforce.
+                </div>
+              </div>
+
+              {/* Pay Rates */}
+              <div className="bg-[#1e293b] border border-[#334155] rounded-md p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <DollarSign size={13} className="text-[#0d9488]" />
+                  <span className="text-[10px] font-semibold text-[#e2e8f0]">Pay Rates (Seattle 2026)</span>
+                </div>
+                <div className="space-y-1.5 mt-2">
+                  {[
+                    { label: "Per minute", value: "$0.47" },
+                    { label: "Per mile", value: "$0.80" },
+                    { label: "Per offer minimum", value: "$5.34" },
+                  ].map(({ label, value }) => (
+                    <div key={label} className="flex items-center justify-between">
+                      <span className="text-[10px] text-[#94a3b8]">{label}</span>
+                      <span className="text-[11px] font-semibold tabular-nums text-[#2dd4bf]">{value}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="text-[8px] text-[#64748b] mt-2">Source: SMC 8.37</div>
+              </div>
+
+              {/* Worker Demographics */}
+              <div className="bg-[#1e293b] border border-[#334155] rounded-md p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <TrendingUp size={13} className="text-[#0d9488]" />
+                  <span className="text-[10px] font-semibold text-[#e2e8f0]">Worker Demographics</span>
+                </div>
+                <div className="text-[10px] text-[#94a3b8] leading-relaxed space-y-1.5">
+                  <div>Disproportionately immigrants and communities of color.</div>
+                  <div><span className="text-[#e2e8f0] font-medium">~16%</span> of Americans have done app-based work <span className="text-[#64748b]">(HRW 2025)</span>.</div>
+                  <div>Somali, Ethiopian, and East African drivers are among the largest demographic groups in Seattle.</div>
+                </div>
+              </div>
+
+              {/* Safety Incidents */}
+              <div className="bg-[#1e293b] border border-[#334155] rounded-md p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertTriangle size={13} className="text-[#0d9488]" />
+                  <span className="text-[10px] font-semibold text-[#e2e8f0]">Safety Incidents Tracked</span>
+                </div>
+                <div className="tabular-nums text-[26px] font-bold text-[#2dd4bf] leading-none mb-1">
+                  {stats?.crimeTotal ?? "—"}
+                </div>
+                <div className="text-[9px] text-[#94a3b8] leading-relaxed mb-2">
+                  verified incidents tracked since 2024
+                </div>
+                <a href="/#/" className="text-[9px] text-[#0d9488] hover:underline">
+                  View Overview →
+                </a>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
@@ -225,6 +305,35 @@ export default function WorkerRightsPage() {
                   <div className="text-[9px] text-[#64748b] uppercase tracking-wide mb-0.5">Address</div>
                   <div className="text-[11px] text-[#94a3b8] leading-relaxed">810 3rd Avenue, Suite 375<br />Seattle, WA 98104</div>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Seattle-Specific Resources */}
+          <div className="bg-[#1e293b] border border-[#334155] rounded-md p-4">
+            <div className="section-label mb-3">Seattle-Specific Resources</div>
+            <div className="space-y-2 text-[11px]">
+              <div className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#0d9488] mt-1.5 flex-shrink-0" />
+                <span className="text-[#94a3b8]"><span className="text-[#e2e8f0] font-medium">WA State Driver Resource Center</span> — funded by HB 2076 passenger fees, providing support services for app-based drivers statewide</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#0d9488] mt-1.5 flex-shrink-0" />
+                <span className="text-[#94a3b8]"><span className="text-[#e2e8f0] font-medium">Seattle OLS:</span>{" "}
+                  <a href="https://seattle.gov/laborstandards" target="_blank" rel="noopener noreferrer" className="text-[#0d9488] hover:underline">seattle.gov/laborstandards</a>
+                </span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#0d9488] mt-1.5 flex-shrink-0" />
+                <span className="text-[#94a3b8]"><span className="text-[#e2e8f0] font-medium">OLS Phone:</span>{" "}
+                  <a href="tel:206-256-5297" className="text-[#0d9488] hover:underline">206-256-5297</a>
+                </span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#0d9488] mt-1.5 flex-shrink-0" />
+                <span className="text-[#94a3b8]"><span className="text-[#e2e8f0] font-medium">OLS Email:</span>{" "}
+                  <a href="mailto:laborstandards@seattle.gov" className="text-[#0d9488] hover:underline">laborstandards@seattle.gov</a>
+                </span>
               </div>
             </div>
           </div>

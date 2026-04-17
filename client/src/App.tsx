@@ -8,7 +8,7 @@ import MapPage from "./pages/MapPage";
 import IncidentsPage from "./pages/IncidentsPage";
 import LiveFeed from "./pages/LiveFeed";
 import WorkerRightsPage from "./pages/WorkerRightsPage";
-import TranslatePage from "./pages/TranslatePage";
+import ResourcesPage from "./pages/ResourcesPage";
 import NotFound from "./pages/not-found";
 
 export default function App() {
@@ -21,7 +21,7 @@ export default function App() {
           <Route path="/incidents" component={IncidentsPage} />
           <Route path="/live" component={LiveFeed} />
           <Route path="/worker-rights" component={WorkerRightsPage} />
-          <Route path="/translate" component={TranslatePage} />
+          <Route path="/resources" component={ResourcesPage} />
           <Route component={NotFound} />
         </Switch>
       </Router>

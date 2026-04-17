@@ -58,7 +58,7 @@ export default function LiveFeed() {
 
           <div className="flex items-center gap-2 text-[10px] text-[#94a3b8]">
             <span className="pulse-dot" />
-            <span>Data current as of Apr 14, 2026 · SPD Blotter RSS checked every 5 minutes</span>
+            <span>Data current as of Apr 14, 2026 · Real-Time Incident Tracking · updated every 5 minutes</span>
             <span className="ml-auto tabular-nums text-[#64748b]">{stats?.crimeTotal ?? "—"} crime incidents + {stats?.policyCount ?? "—"} policy entries</span>
           </div>
 
@@ -130,7 +130,7 @@ export default function LiveFeed() {
               <div className="bg-[#1e293b] border border-[#334155] rounded-md flex flex-col" style={{ maxHeight: 280 }}>
                 <div className="px-4 py-2 border-b border-[#334155] flex items-center gap-2">
                   <Rss size={11} style={{ color: TEAL }} />
-                  <span className="text-[11px] font-medium text-[#e2e8f0]">SPD Blotter — Live RSS Feed</span>
+                  <span className="text-[11px] font-medium text-[#e2e8f0]">Live Incident Activity</span>
                   {blotter?.fetchedAt && (
                     <span className="ml-auto text-[8px] text-[#64748b] tabular-nums">
                       Fetched {new Date(blotter.fetchedAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
