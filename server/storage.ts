@@ -326,7 +326,22 @@ const SEED_DATA: InsertIncident[] = [
     sourceUrl: null,
     status: "under investigation",
   },
-  // REMOVED: Aug 2025 Central District Carjacking/Homicide — unverifiable, no corroborating news source found
+  {
+    date: "2025-08-09",
+    type: "Armed Robbery",
+    severity: "robbery",
+    category: "crime",
+    neighborhood: "West Seattle",
+    address: "7000 block Lincoln Park Way SW, Seattle, WA",
+    lat: 47.5305,
+    lng: -122.3935,
+    victim: "Uber driver and passenger",
+    platform: "Uber",
+    description: "Uber driver and passenger robbed at gunpoint at 2:17 AM by two masked suspects who used a Chevy Silverado to block the vehicle on Lincoln Park Way SW. Suspects demanded valuables from both driver and passenger. Same suspects had robbed another driver 7 minutes earlier at 35th Ave SW & SW Thistle St. Suspect truck recovered at 59th Ave SW & Alki Ave SW. Three suspects fled in separate vehicles.",
+    source: "KOMO News",
+    sourceUrl: "https://komonews.com/news/local/police-investigate-west-seattle-armed-robberies-involving-truck-and-masked-suspects-crime-robbery-theft-uber-money-danger-community-alert-warning-witness",
+    status: "under investigation",
+  },
   {
     date: "2025-09-29",
     type: "Robbery & Assault",

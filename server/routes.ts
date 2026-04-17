@@ -50,7 +50,7 @@ export function registerRoutes(httpServer: Server, app: Express): Server {
       crimeTotal: crimeOnly.length,
       resolved, underInvestigation,
       byPlatform, byNeighborhood, byMonth,
-      lastVerified: "2026-04-14",
+      lastVerified: "2026-04-17",
     });
   });
 
