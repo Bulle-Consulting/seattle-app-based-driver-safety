@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { useHashLocation } from "wouter/use-hash-location";
-import { LayoutDashboard, Map, List, Radio, Shield, BookOpen, BarChart3, Calculator, FileUp, Bell, Code } from "lucide-react";
+import { LayoutDashboard, Map, List, Radio, Shield, BookOpen, BarChart3, Calculator, FileUp, Bell, Code, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const nav = [
@@ -17,13 +17,25 @@ const nav = [
   { href: "/api-docs", label: "API Docs", icon: Code },
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+  open?: boolean;
+  onClose?: () => void;
+}
+
+export default function Sidebar({ open, onClose }: SidebarProps) {
   const [location] = useHashLocation();
 
   return (
-    <aside className="sidebar flex flex-col h-full">
+    <aside className={cn("sidebar flex flex-col h-full", open && "open")}>
+      {/* Mobile close button — only visible on mobile */}
+      <div className="lg:hidden flex items-center justify-end px-4 pt-3">
+        <button onClick={onClose} className="p-1.5 rounded-md text-[#8B95A8] hover:text-[#F5F5F5] transition-colors" aria-label="Close menu">
+          <X size={18} />
+        </button>
+      </div>
+
       {/* Logo area */}
-      <div className="px-5 pt-6 pb-5">
+      <div className="px-5 pt-4 pb-5">
         <div className="flex items-center gap-3">
           <svg width="28" height="28" viewBox="0 0 40 40" fill="none" aria-label="Bulle Cloud">
             <rect width="40" height="40" rx="10" fill="hsl(176 65% 42%)"/>
@@ -51,6 +63,7 @@ export default function Sidebar() {
           return (
             <Link key={href} href={href}>
               <div
+                onClick={() => onClose?.()}
                 data-testid={`nav-${label.toLowerCase().replace(' ', '-')}`}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-150 text-[12.5px] select-none",

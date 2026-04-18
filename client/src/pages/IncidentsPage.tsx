@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import Sidebar from "@/components/Sidebar";
-import Header from "@/components/Header";
+import Layout from "@/components/Layout";
 import { SeverityBadge, StatusBadge } from "@/components/SeverityBadge";
 import { useState, useMemo } from "react";
 import { Search, Download } from "lucide-react";
@@ -38,11 +37,8 @@ export default function IncidentsPage() {
   };
 
   return (
-    <div className="dashboard-layout">
-      <Sidebar />
-      <div className="main-content">
-        <Header title="All Incidents" subtitle="Complete Incident Database · Seattle Metro" />
-        <main className="flex-1 p-4 flex flex-col gap-3 min-h-0">
+    <Layout title="All Incidents" subtitle="Complete Incident Database · Seattle Metro">
+        <main className="flex-1 p-3 md:p-4 flex flex-col gap-3 min-h-0">
 
           <div className="bg-[#151d2e] border border-[#1F2937] rounded-md px-4 py-2.5 flex items-center gap-3 flex-wrap">
             <div className="relative flex-1 min-w-[180px]">
@@ -69,8 +65,8 @@ export default function IncidentsPage() {
           </div>
 
           <div className="flex-1 bg-[#151d2e] border border-[#1F2937] rounded-md overflow-hidden flex flex-col min-h-0">
-            <div className="overflow-y-auto flex-1">
-              <table className="w-full text-[11px]">
+            <div className="overflow-y-auto overflow-x-auto flex-1">
+              <table className="w-full text-[11px] min-w-[600px]">
                 <thead className="sticky top-0 z-10">
                   <tr className="bg-[#0b1120] border-b border-[#1F2937]">
                     {["Date","Type","Severity","Neighborhood","Platform","Victim","Status","Source"].map(h => (
@@ -99,7 +95,6 @@ export default function IncidentsPage() {
             </div>
           </div>
         </main>
-      </div>
-    </div>
+    </Layout>
   );
 }

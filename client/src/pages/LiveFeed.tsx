@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import Sidebar from "@/components/Sidebar";
-import Header from "@/components/Header";
+import Layout from "@/components/Layout";
 import { SeverityBadge, StatusBadge } from "@/components/SeverityBadge";
 import { useState, useEffect, useRef } from "react";
 import { TrendingUp, AlertTriangle, ExternalLink, Rss } from "lucide-react";
@@ -50,11 +49,8 @@ export default function LiveFeed() {
   ).sort(([, a], [, b]) => b - a)[0];
 
   return (
-    <div className="dashboard-layout">
-      <Sidebar />
-      <div className="main-content">
-        <Header title="Live Feed" subtitle="Live Incident Monitoring · Seattle Metro" />
-        <main className="flex-1 p-4 flex flex-col gap-4 overflow-y-auto">
+    <Layout title="Live Feed" subtitle="Live Incident Monitoring · Seattle Metro">
+        <main className="flex-1 p-3 md:p-4 flex flex-col gap-4 overflow-y-auto">
 
           <div className="flex items-center gap-2 text-[10px] text-[#A3AEC0]">
             <span className="pulse-dot" />
@@ -197,7 +193,6 @@ export default function LiveFeed() {
             </div>
           </div>
         </main>
-      </div>
-    </div>
+    </Layout>
   );
 }

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { apiRequest } from "@/lib/queryClient";
-import Sidebar from "@/components/Sidebar";
-import Header from "@/components/Header";
+import Layout from "@/components/Layout";
 import { CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
 
 const TEAL = "#26A69A";
@@ -73,11 +72,8 @@ export default function SubmitIncidentPage() {
   };
 
   return (
-    <div className="dashboard-layout">
-      <Sidebar />
-      <div className="main-content">
-        <Header title="Report an Incident" subtitle="Submit a safety incident for verification" />
-        <main className="flex-1 p-5">
+    <Layout title="Report an Incident" subtitle="Submit a safety incident for verification">
+        <main className="flex-1 p-3 md:p-5">
           <div className="max-w-2xl space-y-5">
 
             {/* Success state */}
@@ -276,7 +272,6 @@ export default function SubmitIncidentPage() {
             bullecloud.com · Incident data is verified before publication. We do not publish unverified reports.
           </div>
         </main>
-      </div>
-    </div>
+    </Layout>
   );
 }

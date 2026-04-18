@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import Sidebar from "@/components/Sidebar";
-import Header from "@/components/Header";
+import Layout from "@/components/Layout";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -318,11 +317,8 @@ export default function AnalyticsPage() {
   const loading = stL || incL;
 
   return (
-    <div className="dashboard-layout">
-      <Sidebar />
-      <div className="main-content">
-        <Header title="Analytics" subtitle="Advanced Crime Analytics · Seattle Metro" />
-        <main className="flex-1 p-5 space-y-5">
+    <Layout title="Analytics" subtitle="Advanced Crime Analytics · Seattle Metro">
+        <main className="flex-1 p-3 md:p-5 space-y-5">
 
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -355,7 +351,6 @@ export default function AnalyticsPage() {
             bullecloud.com · Analytics data derived from verified incident database
           </div>
         </main>
-      </div>
-    </div>
+    </Layout>
   );
 }

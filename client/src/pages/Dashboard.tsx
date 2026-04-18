@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import Sidebar from "@/components/Sidebar";
-import Header from "@/components/Header";
+import Layout from "@/components/Layout";
 import SeattleMap from "@/components/SeattleMap";
 import { SeverityBadge, StatusBadge } from "@/components/SeverityBadge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -126,11 +125,8 @@ export default function Dashboard() {
   const toggleSev = (s: string) => { setSevFilter(p => p === s ? null : s); setSelectedId(null); };
 
   return (
-    <div className="dashboard-layout">
-      <Sidebar />
-      <div className="main-content">
-        <Header title="App-Based Driver Safety Steward" subtitle="App-Based Driver Safety Intelligence · Seattle Metro" />
-        <main className="flex-1 p-5 space-y-5">
+    <Layout title="App-Based Driver Safety Steward" subtitle="App-Based Driver Safety Intelligence · Seattle Metro">
+        <main className="flex-1 p-3 md:p-5 space-y-5">
 
           {(sevFilter || yearFilter !== "All") && (
             <div className="flex items-center gap-2 text-[10px] text-[#A3AEC0]">
@@ -200,9 +196,11 @@ export default function Dashboard() {
                   ))}
                 </div>
               </div>
-              <SeattleMap incidents={filtered.filter(i => i.category === "crime")} selectedId={selectedId}
-                onSelectIncident={id => { setSelectedId(id); const i = incidents.find(x => x.id === id); if (i) setModal(i); }}
-                showHeatmap={showHeatmap} height="320px" />
+              <div className="h-[280px] md:h-[320px]">
+                <SeattleMap incidents={filtered.filter(i => i.category === "crime")} selectedId={selectedId}
+                  onSelectIncident={id => { setSelectedId(id); const i = incidents.find(x => x.id === id); if (i) setModal(i); }}
+                  showHeatmap={showHeatmap} height="100%" />
+              </div>
             </div>
 
             <div className="bg-[#151d2e] border border-[#1F2937] rounded-md flex flex-col">
@@ -314,7 +312,7 @@ export default function Dashboard() {
               <span className="text-[9px] text-[#8B95A8]">Click row for details · linked sources open in new tab</span>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-[11px]">
+              <table className="w-full text-[11px] min-w-[600px]">
                 <thead>
                   <tr className="bg-[#0b1120] border-b border-[#1F2937]">
                     {["Date", "Type", "Category", "Severity", "Neighborhood", "Platform", "Status", "Source"].map(h => (
@@ -364,8 +362,7 @@ export default function Dashboard() {
             </div>
           </div>
         </main>
-      </div>
       {modal && <Modal incident={modal} onClose={() => { setModal(null); setSelectedId(null); }} />}
-    </div>
+    </Layout>
   );
 }

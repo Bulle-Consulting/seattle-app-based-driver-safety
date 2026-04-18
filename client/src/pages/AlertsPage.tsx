@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import Sidebar from "@/components/Sidebar";
-import Header from "@/components/Header";
+import Layout from "@/components/Layout";
 import { Bell, CheckCircle2, Loader2, Users } from "lucide-react";
 
 const TEAL = "#26A69A";
@@ -72,11 +71,8 @@ export default function AlertsPage() {
   };
 
   return (
-    <div className="dashboard-layout">
-      <Sidebar />
-      <div className="main-content">
-        <Header title="Alerts" subtitle="Get notified about safety incidents in your area" />
-        <main className="flex-1 p-5">
+    <Layout title="Alerts" subtitle="Get notified about safety incidents in your area">
+        <main className="flex-1 p-3 md:p-5">
           <div className="max-w-2xl space-y-5">
 
             {/* Subscriber count */}
@@ -159,7 +155,7 @@ export default function AlertsPage() {
                       {selected.size === NEIGHBORHOODS.length ? "Deselect All" : "Select All"}
                     </button>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 p-3 rounded-md bg-[#101827] border border-[#1F2937]">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-1.5 p-3 rounded-md bg-[#101827] border border-[#1F2937]">
                     {NEIGHBORHOODS.map(n => {
                       const checked = selected.has(n);
                       return (
@@ -228,7 +224,6 @@ export default function AlertsPage() {
             bullecloud.com · Alerts are sent for verified incidents only.
           </div>
         </main>
-      </div>
-    </div>
+    </Layout>
   );
 }

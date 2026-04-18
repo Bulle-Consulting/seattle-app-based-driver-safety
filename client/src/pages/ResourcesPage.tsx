@@ -1,5 +1,4 @@
-import Sidebar from "@/components/Sidebar";
-import Header from "@/components/Header";
+import Layout from "@/components/Layout";
 import { BookOpen, ExternalLink, Shield, Globe, Users, BarChart2, AlertTriangle } from "lucide-react";
 
 function SectionCard({ icon: Icon, title, children }: { icon: any; title: string; children: React.ReactNode }) {
@@ -37,11 +36,8 @@ function ExtLink({ href, children }: { href: string; children: React.ReactNode }
 
 export default function ResourcesPage() {
   return (
-    <div className="dashboard-layout">
-      <Sidebar />
-      <div className="main-content">
-        <Header title="Resources" subtitle="Statewide & National Resources for App-Based Drivers" />
-        <main className="flex-1 p-5 space-y-5 overflow-y-auto">
+    <Layout title="Resources" subtitle="Statewide & National Resources for App-Based Drivers">
+        <main className="flex-1 p-3 md:p-5 space-y-5 overflow-y-auto">
 
           {/* Intro */}
           <div className="bg-[rgba(38,166,154,0.08)] border border-[#26A69A]/30 rounded-md px-4 py-3">
@@ -54,7 +50,7 @@ export default function ResourcesPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
             {/* Washington State Protections */}
             <SectionCard icon={Shield} title="Washington State Protections">
@@ -188,7 +184,6 @@ export default function ResourcesPage() {
             Sources: NELP (nelp.org) · HRW (hrw.org) · Ogletree (ogletree.com) · Jackson Lewis (jacksonlewis.com) · omar.house.gov · drivers-united.org · workplacefairness.org. bullecloud.com
           </div>
         </main>
-      </div>
-    </div>
+    </Layout>
   );
 }

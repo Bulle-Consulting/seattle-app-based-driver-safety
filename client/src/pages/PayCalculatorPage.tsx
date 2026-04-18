@@ -1,6 +1,5 @@
 import { useState } from "react";
-import Sidebar from "@/components/Sidebar";
-import Header from "@/components/Header";
+import Layout from "@/components/Layout";
 import { Calculator, CheckCircle2, Circle, AlertTriangle, Phone, Mail } from "lucide-react";
 
 const TEAL = "#26A69A";
@@ -381,11 +380,8 @@ function DeactivationChecklist() {
 // ── Main Page ───────────────────────────────────────────────────────────────
 export default function PayCalculatorPage() {
   return (
-    <div className="dashboard-layout">
-      <Sidebar />
-      <div className="main-content">
-        <Header title="Tools" subtitle="Interactive Worker Tools · Seattle Metro" />
-        <main className="flex-1 p-5">
+    <Layout title="Tools" subtitle="Interactive Worker Tools · Seattle Metro">
+        <main className="flex-1 p-3 md:p-5">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <PayCalculator />
             <DeactivationChecklist />
@@ -394,7 +390,6 @@ export default function PayCalculatorPage() {
             bullecloud.com · Rate information sourced from Seattle Office of Labor Standards. Not legal advice.
           </div>
         </main>
-      </div>
-    </div>
+    </Layout>
   );
 }

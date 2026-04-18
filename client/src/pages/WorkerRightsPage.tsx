@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import Sidebar from "@/components/Sidebar";
-import Header from "@/components/Header";
+import Layout from "@/components/Layout";
 import { Shield, Phone, Mail, Globe, MapPin, AlertTriangle, CheckCircle, Clock, Users, DollarSign, BarChart2, TrendingUp } from "lucide-react";
 
 function RateTable({ rates }: { rates: { year: string; perMin: string; perMile: string; perOffer: string }[] }) {
@@ -47,11 +46,8 @@ export default function WorkerRightsPage() {
   });
 
   return (
-    <div className="dashboard-layout">
-      <Sidebar />
-      <div className="main-content">
-        <Header title="OLS Data" subtitle="Seattle Office of Labor Standards · App-Based Worker Data & Rights" />
-        <main className="flex-1 p-5 space-y-5 overflow-y-auto">
+    <Layout title="OLS Data" subtitle="Seattle Office of Labor Standards · App-Based Worker Data & Rights">
+        <main className="flex-1 p-3 md:p-5 space-y-5 overflow-y-auto">
 
           {/* Intro */}
           <div className="bg-[rgba(38,166,154,0.08)] border border-[#26A69A]/30 rounded-md px-4 py-3">
@@ -70,7 +66,7 @@ export default function WorkerRightsPage() {
               <BarChart2 size={13} className="text-[#26A69A]" />
               Seattle App-Based Driver Data
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
 
               {/* Active Drivers */}
               <div className="bg-[#151d2e] border border-[#1F2937] rounded-md p-4">
@@ -137,7 +133,7 @@ export default function WorkerRightsPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
             {/* Ordinance A: Minimum Payment */}
             <div className="bg-[#151d2e] border border-[#1F2937] rounded-md overflow-hidden">
@@ -277,7 +273,7 @@ export default function WorkerRightsPage() {
           {/* Contact */}
           <div className="bg-[#151d2e] border border-[#1F2937] rounded-md p-4">
             <div className="section-label mb-3">OLS Contact Information</div>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               <div className="flex items-start gap-2.5">
                 <Phone size={13} className="text-[#26A69A] mt-0.5 flex-shrink-0" />
                 <div>
@@ -342,7 +338,6 @@ export default function WorkerRightsPage() {
             Information sourced from Seattle Office of Labor Standards ordinances SMC 8.37, 8.39, 8.40. Rates updated annually. bullecloud.com
           </div>
         </main>
-      </div>
-    </div>
+    </Layout>
   );
 }

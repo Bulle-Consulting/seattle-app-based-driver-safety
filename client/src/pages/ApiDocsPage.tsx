@@ -1,5 +1,4 @@
-import Sidebar from "@/components/Sidebar";
-import Header from "@/components/Header";
+import Layout from "@/components/Layout";
 import { Code2 } from "lucide-react";
 
 const TEAL = "#26A69A";
@@ -158,7 +157,7 @@ function EndpointCard({ ep }: { ep: Endpoint }) {
         {ep.body && (
           <div>
             <div className="section-label mb-1.5">Request Body</div>
-            <pre className="text-[10px] font-mono bg-[#0b1120] border border-[#1F2937] rounded p-3 overflow-x-auto text-[#A3AEC0] leading-relaxed">
+            <pre className="text-[10px] sm:text-[11px] font-mono bg-[#0b1120] border border-[#1F2937] rounded p-3 overflow-x-auto text-[#A3AEC0] leading-relaxed">
               <code>{ep.body}</code>
             </pre>
           </div>
@@ -166,7 +165,7 @@ function EndpointCard({ ep }: { ep: Endpoint }) {
 
         <div>
           <div className="section-label mb-1.5">Example Response</div>
-          <pre className="text-[10px] font-mono bg-[#0b1120] border border-[#1F2937] rounded p-3 overflow-x-auto leading-relaxed"
+          <pre className="text-[10px] sm:text-[11px] font-mono bg-[#0b1120] border border-[#1F2937] rounded p-3 overflow-x-auto leading-relaxed"
             style={{ color: TEAL }}>
             <code>{ep.example}</code>
           </pre>
@@ -178,11 +177,8 @@ function EndpointCard({ ep }: { ep: Endpoint }) {
 
 export default function ApiDocsPage() {
   return (
-    <div className="dashboard-layout">
-      <Sidebar />
-      <div className="main-content">
-        <Header title="API Documentation" subtitle="Public API for researchers and developers" />
-        <main className="flex-1 p-5 space-y-5">
+    <Layout title="API Documentation" subtitle="Public API for researchers and developers">
+        <main className="flex-1 p-3 md:p-5 space-y-5">
 
           {/* Intro */}
           <div className="bg-[#151d2e] border border-[#1F2937] rounded-md p-4">
@@ -232,7 +228,6 @@ export default function ApiDocsPage() {
             bullecloud.com · API subject to change. Subscribe to updates at laborstandards@seattle.gov.
           </div>
         </main>
-      </div>
-    </div>
+    </Layout>
   );
 }

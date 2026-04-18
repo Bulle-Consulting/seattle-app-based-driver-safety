@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import Sidebar from "@/components/Sidebar";
-import Header from "@/components/Header";
+import Layout from "@/components/Layout";
 import SeattleMap from "@/components/SeattleMap";
 import { SeverityBadge, StatusBadge } from "@/components/SeverityBadge";
 import { useState } from "react";
@@ -41,11 +40,8 @@ export default function MapPage() {
   const sel = incidents.find(i => i.id === selId);
 
   return (
-    <div className="dashboard-layout">
-      <Sidebar />
-      <div className="main-content">
-        <Header title="Crime Map" subtitle="Interactive Incident Map · Seattle Metro" />
-        <main className="flex-1 p-4 flex flex-col gap-3" style={{ minHeight: 0 }}>
+    <Layout title="Crime Map" subtitle="Interactive Incident Map · Seattle Metro">
+        <main className="flex-1 p-3 md:p-4 flex flex-col gap-3" style={{ minHeight: 0 }}>
 
           <div className="bg-[#151d2e] border border-[#1F2937] rounded-md px-4 py-2.5 flex items-center gap-3 flex-wrap">
             <span className="section-label">Platform</span>
@@ -66,7 +62,9 @@ export default function MapPage() {
 
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-3 flex-1" style={{ minHeight: 0 }}>
             <div className="xl:col-span-2 bg-[#151d2e] border border-[#1F2937] rounded-md overflow-hidden">
-              <SeattleMap incidents={filtered} selectedId={selId} onSelectIncident={setSelId} showHeatmap={heatmap} height="400px" />
+              <div className="h-[300px] md:h-[400px]">
+                <SeattleMap incidents={filtered} selectedId={selId} onSelectIncident={setSelId} showHeatmap={heatmap} height="100%" />
+              </div>
             </div>
 
             <div className="bg-[#151d2e] border border-[#1F2937] rounded-md flex flex-col overflow-hidden" style={{ minHeight: 0 }}>
@@ -120,7 +118,6 @@ export default function MapPage() {
             ))}
           </div>
         </main>
-      </div>
-    </div>
+    </Layout>
   );
 }
