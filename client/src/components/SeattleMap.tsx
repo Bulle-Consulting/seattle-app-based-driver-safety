@@ -4,7 +4,7 @@ import "leaflet/dist/leaflet.css";
 import type { Incident } from "@shared/schema";
 
 const SEV_COLORS: Record<string, string> = {
-  fatal: "#000000", injury: "#4F4F4F", robbery: "#7A7A7A", assault: "#9E9E9E", policy: "#9E9E9E", other: "#9E9E9E",
+  fatal: "#000000", injury: "#333333", robbery: "#666666", assault: "#8C8C8C", policy: "#BFBFBF", other: "#BFBFBF",
 };
 const SEV_R: Record<string, number> = { fatal: 10, injury: 8, robbery: 7, assault: 7, other: 5, policy: 5 };
 
@@ -56,8 +56,9 @@ export default function SeattleMap({ incidents, selectedId, onSelectIncident, sh
         const r = SEV_R[inc.severity] ?? 5;
         const sel = inc.id === selectedId;
         const m = L.circleMarker([inc.lat, inc.lng], {
-          radius: sel ? r + 3 : r, fillColor: c, color: sel ? "#000000" : "#FFFFFF",
-          weight: sel ? 2 : 1, opacity: 1, fillOpacity: sel ? 1 : 0.8,
+          radius: sel ? r + 3 : r, fillColor: c, color: sel ? "#2563EB" : "#FFFFFF",
+          weight: sel ? 3 : 1.5,
+          opacity: 1, fillOpacity: sel ? 1 : 0.85,
         });
         const d = new Date(inc.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
         m.bindPopup(`

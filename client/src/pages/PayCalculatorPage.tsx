@@ -2,7 +2,7 @@ import { useState } from "react";
 import Layout from "@/components/Layout";
 import { Calculator, CheckCircle2, Circle, AlertTriangle, Phone, Mail } from "lucide-react";
 
-const TEAL = "#000000";
+const TEAL = "#2563EB";
 
 // ── Rate sets ──────────────────────────────────────────────────────────────
 const RATE_SETS = {

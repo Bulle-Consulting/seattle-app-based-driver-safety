@@ -6,7 +6,7 @@ import { useState, useMemo } from "react";
 import { Search, Download } from "lucide-react";
 import type { Incident } from "@shared/schema";
 
-const TEAL = "#000000";
+const TEAL = "#2563EB";
 
 export default function IncidentsPage() {
   const [search, setSearch]       = useState("");

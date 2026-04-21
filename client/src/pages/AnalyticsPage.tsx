@@ -9,8 +9,8 @@ import {
 import { AlertTriangle, Video, FileText } from "lucide-react";
 import type { Incident } from "@shared/schema";
 
-const TEAL = "#000000";
-const TEAL_DIM = "#4F4F4F";
+const TEAL = "#2563EB";
+const TEAL_DIM = "#3B82F6";
 const PLT_COLORS: Record<string, string> = {
   Uber: "#9E9E9E",
   Lyft: "#000000",
@@ -66,9 +66,12 @@ function TimeHeatmap({ byHour }: { byHour: Record<string, number> }) {
           <Bar dataKey="count" name="Incidents" radius={[2, 2, 0, 0]}>
             {data.map((entry, i) => {
               const intensity = max > 0 ? entry.count / max : 0;
-              // grayscale: 0 count = very light; high intensity = black
-              const v = Math.round(209 - intensity * 209); // 209 (#D1D1D1) -> 0 (#000000)
-              const color = entry.count === 0 ? "#E8E8E8" : `rgb(${v},${v},${v})`;
+              // blue gradient: light blue (#DBEAFE) -> accent blue (#2563EB)
+              // interpolate R/G/B from (219,234,254) to (37,99,235)
+              const r = Math.round(219 - intensity * (219 - 37));
+              const g = Math.round(234 - intensity * (234 - 99));
+              const b = Math.round(254 - intensity * (254 - 235));
+              const color = entry.count === 0 ? "#E8E8E8" : `rgb(${r},${g},${b})`;
               return <Cell key={i} fill={color} opacity={entry.count === 0 ? 0.6 : 1} />;
             })}
           </Bar>
@@ -201,13 +204,14 @@ function RepeatLocations({ repeatLocations }: { repeatLocations: [string, number
 }
 
 // ── E) Case Tracker ─────────────────────────────────────────────────────────
-const CASE_STATUS_COLORS: Record<string, { bg: string; color: string }> = {
-  pending:    { bg: "#F2F2F2",   color: "#4F4F4F" },
-  arraigned:  { bg: "#F2F2F2",   color: "#4F4F4F" },
-  arrested:   { bg: "#F2F2F2",   color: "#7A7A7A" },
-  convicted:  { bg: "#E8E8E8",  color: "#000000" },
-  sentenced:  { bg: "#F2F2F2",   color: "#4F4F4F" },
-  resolved:   { bg: "#F2F2F2",   color: "#4F4F4F" },
+const CASE_STATUS_COLORS: Record<string, { bg: string; color: string; border: string }> = {
+  pending:    { bg: "#F3F4F6", color: "#4B5563", border: "#D1D5DB" },
+  arraigned:  { bg: "#EFF6FF", color: "#1D4ED8", border: "#BFDBFE" },
+  arrested:   { bg: "#EFF6FF", color: "#1D4ED8", border: "#BFDBFE" },
+  convicted:  { bg: "#1E293B", color: "#FFFFFF", border: "#1E293B" },
+  sentenced:  { bg: "#000000", color: "#FFFFFF", border: "#000000" },
+  charged:    { bg: "#EFF6FF", color: "#1D4ED8", border: "#BFDBFE" },
+  resolved:   { bg: "#ECFDF5", color: "#047857", border: "#A7F3D0" },
 };
 
 function CaseTracker({ incidents }: { incidents: Incident[] }) {
@@ -232,7 +236,7 @@ function CaseTracker({ incidents }: { incidents: Incident[] }) {
             <tbody className="divide-y divide-[#D1D1D1]">
               {caseIncidents.map(inc => {
                 const caseStatus = (inc as any).caseStatus ?? "";
-                const statusStyle = CASE_STATUS_COLORS[caseStatus?.toLowerCase()] ?? { bg: "transparent", color: "#9E9E9E" };
+                const statusStyle = CASE_STATUS_COLORS[caseStatus?.toLowerCase()] ?? { bg: "transparent", color: "#9E9E9E", border: "#D1D1D1" };
                 return (
                   <tr key={inc.id} data-testid={`case-row-${inc.id}`} className="hover:bg-[#F2F2F2] transition-colors">
                     <td className="px-3 py-2.5 tabular-nums text-[#4F4F4F] whitespace-nowrap">
@@ -244,7 +248,7 @@ function CaseTracker({ incidents }: { incidents: Incident[] }) {
                     <td className="px-3 py-2.5">
                       {caseStatus ? (
                         <span className="px-2 py-0.5 rounded text-[9px] font-medium capitalize"
-                          style={{ background: statusStyle.bg, color: statusStyle.color, border: `1px solid ${statusStyle.color}30` }}>
+                          style={{ background: statusStyle.bg, color: statusStyle.color, border: `1px solid ${statusStyle.border}` }}>
                           {caseStatus}
                         </span>
                       ) : <span className="text-[#9E9E9E]">—</span>}

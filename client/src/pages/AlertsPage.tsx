@@ -4,7 +4,7 @@ import { apiRequest } from "@/lib/queryClient";
 import Layout from "@/components/Layout";
 import { Bell, CheckCircle2, Loader2, Users } from "lucide-react";
 
-const TEAL = "#000000";
+const TEAL = "#2563EB";
 
 const NEIGHBORHOODS = [
   "Rainier Beach", "Capitol Hill", "SODO", "Belltown", "Pioneer Square",

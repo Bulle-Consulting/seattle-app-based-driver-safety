@@ -3,7 +3,7 @@ import { apiRequest } from "@/lib/queryClient";
 import Layout from "@/components/Layout";
 import { CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
 
-const TEAL = "#000000";
+const TEAL = "#2563EB";
 
 const INCIDENT_TYPES = [
   "Robbery", "Assault", "Carjacking", "Shooting", "Stabbing",

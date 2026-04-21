@@ -12,8 +12,8 @@ import { X, ChevronRight, ExternalLink, Filter, Printer } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import type { Incident } from "@shared/schema";
 
-const TEAL = "#000000";
-const SEV: Record<string, string> = { fatal: "#000000", injury: "#4F4F4F", robbery: "#7A7A7A", assault: "#9E9E9E", policy: "#9E9E9E" };
+const TEAL = "#2563EB";
+const SEV: Record<string, string> = { fatal: "#000000", injury: "#333333", robbery: "#666666", assault: "#8C8C8C", policy: "#BFBFBF" };
 const PLT: Record<string, string> = { Uber: "#000000", Lyft: "#4F4F4F", DoorDash: "#7A7A7A", "Amazon Flex": "#9E9E9E" };
 
 function Num({ value, loading }: { value: number; loading: boolean }) {
@@ -141,7 +141,7 @@ export default function Dashboard() {
             <span className="section-label mr-1">Year</span>
             {years.map(y => (
               <button key={y} onClick={() => setYearFilter(y)}
-                className={`text-[10px] px-2 py-0.5 rounded border transition-colors ${yearFilter === y ? "bg-[#000000] text-white border-transparent font-medium" : "bg-[#F7F7F7] border-[#D1D1D1] text-[#4F4F4F] hover:border-[#9E9E9E]"}`}>
+                className={`text-[10px] px-2 py-0.5 rounded border transition-colors ${yearFilter === y ? "bg-[#2563EB] text-white border-transparent font-medium" : "bg-[#F7F7F7] border-[#D1D1D1] text-[#4F4F4F] hover:border-[#9E9E9E]"}`}>
                 {y}
               </button>
             ))}

@@ -21,21 +21,26 @@
     --text-tertiary:   0 0% 62%;    /* #9E9E9E */
     --text-quaternary: 0 0% 62%;    /* #9E9E9E */
 
-    /* "Accent" — now pure black (CTA) */
-    --accent:     0 0% 0%;          /* #000000 */
-    --accent-dim: 0 0% 31%;         /* #4F4F4F */
-    --accent-bg:  0 0% 88%;         /* #E0E0E0 subtle selection */
+    /* Complementary accent — enterprise blue */
+    --accent:     221 83% 53%;      /* #2563EB electric blue */
+    --accent-dim: 221 83% 43%;      /* #1D4ED8 darker hover */
+    --accent-bg:  214 100% 96%;     /* #EFF6FF subtle tinted bg */
+    --accent-soft:214 95% 90%;      /* #DBEAFE soft chip bg */
+
+    /* Status accents — use the primary accent blue; grayscale for resolved */
+    --status-open:     221 83% 53%; /* uses accent blue for active/open states */
+    --status-resolved: 0 0% 45%;    /* muted gray for resolved */
 
     /* Borders and dividers */
     --border:      0 0% 82%;        /* #D1D1D1 */
     --border-lite: 0 0% 75%;        /* #BFBFBF */
 
-    /* Severity — grayscale only */
-    --sev-fatal:   0 0% 0%;         /* #000000 */
-    --sev-injury:  0 0% 31%;        /* #4F4F4F */
-    --sev-robbery: 0 0% 48%;        /* #7A7A7A */
-    --sev-assault: 0 0% 62%;        /* #9E9E9E */
-    --sev-policy:  0 0% 82%;        /* #D1D1D1 */
+    /* Severity — enriched grayscale for stronger differentiation */
+    --sev-fatal:   0 0% 0%;         /* #000000 pure black — strongest */
+    --sev-injury:  0 0% 20%;        /* #333333 */
+    --sev-robbery: 0 0% 40%;        /* #666666 */
+    --sev-assault: 0 0% 55%;        /* #8C8C8C */
+    --sev-policy:  0 0% 75%;        /* #BFBFBF */
 
     /* Shadcn compat tokens */
     --background: var(--bg-base);
@@ -119,8 +124,9 @@ html, body {
 }
 .kpi-card:hover { border-color: hsl(var(--border-lite)); }
 .kpi-card.active-filter {
-  border-color: #000000;
-  background: #E8E8E8;
+  border-color: #2563EB;
+  background: #EFF6FF;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.1);
 }
 
 /* ── Map ── */
@@ -134,26 +140,28 @@ html, body {
   letter-spacing: -0.02em;
 }
 
-/* ── Badges — grayscale pill styles ── */
+/* ── Severity badges — enriched grayscale pills ── */
 .badge-fatal    { background: #000000; color: #FFFFFF; border: 1px solid #000000; }
-.badge-injury   { background: #4F4F4F; color: #FFFFFF; border: 1px solid #4F4F4F; }
-.badge-robbery  { background: #7A7A7A; color: #FFFFFF; border: 1px solid #7A7A7A; }
-.badge-assault  { background: #9E9E9E; color: #FFFFFF; border: 1px solid #9E9E9E; }
+.badge-injury   { background: #333333; color: #FFFFFF; border: 1px solid #333333; }
+.badge-robbery  { background: #666666; color: #FFFFFF; border: 1px solid #666666; }
+.badge-assault  { background: #8C8C8C; color: #FFFFFF; border: 1px solid #8C8C8C; }
 .badge-policy, .badge-other { background: #E0E0E0; color: #000000; border: 1px solid #D1D1D1; }
 
-.status-resolved            { background: #F2F2F2; color: #4F4F4F; border: 1px solid #D1D1D1; }
-.status-under-investigation { background: #F2F2F2; color: #000000; border: 1px solid #9E9E9E; }
-.status-active              { background: #000000; color: #FFFFFF; border: 1px solid #000000; }
+/* ── Status pills — accent blue for active work, green for resolved ── */
+.status-resolved            { background: #ECFDF5; color: #047857; border: 1px solid #A7F3D0; }
+.status-under-investigation { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
+.status-active              { background: #2563EB; color: #FFFFFF; border: 1px solid #2563EB; }
 
-/* ── Accent line — solid, no gradient ── */
-.seattle-accent { height: 1px; background: #D1D1D1; opacity: 1; }
+/* ── Accent line — brand blue thin rule ── */
+.seattle-accent { height: 2px; background: linear-gradient(90deg, #2563EB 0%, transparent 85%); opacity: 0.8; }
 
-/* ── Pulse — minimal ── */
-@keyframes pulse-dot { 0%,100% { opacity:.9; } 50% { opacity:.3; } }
+/* ── Pulse — live indicator (accent blue) ── */
+@keyframes pulse-dot { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(0.85); } }
 .pulse-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: #000000;
-  animation: pulse-dot 3s ease-in-out infinite;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #2563EB;
+  box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5);
+  animation: pulse-dot 2s ease-in-out infinite;
   display: inline-block; flex-shrink: 0;
 }
 
@@ -171,10 +179,17 @@ html, body {
 }
 button:hover .rotating-globe { animation-play-state: paused; }
 
-/* ── Hide Google Translate bar ── */
-.goog-te-banner-frame { display: none !important; }
-body { top: 0 !important; }
-.skiptranslate { display: none !important; }
+/* ── RTL support for Arabic/Farsi/Pashto ── */
+[dir="rtl"] .sidebar { border-right: none; border-left: 1px solid hsl(var(--border)); }
+[dir="rtl"] .dashboard-layout { grid-template-columns: 1fr var(--sidebar-width); }
+@media (max-width: 1023px) {
+  [dir="rtl"] .dashboard-layout { grid-template-columns: 1fr; }
+  [dir="rtl"] .sidebar {
+    left: auto; right: 0;
+    transform: translateX(100%);
+  }
+  [dir="rtl"] .sidebar.open { transform: translateX(0); }
+}
 
 /* ── Micro-animations ── */
 @keyframes slide-in { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
@@ -213,7 +228,7 @@ body { top: 0 !important; }
 
 /* ── Selected incident row ── */
 .incident-row { transition: background 0.15s ease; }
-.incident-row.selected { background: #E8E8E8; border-left: 2px solid #000000; }
+.incident-row.selected { background: #EFF6FF; border-left: 2px solid #2563EB; }
 
 /* ── Section label ── */
 .section-label {
@@ -224,11 +239,26 @@ body { top: 0 !important; }
   color: #9E9E9E;
 }
 
-/* ── Focus ring ── */
-:focus-visible { outline: 2px solid #000000; outline-offset: 2px; border-radius: 4px; }
+/* ── Focus ring — accent blue for accessibility ── */
+:focus-visible { outline: 2px solid #2563EB; outline-offset: 2px; border-radius: 4px; }
 
-/* ── Primary button — black bg, white text ── */
+/* ── Primary button — accent blue for key CTAs ── */
 .btn-primary {
+  background: #2563EB;
+  color: #FFFFFF;
+  font-weight: 500;
+  font-size: 12px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #2563EB;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.btn-primary:hover { background: #1D4ED8; border-color: #1D4ED8; }
+.btn-primary:active { transform: scale(0.98); }
+
+/* Alt: dark button for secondary emphasis */
+.btn-dark {
   background: #000000;
   color: #FFFFFF;
   font-weight: 500;
@@ -239,8 +269,7 @@ body { top: 0 !important; }
   cursor: pointer;
   transition: opacity 0.15s ease, transform 0.1s ease;
 }
-.btn-primary:hover { opacity: 0.85; }
-.btn-primary:active { transform: scale(0.98); }
+.btn-dark:hover { opacity: 0.85; }
 
 .btn-secondary {
   background: #FFFFFF;

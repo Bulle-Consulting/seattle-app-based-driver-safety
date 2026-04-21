@@ -38,11 +38,11 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
       <div className="px-5 pt-4 pb-5">
         <div className="flex items-center gap-3">
           <svg width="28" height="28" viewBox="0 0 40 40" fill="none" aria-label="Bulle Cloud">
-            <rect width="40" height="40" rx="10" fill="#000000"/>
+            <rect width="40" height="40" rx="10" fill="#2563EB"/>
             <path d="M28.5 21.5C28.5 19 26.8 17 24.5 16.6C23.8 14.5 21.9 13 19.5 13C16.7 13 14.5 15.2 14.5 18c0 .1 0 .2 0 .3C12.8 18.8 11.5 20.4 11.5 22.3c0 2.2 1.8 4 4 4H27.5c.6 0 1-.5 1-1V21.5Z" fill="white" opacity=".85"/>
           </svg>
           <div>
-            <div className="text-[10px] font-medium tracking-[0.08em] uppercase" style={{ color: "#000000" }}>Bulle Cloud</div>
+            <div className="text-[10px] font-medium tracking-[0.08em] uppercase" style={{ color: "#2563EB" }}>Bulle Cloud</div>
             <div className="text-[13px] font-semibold text-[#000000] leading-tight">Safety Steward</div>
           </div>
         </div>
@@ -71,7 +71,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
                     ? "text-white font-medium"
                     : "text-[#9E9E9E] hover:text-[#4F4F4F] hover:bg-black/[0.04]"
                 )}
-                style={active ? { background: "#000000", color: "#FFFFFF" } : {}}
+                style={active ? { background: "#2563EB", color: "#FFFFFF" } : {}}
               >
                 <Icon size={15} strokeWidth={active ? 2 : 1.5} className={active ? "" : "text-[#9E9E9E]"} style={active ? { color: "#FFFFFF" } : {}} />
                 {label}
@@ -88,7 +88,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
         <div className="text-[9px] text-[#9E9E9E] leading-relaxed space-y-1">
           <div>SPD Open Data · SPD Blotter · Cascade PBS · KOMO · KIRO 7 · Fox 13 · King Co. Prosecutors</div>
           <div>2024–Present · Seattle Metro</div>
-          <div className="mt-2" style={{ color: "#4F4F4F" }}>bullecloud.com</div>
+          <div className="mt-2" style={{ color: "#2563EB" }}>bullecloud.com</div>
         </div>
       </div>
     </aside>

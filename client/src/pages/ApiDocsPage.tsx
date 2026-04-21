@@ -1,7 +1,7 @@
 import Layout from "@/components/Layout";
 import { Code2 } from "lucide-react";
 
-const TEAL = "#000000";
+const TEAL = "#2563EB";
 
 interface Endpoint {
   method: "GET" | "POST";
@@ -12,8 +12,8 @@ interface Endpoint {
 }
 
 const METHOD_STYLES = {
-  GET:  { bg: "#F2F2F2", color: "#4F4F4F", border: "#D1D1D1" },
-  POST: { bg: "#E8E8E8", color: "#4F4F4F", border: "#D1D1D1" },
+  GET:  { bg: "#ECFDF5", color: "#047857", border: "#A7F3D0" },
+  POST: { bg: "#EFF6FF", color: "#1D4ED8", border: "#BFDBFE" },
 };
 
 const ENDPOINTS: Endpoint[] = [

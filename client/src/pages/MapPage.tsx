@@ -7,7 +7,7 @@ import { useState } from "react";
 import { X, ExternalLink } from "lucide-react";
 import type { Incident } from "@shared/schema";
 
-const TEAL = "#000000";
+const TEAL = "#2563EB";
 const SEV: Record<string, string> = { fatal: "#000000", injury: "#4F4F4F", robbery: "#7A7A7A", assault: "#9E9E9E" };
 const PLATFORMS = ["All", "Uber", "Lyft", "DoorDash", "Amazon Flex"];
 const SEVERITIES = ["All", "fatal", "injury", "robbery", "assault"];
@@ -15,7 +15,7 @@ const SEVERITIES = ["All", "fatal", "injury", "robbery", "assault"];
 function Btn({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
   return (
     <button onClick={onClick}
-      className={`text-[10px] px-2 py-0.5 rounded border transition-colors capitalize ${active ? "bg-[#000000] text-white border-transparent font-medium" : "bg-[#F7F7F7] border-[#D1D1D1] text-[#4F4F4F] hover:border-[#9E9E9E]"}`}>
+      className={`text-[10px] px-2 py-0.5 rounded border transition-colors capitalize ${active ? "bg-[#2563EB] text-white border-transparent font-medium" : "bg-[#F7F7F7] border-[#D1D1D1] text-[#4F4F4F] hover:border-[#9E9E9E]"}`}>
       {label}
     </button>
   );

@@ -1,6 +1,8 @@
 import { RefreshCw, ChevronDown, Menu } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { translatePage, retranslateNewContent, getCurrentLang, startObserver } from "@/lib/translator";
+import { useHashLocation } from "wouter/use-hash-location";
 
 const LANGUAGES = [
   { code: "en", name: "English", native: "English" },
@@ -40,10 +42,12 @@ export default function Header({ title, subtitle, onMenuToggle }: HeaderProps) {
   const [time, setTime] = useState(new Date());
   const [refreshing, setRefreshing] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
-  const [activeLang, setActiveLang] = useState("en");
+  const [activeLang, setActiveLang] = useState(() => getCurrentLang());
+  const [translating, setTranslating] = useState(false);
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const langRef = useRef<HTMLDivElement>(null);
-  const gtInitRef = useRef(false);
   const qc = useQueryClient();
+  const [location] = useHashLocation();
 
   useEffect(() => { const t = setInterval(() => setTime(new Date()), 1000); return () => clearInterval(t); }, []);
 
@@ -53,61 +57,46 @@ export default function Header({ title, subtitle, onMenuToggle }: HeaderProps) {
     return () => document.removeEventListener("mousedown", close);
   }, []);
 
-  /* Initialize Google Translate widget once */
+  /* Start the MutationObserver once so new DOM content gets auto-translated */
   useEffect(() => {
-    if (gtInitRef.current) return;
-    gtInitRef.current = true;
-
-    // Create hidden container for Google Translate
-    const container = document.createElement("div");
-    container.id = "google_translate_element";
-    container.style.display = "none";
-    document.body.appendChild(container);
-
-    // Define the init callback
-    (window as any).googleTranslateElementInit = () => {
-      new (window as any).google.translate.TranslateElement(
-        { pageLanguage: "en", autoDisplay: false },
-        "google_translate_element"
+    startObserver();
+    // Also retranslate on mount if a non-English language is active
+    if (getCurrentLang() !== "en") {
+      const timers = [200, 800, 1800, 3500].map((ms) =>
+        setTimeout(() => { retranslateNewContent(); }, ms)
       );
-    };
-
-    // Load Google Translate script
-    const script = document.createElement("script");
-    script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
-    script.async = true;
-    document.head.appendChild(script);
+      return () => { timers.forEach(clearTimeout); };
+    }
   }, []);
+
+  /* On route change, retranslate new page content */
+  useEffect(() => {
+    if (activeLang === "en") return;
+    const timers = [300, 1200, 2500].map((ms) =>
+      setTimeout(() => { retranslateNewContent(); }, ms)
+    );
+    return () => { timers.forEach(clearTimeout); };
+  }, [location, activeLang]);
 
   const handleRefresh = () => { setRefreshing(true); qc.invalidateQueries(); setTimeout(() => setRefreshing(false), 800); };
 
-  const translatePage = (code: string) => {
-    setActiveLang(code);
+  const handleTranslate = async (code: string) => {
     setLangOpen(false);
-
+    setActiveLang(code);
     if (code === "en") {
-      // Reset to English — remove Google Translate frame
-      const frame = document.querySelector(".goog-te-banner-frame") as HTMLElement;
-      if (frame) frame.style.display = "none";
-      // Try to restore original
-      const sel = document.querySelector(".goog-te-combo") as HTMLSelectElement;
-      if (sel) { sel.value = ""; sel.dispatchEvent(new Event("change")); }
-      // Also try cookie reset
-      document.cookie = "googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-      document.cookie = "googtrans=; path=/; domain=" + window.location.hostname + "; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-      window.location.reload();
+      await translatePage("en");
+      setProgress(null);
       return;
     }
-
-    // Try in-page Google Translate first
-    const sel = document.querySelector(".goog-te-combo") as HTMLSelectElement;
-    if (sel) {
-      sel.value = code;
-      sel.dispatchEvent(new Event("change"));
-    } else {
-      // Fallback: open Google Translate in new tab
-      const baseUrl = window.location.href.split("#")[0];
-      window.open(`https://translate.google.com/translate?sl=en&tl=${code}&u=${encodeURIComponent(baseUrl)}`, "_blank");
+    setTranslating(true);
+    setProgress({ done: 0, total: 0 });
+    try {
+      await translatePage(code, (done, total) => {
+        setProgress({ done, total });
+      });
+    } finally {
+      setTranslating(false);
+      setProgress(null);
     }
   };
 
@@ -128,23 +117,30 @@ export default function Header({ title, subtitle, onMenuToggle }: HeaderProps) {
       </div>
 
       <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
-        <span className="hidden lg:block text-[11px] text-[#9E9E9E] tabular-nums">{dateFmt(time)} · {fmt(time)}</span>
+        <span className="hidden lg:block text-[11px] text-[#9E9E9E] tabular-nums" data-no-translate>{dateFmt(time)} · {fmt(time)}</span>
         <span className="hidden md:block text-[9px] text-[#9E9E9E] px-2 py-1 rounded-md" style={{ border: "1px solid #D1D1D1" }}>Seattle Metro</span>
 
-        {/* ── Translate button — always visible with rotating globe ── */}
-        <div ref={langRef} className="relative">
+        {/* ── Translate button — in-place translation, no external UI ── */}
+        <div ref={langRef} className="relative" data-no-translate>
           <button
             onClick={() => setLangOpen(!langOpen)}
             aria-label="Translate page"
             aria-expanded={langOpen}
-            className="flex items-center gap-1.5 px-2 md:px-3 py-1.5 rounded-lg transition-all text-[11px] font-medium"
-            style={langOpen
-              ? { background: "#000000", color: "white" }
+            disabled={translating}
+            className="flex items-center gap-1.5 px-2 md:px-3 py-1.5 rounded-lg transition-all text-[11px] font-medium disabled:opacity-75"
+            style={langOpen || translating
+              ? { background: "#2563EB", color: "white" }
               : { background: "#F7F7F7", color: "#4F4F4F", border: "1px solid #D1D1D1" }
             }
           >
             <RotatingGlobe size={15} />
-            <span className="text-[11px]">Translate</span>
+            <span className="text-[11px]">
+              {translating
+                ? (progress && progress.total > 0
+                    ? `Translating · ${Math.round((progress.done / progress.total) * 100)}%`
+                    : "Translating…")
+                : (activeLang === "en" ? "Translate" : (LANGUAGES.find(l => l.code === activeLang)?.name || "Translate"))}
+            </span>
             <ChevronDown size={9} className={`transition-transform duration-200 ${langOpen ? "rotate-180" : ""}`} />
           </button>
 
@@ -157,18 +153,18 @@ export default function Header({ title, subtitle, onMenuToggle }: HeaderProps) {
               <div className="px-3 py-2 flex items-center justify-between" style={{ borderBottom: "1px solid #D1D1D1" }}>
                 <span className="text-[9px] font-semibold text-[#9E9E9E] uppercase tracking-widest">Translate page</span>
                 {activeLang !== "en" && (
-                  <span className="text-[8px] bg-[#000000]/20 text-[#000000] px-1.5 py-0.5 rounded">Active: {currentLang?.name}</span>
+                  <span className="text-[8px] bg-[#2563EB]/10 text-[#2563EB] px-1.5 py-0.5 rounded">Active: {currentLang?.name}</span>
                 )}
               </div>
               <div className="max-h-[320px] overflow-y-auto py-1">
                 {LANGUAGES.map(l => (
                   <button
                     key={l.code}
-                    onClick={() => translatePage(l.code)}
+                    onClick={() => handleTranslate(l.code)}
                     role="menuitem"
                     className={`w-full text-left px-3 py-2 flex items-center justify-between transition-colors ${
                       activeLang === l.code
-                        ? "bg-[#000000] text-white"
+                        ? "bg-[#2563EB] text-white"
                         : "text-[#4F4F4F] hover:text-[#000000] hover:bg-black/[0.04]"
                     }`}
                   >
@@ -180,7 +176,7 @@ export default function Header({ title, subtitle, onMenuToggle }: HeaderProps) {
                 ))}
               </div>
               <div className="px-3 py-2 text-[8px] text-[#9E9E9E]" style={{ borderTop: "1px solid #D1D1D1" }}>
-                Powered by Google Translate
+                Auto-translation · English original preserved
               </div>
             </div>
           )}

@@ -6,7 +6,7 @@ import { useState, useEffect, useRef } from "react";
 import { TrendingUp, AlertTriangle, ExternalLink, Rss } from "lucide-react";
 import type { Incident } from "@shared/schema";
 
-const TEAL = "#000000";
+const TEAL = "#2563EB";
 const SEV: Record<string, string> = { fatal: "#000000", injury: "#4F4F4F", robbery: "#7A7A7A", assault: "#9E9E9E", policy: "#9E9E9E", other: "#9E9E9E" };
 const SEV_BG: Record<string, string> = { fatal: "#E0E0E0", injury: "#E8E8E8", robbery: "#E8E8E8", assault: "#E8E8E8", policy: "#E8E8E8", other: "#F2F2F2" };
 
