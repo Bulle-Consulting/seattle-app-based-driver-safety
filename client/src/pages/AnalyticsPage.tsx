@@ -9,20 +9,20 @@ import {
 import { AlertTriangle, Video, FileText } from "lucide-react";
 import type { Incident } from "@shared/schema";
 
-const TEAL = "#26A69A";
-const TEAL_DIM = "#1B7D74";
+const TEAL = "#000000";
+const TEAL_DIM = "#4F4F4F";
 const PLT_COLORS: Record<string, string> = {
-  Uber: "#8B95A8",
-  Lyft: "#E91E8C",
-  DoorDash: "#F87171",
-  "Amazon Flex": "#E8A317",
+  Uber: "#9E9E9E",
+  Lyft: "#000000",
+  DoorDash: "#7A7A7A",
+  "Amazon Flex": "#000000",
 };
 
 const Tip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="chart-tooltip">
-      <p className="font-medium text-[#F5F5F5] mb-0.5">{label}</p>
+      <p className="font-medium text-[#000000] mb-0.5">{label}</p>
       {payload.map((p: any, i: number) => (
         <p key={i} className="text-[10px]" style={{ color: p.color || p.fill || TEAL }}>
           {p.name}: <span className="font-medium">{p.value}</span>
@@ -36,10 +36,10 @@ function SectionCard({ title, subtitle, children }: {
   title: string; subtitle?: string; children: React.ReactNode;
 }) {
   return (
-    <div className="bg-[#151d2e] border border-[#1F2937] rounded-md p-4">
+    <div className="bg-[#F7F7F7] border border-[#D1D1D1] rounded-md p-4">
       <div className="mb-3">
-        <div className="text-[11px] font-semibold text-[#F5F5F5]">{title}</div>
-        {subtitle && <div className="text-[9px] text-[#8B95A8] mt-0.5">{subtitle}</div>}
+        <div className="text-[11px] font-semibold text-[#000000]">{title}</div>
+        {subtitle && <div className="text-[9px] text-[#9E9E9E] mt-0.5">{subtitle}</div>}
       </div>
       {children}
     </div>
@@ -59,23 +59,22 @@ function TimeHeatmap({ byHour }: { byHour: Record<string, number> }) {
     <SectionCard title="Incident Time Distribution" subtitle="When incidents occur (24-hour clock)">
       <ResponsiveContainer width="100%" height={180}>
         <BarChart data={data} margin={{ top: 4, right: 4, left: -16, bottom: 4 }}>
-          <XAxis dataKey="label" tick={{ fontSize: 8, fill: "#8B95A8" }} axisLine={false} tickLine={false}
+          <XAxis dataKey="label" tick={{ fontSize: 8, fill: "#9E9E9E" }} axisLine={false} tickLine={false}
             interval={1} angle={-45} textAnchor="end" height={36} />
-          <YAxis tick={{ fontSize: 8, fill: "#8B95A8" }} axisLine={false} tickLine={false} width={22} />
+          <YAxis tick={{ fontSize: 8, fill: "#9E9E9E" }} axisLine={false} tickLine={false} width={22} />
           <Tooltip content={<Tip />} />
           <Bar dataKey="count" name="Incidents" radius={[2, 2, 0, 0]}>
             {data.map((entry, i) => {
               const intensity = max > 0 ? entry.count / max : 0;
-              const r = Math.round(26 + intensity * (38 - 26));
-              const g = Math.round(166 + intensity * (200 - 166));
-              const b = Math.round(154 + intensity * (100 - 154));
-              const color = entry.count === 0 ? "#1F2937" : `rgb(${r},${g},${b})`;
-              return <Cell key={i} fill={color} opacity={entry.count === 0 ? 0.3 : 0.85} />;
+              // grayscale: 0 count = very light; high intensity = black
+              const v = Math.round(209 - intensity * 209); // 209 (#D1D1D1) -> 0 (#000000)
+              const color = entry.count === 0 ? "#E8E8E8" : `rgb(${v},${v},${v})`;
+              return <Cell key={i} fill={color} opacity={entry.count === 0 ? 0.6 : 1} />;
             })}
           </Bar>
         </BarChart>
       </ResponsiveContainer>
-      <p className="text-[9px] text-[#8B95A8] mt-2 leading-relaxed">
+      <p className="text-[9px] text-[#9E9E9E] mt-2 leading-relaxed">
         Based on incidents with recorded times. Not all incidents have time data.
       </p>
     </SectionCard>
@@ -117,18 +116,18 @@ function QuarterlyTrend({ byQuarter }: { byQuarter: Record<string, number> }) {
     <SectionCard title="Quarterly Trend & Forecast" subtitle="Incidents per quarter with linear projection">
       <ResponsiveContainer width="100%" height={180}>
         <BarChart data={data} margin={{ top: 4, right: 4, left: -16, bottom: 4 }}>
-          <XAxis dataKey="label" tick={{ fontSize: 8, fill: "#8B95A8" }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fontSize: 8, fill: "#8B95A8" }} axisLine={false} tickLine={false} width={22} />
-          <CartesianGrid strokeDasharray="2 3" stroke="#1F2937" vertical={false} />
+          <XAxis dataKey="label" tick={{ fontSize: 8, fill: "#9E9E9E" }} axisLine={false} tickLine={false} />
+          <YAxis tick={{ fontSize: 8, fill: "#9E9E9E" }} axisLine={false} tickLine={false} width={22} />
+          <CartesianGrid strokeDasharray="2 3" stroke="#D1D1D1" vertical={false} />
           <Tooltip content={<Tip />} />
           <Bar dataKey="value" name="Incidents" fill={TEAL} opacity={0.8} radius={[2, 2, 0, 0]} />
           <Bar dataKey="forecast" name="Forecast" fill={TEAL_DIM} opacity={0.5} radius={[2, 2, 0, 0]}
             strokeDasharray="4 2" stroke={TEAL} strokeWidth={1} />
           <ReferenceLine
             x={nextQ}
-            stroke="#8B95A8"
+            stroke="#9E9E9E"
             strokeDasharray="4 2"
-            label={{ value: "Forecast", fontSize: 8, fill: "#8B95A8", position: "top" }}
+            label={{ value: "Forecast", fontSize: 8, fill: "#9E9E9E", position: "top" }}
           />
         </BarChart>
       </ResponsiveContainer>
@@ -139,22 +138,22 @@ function QuarterlyTrend({ byQuarter }: { byQuarter: Record<string, number> }) {
 // ── C) Platform Comparison ──────────────────────────────────────────────────
 function PlatformComparison({ byPlatform }: { byPlatform: Record<string, number> }) {
   const data = Object.entries(byPlatform)
-    .map(([name, value]) => ({ name, value, fill: PLT_COLORS[name] ?? "#6D7A8F" }))
+    .map(([name, value]) => ({ name, value, fill: PLT_COLORS[name] ?? "#9E9E9E" }))
     .sort((a, b) => b.value - a.value);
 
   return (
     <SectionCard title="Platform Comparison" subtitle="Incident count per platform">
       <ResponsiveContainer width="100%" height={140}>
         <BarChart data={data} layout="vertical" margin={{ top: 2, right: 16, left: 0, bottom: 2 }}>
-          <XAxis type="number" tick={{ fontSize: 8, fill: "#8B95A8" }} axisLine={false} tickLine={false} />
-          <YAxis dataKey="name" type="category" tick={{ fontSize: 9, fill: "#8B95A8" }} axisLine={false} tickLine={false} width={72} />
+          <XAxis type="number" tick={{ fontSize: 8, fill: "#9E9E9E" }} axisLine={false} tickLine={false} />
+          <YAxis dataKey="name" type="category" tick={{ fontSize: 9, fill: "#9E9E9E" }} axisLine={false} tickLine={false} width={72} />
           <Tooltip content={<Tip />} />
           <Bar dataKey="value" name="Incidents" radius={[0, 3, 3, 0]}>
             {data.map((e, i) => <Cell key={i} fill={e.fill} opacity={0.8} />)}
           </Bar>
         </BarChart>
       </ResponsiveContainer>
-      <p className="text-[9px] text-[#8B95A8] mt-2 leading-relaxed">
+      <p className="text-[9px] text-[#9E9E9E] mt-2 leading-relaxed">
         Counts are not normalized by active driver population.
       </p>
     </SectionCard>
@@ -169,7 +168,7 @@ function RepeatLocations({ repeatLocations }: { repeatLocations: [string, number
   return (
     <SectionCard title="Repeat Incident Locations" subtitle="Neighborhoods with 2+ incidents">
       {sorted.length === 0 ? (
-        <p className="text-[10px] text-[#8B95A8]">No repeat locations recorded.</p>
+        <p className="text-[10px] text-[#9E9E9E]">No repeat locations recorded.</p>
       ) : (
         <div className="space-y-2">
           {sorted.map(([neighborhood, count]) => {
@@ -180,15 +179,15 @@ function RepeatLocations({ repeatLocations }: { repeatLocations: [string, number
                 data-testid={`repeat-loc-${neighborhood}`}
                 className="flex items-center gap-2.5 px-3 py-2 rounded-md border"
                 style={{
-                  background: isHigh ? "rgba(232,163,23,0.08)" : "rgba(31,41,55,0.4)",
-                  borderColor: isHigh ? "rgba(232,163,23,0.2)" : "#1F2937",
+                  background: isHigh ? "#F2F2F2" : "#E8E8E8",
+                  borderColor: isHigh ? "#E8E8E8" : "#D1D1D1",
                 }}
               >
-                <AlertTriangle size={12} style={{ color: isHigh ? "#E8A317" : "#8B95A8" }} />
-                <span className="flex-1 text-[11px] text-[#F5F5F5] font-medium">{neighborhood}</span>
+                <AlertTriangle size={12} style={{ color: isHigh ? "#000000" : "#9E9E9E" }} />
+                <span className="flex-1 text-[11px] text-[#000000] font-medium">{neighborhood}</span>
                 <span
                   className="tabular-nums text-[13px] font-semibold"
-                  style={{ color: isHigh ? "#E8A317" : "#A3AEC0" }}
+                  style={{ color: isHigh ? "#000000" : "#4F4F4F" }}
                 >
                   {count}
                 </span>
@@ -203,12 +202,12 @@ function RepeatLocations({ repeatLocations }: { repeatLocations: [string, number
 
 // ── E) Case Tracker ─────────────────────────────────────────────────────────
 const CASE_STATUS_COLORS: Record<string, { bg: string; color: string }> = {
-  pending:    { bg: "rgba(251,191,36,0.1)",   color: "#FBBF24" },
-  arraigned:  { bg: "rgba(96,165,250,0.1)",   color: "#60A5FA" },
-  arrested:   { bg: "rgba(251,146,60,0.1)",   color: "#FB923C" },
-  convicted:  { bg: "rgba(38,166,154,0.12)",  color: "#26A69A" },
-  sentenced:  { bg: "rgba(52,211,153,0.1)",   color: "#34D399" },
-  resolved:   { bg: "rgba(52,211,153,0.1)",   color: "#34D399" },
+  pending:    { bg: "#F2F2F2",   color: "#4F4F4F" },
+  arraigned:  { bg: "#F2F2F2",   color: "#4F4F4F" },
+  arrested:   { bg: "#F2F2F2",   color: "#7A7A7A" },
+  convicted:  { bg: "#E8E8E8",  color: "#000000" },
+  sentenced:  { bg: "#F2F2F2",   color: "#4F4F4F" },
+  resolved:   { bg: "#F2F2F2",   color: "#4F4F4F" },
 };
 
 function CaseTracker({ incidents }: { incidents: Incident[] }) {
@@ -219,38 +218,38 @@ function CaseTracker({ incidents }: { incidents: Incident[] }) {
   return (
     <SectionCard title="Court Case Tracker" subtitle="Incidents with active or resolved cases">
       {caseIncidents.length === 0 ? (
-        <p className="text-[10px] text-[#8B95A8]">No case data available.</p>
+        <p className="text-[10px] text-[#9E9E9E]">No case data available.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-[11px]">
             <thead>
-              <tr className="bg-[#0b1120] border-b border-[#1F2937]">
+              <tr className="bg-[#F2F2F2] border-b border-[#D1D1D1]">
                 {["Date", "Type", "Suspect", "Case #", "Status", "Sentence"].map(h => (
-                  <th key={h} className="px-3 py-2 text-left text-[9px] font-medium text-[#8B95A8] uppercase tracking-wider whitespace-nowrap">{h}</th>
+                  <th key={h} className="px-3 py-2 text-left text-[9px] font-medium text-[#9E9E9E] uppercase tracking-wider whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1F2937]">
+            <tbody className="divide-y divide-[#D1D1D1]">
               {caseIncidents.map(inc => {
                 const caseStatus = (inc as any).caseStatus ?? "";
-                const statusStyle = CASE_STATUS_COLORS[caseStatus?.toLowerCase()] ?? { bg: "transparent", color: "#8B95A8" };
+                const statusStyle = CASE_STATUS_COLORS[caseStatus?.toLowerCase()] ?? { bg: "transparent", color: "#9E9E9E" };
                 return (
-                  <tr key={inc.id} data-testid={`case-row-${inc.id}`} className="hover:bg-[#0b1120] transition-colors">
-                    <td className="px-3 py-2.5 tabular-nums text-[#A3AEC0] whitespace-nowrap">
+                  <tr key={inc.id} data-testid={`case-row-${inc.id}`} className="hover:bg-[#F2F2F2] transition-colors">
+                    <td className="px-3 py-2.5 tabular-nums text-[#4F4F4F] whitespace-nowrap">
                       {new Date(inc.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                     </td>
-                    <td className="px-3 py-2.5 text-[#F5F5F5] font-medium max-w-[140px] truncate">{inc.type}</td>
-                    <td className="px-3 py-2.5 text-[#A3AEC0]">{(inc as any).suspectName ?? "—"}</td>
-                    <td className="px-3 py-2.5 text-[#A3AEC0] tabular-nums">{(inc as any).caseNumber ?? "—"}</td>
+                    <td className="px-3 py-2.5 text-[#000000] font-medium max-w-[140px] truncate">{inc.type}</td>
+                    <td className="px-3 py-2.5 text-[#4F4F4F]">{(inc as any).suspectName ?? "—"}</td>
+                    <td className="px-3 py-2.5 text-[#4F4F4F] tabular-nums">{(inc as any).caseNumber ?? "—"}</td>
                     <td className="px-3 py-2.5">
                       {caseStatus ? (
                         <span className="px-2 py-0.5 rounded text-[9px] font-medium capitalize"
                           style={{ background: statusStyle.bg, color: statusStyle.color, border: `1px solid ${statusStyle.color}30` }}>
                           {caseStatus}
                         </span>
-                      ) : <span className="text-[#8B95A8]">—</span>}
+                      ) : <span className="text-[#9E9E9E]">—</span>}
                     </td>
-                    <td className="px-3 py-2.5 text-[#A3AEC0]">{(inc as any).sentence ?? "—"}</td>
+                    <td className="px-3 py-2.5 text-[#4F4F4F]">{(inc as any).sentence ?? "—"}</td>
                   </tr>
                 );
               })}
@@ -271,27 +270,27 @@ function EvidenceTracker({ incidents }: { incidents: Incident[] }) {
   return (
     <SectionCard title="Evidence Tracker" subtitle="Dashcam & video documentation">
       <div className="flex items-center gap-4 mb-4">
-        <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "rgba(38,166,154,0.1)", border: "2px solid rgba(38,166,154,0.3)" }}>
+        <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "#F2F2F2", border: "2px solid #D1D1D1" }}>
           <Video size={22} style={{ color: TEAL }} />
         </div>
         <div>
-          <div className="text-[22px] font-semibold tabular-nums text-[#F5F5F5]">
-            {withVideo} <span className="text-[14px] text-[#8B95A8] font-normal">of {total}</span>
+          <div className="text-[22px] font-semibold tabular-nums text-[#000000]">
+            {withVideo} <span className="text-[14px] text-[#9E9E9E] font-normal">of {total}</span>
           </div>
-          <div className="text-[11px] text-[#A3AEC0]">incidents have video/dashcam evidence</div>
+          <div className="text-[11px] text-[#4F4F4F]">incidents have video/dashcam evidence</div>
         </div>
         <div className="ml-auto text-right">
           <div className="text-[26px] font-semibold tabular-nums" style={{ color: TEAL }}>{pct}%</div>
-          <div className="text-[9px] text-[#8B95A8]">coverage rate</div>
+          <div className="text-[9px] text-[#9E9E9E]">coverage rate</div>
         </div>
       </div>
-      <div className="h-2 rounded-full bg-[#1F2937] mb-4">
+      <div className="h-2 rounded-full bg-[#D1D1D1] mb-4">
         <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: TEAL, opacity: 0.8 }} />
       </div>
-      <div className="flex items-start gap-2.5 px-3 py-2.5 rounded-md border border-[#1F2937] bg-[#0E3D39]/30">
+      <div className="flex items-start gap-2.5 px-3 py-2.5 rounded-md border border-[#D1D1D1] bg-[#E0E0E0]/30">
         <FileText size={12} style={{ color: TEAL }} className="mt-0.5 shrink-0" />
-        <p className="text-[10px] text-[#A3AEC0] leading-relaxed">
-          <span className="font-medium text-[#F5F5F5]">Seattle Rideshare Drivers Association</span> advocates for mandatory dashcams in all app-based vehicles to improve evidence collection and driver safety.
+        <p className="text-[10px] text-[#4F4F4F] leading-relaxed">
+          <span className="font-medium text-[#000000]">Seattle Rideshare Drivers Association</span> advocates for mandatory dashcams in all app-based vehicles to improve evidence collection and driver safety.
         </p>
       </div>
     </SectionCard>
@@ -323,7 +322,7 @@ export default function AnalyticsPage() {
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {Array(4).fill(0).map((_, i) => (
-                <div key={i} className="bg-[#151d2e] border border-[#1F2937] rounded-md p-4 h-60">
+                <div key={i} className="bg-[#F7F7F7] border border-[#D1D1D1] rounded-md p-4 h-60">
                   <Skeleton className="h-4 w-40 mb-3" />
                   <Skeleton className="h-40 w-full" />
                 </div>
@@ -347,7 +346,7 @@ export default function AnalyticsPage() {
             </>
           )}
 
-          <div className="text-[9px] text-[#8B95A8] pb-2">
+          <div className="text-[9px] text-[#9E9E9E] pb-2">
             bullecloud.com · Analytics data derived from verified incident database
           </div>
         </main>

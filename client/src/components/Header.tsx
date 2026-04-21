@@ -116,20 +116,20 @@ export default function Header({ title, subtitle, onMenuToggle }: HeaderProps) {
   const currentLang = LANGUAGES.find(l => l.code === activeLang);
 
   return (
-    <header className="sticky top-0 z-30 px-3 md:px-6 py-2.5 flex items-center justify-between" style={{ background: "hsl(220 40% 9%)", borderBottom: "1px solid hsl(220 25% 18%)" }}>
+    <header className="sticky top-0 z-30 px-3 md:px-6 py-2.5 flex items-center justify-between" style={{ background: "#F7F7F7", borderBottom: "1px solid #D1D1D1" }}>
       <div className="flex items-center gap-2 md:gap-3 min-w-0">
-        <button onClick={onMenuToggle} className="lg:hidden p-1.5 rounded-md text-[#8B95A8] hover:text-[#F5F5F5] transition-colors flex-shrink-0" aria-label="Open menu">
+        <button onClick={onMenuToggle} className="lg:hidden p-1.5 rounded-md text-[#9E9E9E] hover:text-[#000000] transition-colors flex-shrink-0" aria-label="Open menu">
           <Menu size={18} />
         </button>
         <div className="min-w-0">
-          <h1 className="text-[13px] md:text-[14px] font-semibold text-[#F5F5F5] tracking-tight truncate">{title}</h1>
-          {subtitle && <p className="text-[10px] md:text-[11px] text-[#8B95A8] mt-0.5 hidden sm:block truncate">{subtitle}</p>}
+          <h1 className="text-[13px] md:text-[14px] font-semibold text-[#000000] tracking-tight truncate">{title}</h1>
+          {subtitle && <p className="text-[10px] md:text-[11px] text-[#9E9E9E] mt-0.5 hidden sm:block truncate">{subtitle}</p>}
         </div>
       </div>
 
       <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
-        <span className="hidden lg:block text-[11px] text-[#8B95A8] tabular-nums">{dateFmt(time)} · {fmt(time)}</span>
-        <span className="hidden md:block text-[9px] text-[#8B95A8] px-2 py-1 rounded-md" style={{ border: "1px solid hsl(220 25% 18%)" }}>Seattle Metro</span>
+        <span className="hidden lg:block text-[11px] text-[#9E9E9E] tabular-nums">{dateFmt(time)} · {fmt(time)}</span>
+        <span className="hidden md:block text-[9px] text-[#9E9E9E] px-2 py-1 rounded-md" style={{ border: "1px solid #D1D1D1" }}>Seattle Metro</span>
 
         {/* ── Translate button — always visible with rotating globe ── */}
         <div ref={langRef} className="relative">
@@ -139,8 +139,8 @@ export default function Header({ title, subtitle, onMenuToggle }: HeaderProps) {
             aria-expanded={langOpen}
             className="flex items-center gap-1.5 px-2 md:px-3 py-1.5 rounded-lg transition-all text-[11px] font-medium"
             style={langOpen
-              ? { background: "hsl(176 65% 42%)", color: "white" }
-              : { background: "hsl(220 30% 15%)", color: "#C0C8D8", border: "1px solid hsl(220 25% 18%)" }
+              ? { background: "#000000", color: "white" }
+              : { background: "#F7F7F7", color: "#4F4F4F", border: "1px solid #D1D1D1" }
             }
           >
             <RotatingGlobe size={15} />
@@ -151,13 +151,13 @@ export default function Header({ title, subtitle, onMenuToggle }: HeaderProps) {
           {langOpen && (
             <div
               className="absolute right-0 top-full mt-2 w-56 rounded-xl overflow-hidden shadow-2xl z-50"
-              style={{ background: "hsl(220 35% 11%)", border: "1px solid hsl(220 25% 18%)" }}
+              style={{ background: "#FFFFFF", border: "1px solid #D1D1D1" }}
               role="menu"
             >
-              <div className="px-3 py-2 flex items-center justify-between" style={{ borderBottom: "1px solid hsl(220 25% 16%)" }}>
-                <span className="text-[9px] font-semibold text-[#8B95A8] uppercase tracking-widest">Translate page</span>
+              <div className="px-3 py-2 flex items-center justify-between" style={{ borderBottom: "1px solid #D1D1D1" }}>
+                <span className="text-[9px] font-semibold text-[#9E9E9E] uppercase tracking-widest">Translate page</span>
                 {activeLang !== "en" && (
-                  <span className="text-[8px] bg-[#26A69A]/20 text-[#26A69A] px-1.5 py-0.5 rounded">Active: {currentLang?.name}</span>
+                  <span className="text-[8px] bg-[#000000]/20 text-[#000000] px-1.5 py-0.5 rounded">Active: {currentLang?.name}</span>
                 )}
               </div>
               <div className="max-h-[320px] overflow-y-auto py-1">
@@ -168,18 +168,18 @@ export default function Header({ title, subtitle, onMenuToggle }: HeaderProps) {
                     role="menuitem"
                     className={`w-full text-left px-3 py-2 flex items-center justify-between transition-colors ${
                       activeLang === l.code
-                        ? "bg-[#26A69A]/10 text-[#26A69A]"
-                        : "text-[#C0C8D8] hover:text-white hover:bg-white/[0.04]"
+                        ? "bg-[#000000] text-white"
+                        : "text-[#4F4F4F] hover:text-[#000000] hover:bg-black/[0.04]"
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <span className="text-[12px] font-medium">{l.name}</span>
                     </div>
-                    <span className="text-[10px] text-[#8B95A8]">{l.native}</span>
+                    <span className="text-[10px] text-[#9E9E9E]">{l.native}</span>
                   </button>
                 ))}
               </div>
-              <div className="px-3 py-2 text-[8px] text-[#8B95A8]" style={{ borderTop: "1px solid hsl(220 25% 16%)" }}>
+              <div className="px-3 py-2 text-[8px] text-[#9E9E9E]" style={{ borderTop: "1px solid #D1D1D1" }}>
                 Powered by Google Translate
               </div>
             </div>
@@ -187,7 +187,7 @@ export default function Header({ title, subtitle, onMenuToggle }: HeaderProps) {
         </div>
 
         <button data-testid="button-refresh" onClick={handleRefresh} aria-label="Refresh data"
-          className="p-1.5 rounded-md text-[#8B95A8] hover:text-[#C0C8D8] transition-colors">
+          className="p-1.5 rounded-md text-[#9E9E9E] hover:text-[#4F4F4F] transition-colors">
           <RefreshCw size={13} className={refreshing ? "animate-spin" : ""} />
         </button>
       </div>

@@ -2,7 +2,7 @@ import { useState } from "react";
 import Layout from "@/components/Layout";
 import { Calculator, CheckCircle2, Circle, AlertTriangle, Phone, Mail } from "lucide-react";
 
-const TEAL = "#26A69A";
+const TEAL = "#000000";
 
 // ── Rate sets ──────────────────────────────────────────────────────────────
 const RATE_SETS = {
@@ -69,17 +69,17 @@ function PayCalculator() {
   const fmt = (n: number) => `$${Math.abs(n).toFixed(2)}`;
 
   return (
-    <div className="bg-[#151d2e] border border-[#1F2937] rounded-md p-5">
+    <div className="bg-[#F7F7F7] border border-[#D1D1D1] rounded-md p-5">
       <div className="flex items-center gap-2 mb-4">
         <Calculator size={16} style={{ color: TEAL }} />
         <div>
-          <div className="text-[13px] font-semibold text-[#F5F5F5]">Pay Rate Calculator</div>
-          <div className="text-[10px] text-[#8B95A8]">Check your earnings against Seattle minimums</div>
+          <div className="text-[13px] font-semibold text-[#000000]">Pay Rate Calculator</div>
+          <div className="text-[10px] text-[#9E9E9E]">Check your earnings against Seattle minimums</div>
         </div>
       </div>
 
       {/* Rate toggle */}
-      <div className="flex gap-1 p-1 rounded-lg bg-[#0b1120] border border-[#1F2937] mb-4 w-fit">
+      <div className="flex gap-1 p-1 rounded-lg bg-[#F2F2F2] border border-[#D1D1D1] mb-4 w-fit">
         {(Object.entries(RATE_SETS) as [RateKey, typeof RATE_SETS[RateKey]][]).map(([key, r]) => (
           <button
             key={key}
@@ -88,7 +88,7 @@ function PayCalculator() {
             className="px-3 py-1.5 rounded-md text-[11px] font-medium transition-all"
             style={rateKey === key
               ? { background: TEAL, color: "white" }
-              : { color: "#8B95A8" }}
+              : { color: "#9E9E9E" }}
           >
             {r.label}
           </button>
@@ -96,27 +96,27 @@ function PayCalculator() {
       </div>
 
       {/* Rate display */}
-      <div className="grid grid-cols-3 gap-2 mb-4 p-3 rounded-md bg-[#0E3D39]/30 border border-[#1F2937]">
+      <div className="grid grid-cols-3 gap-2 mb-4 p-3 rounded-md bg-[#E0E0E0]/30 border border-[#D1D1D1]">
         <div className="text-center">
           <div className="text-[16px] font-semibold tabular-nums" style={{ color: TEAL }}>
             ${rateKey === "seattle" ? "0.47" : "0.39"}
           </div>
-          <div className="text-[9px] text-[#8B95A8]">per minute</div>
+          <div className="text-[9px] text-[#9E9E9E]">per minute</div>
         </div>
-        <div className="text-center border-x border-[#1F2937]">
+        <div className="text-center border-x border-[#D1D1D1]">
           <div className="text-[16px] font-semibold tabular-nums" style={{ color: TEAL }}>
             ${rateKey === "seattle" ? "0.80" : "1.34"}
           </div>
-          <div className="text-[9px] text-[#8B95A8]">per mile</div>
+          <div className="text-[9px] text-[#9E9E9E]">per mile</div>
         </div>
         <div className="text-center">
           <div className="text-[16px] font-semibold tabular-nums" style={{ color: TEAL }}>
             ${rateKey === "seattle" ? "5.34" : "3.45"}
           </div>
-          <div className="text-[9px] text-[#8B95A8]">{rateKey === "seattle" ? "per offer min." : "per trip min."}</div>
+          <div className="text-[9px] text-[#9E9E9E]">{rateKey === "seattle" ? "per offer min." : "per trip min."}</div>
         </div>
       </div>
-      <div className="text-[9px] text-[#8B95A8] mb-4">{rates.cite}</div>
+      <div className="text-[9px] text-[#9E9E9E] mb-4">{rates.cite}</div>
 
       {/* Form */}
       <div className="space-y-3 mb-4">
@@ -126,7 +126,7 @@ function PayCalculator() {
             data-testid="calc-platform"
             value={platform}
             onChange={e => setPlatform(e.target.value)}
-            className="w-full bg-[#101827] border border-[#1F2937] rounded-md text-[12px] text-[#F5F5F5] px-3 py-2 focus:outline-none focus:border-[#26A69A]"
+            className="w-full bg-[#F7F7F7] border border-[#D1D1D1] rounded-md text-[12px] text-[#000000] px-3 py-2 focus:outline-none focus:border-[#000000]"
           >
             {["Uber", "Lyft", "DoorDash", "Amazon Flex", "Other"].map(p => (
               <option key={p} value={p}>{p}</option>
@@ -142,7 +142,7 @@ function PayCalculator() {
               value={hours}
               onChange={e => setHours(e.target.value)}
               placeholder="e.g. 6.5"
-              className="w-full bg-[#101827] border border-[#1F2937] rounded-md text-[12px] text-[#F5F5F5] px-3 py-2 focus:outline-none focus:border-[#26A69A] placeholder-[#8B95A8]"
+              className="w-full bg-[#F7F7F7] border border-[#D1D1D1] rounded-md text-[12px] text-[#000000] px-3 py-2 focus:outline-none focus:border-[#000000] placeholder-[#9E9E9E]"
             />
           </div>
           <div>
@@ -153,7 +153,7 @@ function PayCalculator() {
               value={miles}
               onChange={e => setMiles(e.target.value)}
               placeholder="e.g. 120"
-              className="w-full bg-[#101827] border border-[#1F2937] rounded-md text-[12px] text-[#F5F5F5] px-3 py-2 focus:outline-none focus:border-[#26A69A] placeholder-[#8B95A8]"
+              className="w-full bg-[#F7F7F7] border border-[#D1D1D1] rounded-md text-[12px] text-[#000000] px-3 py-2 focus:outline-none focus:border-[#000000] placeholder-[#9E9E9E]"
             />
           </div>
         </div>
@@ -166,7 +166,7 @@ function PayCalculator() {
               value={trips}
               onChange={e => setTrips(e.target.value)}
               placeholder="e.g. 18"
-              className="w-full bg-[#101827] border border-[#1F2937] rounded-md text-[12px] text-[#F5F5F5] px-3 py-2 focus:outline-none focus:border-[#26A69A] placeholder-[#8B95A8]"
+              className="w-full bg-[#F7F7F7] border border-[#D1D1D1] rounded-md text-[12px] text-[#000000] px-3 py-2 focus:outline-none focus:border-[#000000] placeholder-[#9E9E9E]"
             />
           </div>
           <div>
@@ -177,7 +177,7 @@ function PayCalculator() {
               value={earnings}
               onChange={e => setEarnings(e.target.value)}
               placeholder="e.g. 94.50"
-              className="w-full bg-[#101827] border border-[#1F2937] rounded-md text-[12px] text-[#F5F5F5] px-3 py-2 focus:outline-none focus:border-[#26A69A] placeholder-[#8B95A8]"
+              className="w-full bg-[#F7F7F7] border border-[#D1D1D1] rounded-md text-[12px] text-[#000000] px-3 py-2 focus:outline-none focus:border-[#000000] placeholder-[#9E9E9E]"
             />
           </div>
         </div>
@@ -195,33 +195,33 @@ function PayCalculator() {
       {/* Results */}
       {result && (
         <div className="mt-4 space-y-2.5">
-          <div className="text-[9px] text-[#8B95A8] leading-relaxed px-1">
+          <div className="text-[9px] text-[#9E9E9E] leading-relaxed px-1">
             {result.breakdown}
           </div>
           <div className="grid grid-cols-3 gap-2">
-            <div className="bg-[#101827] border border-[#1F2937] rounded-md p-3 text-center">
-              <div className="text-[10px] text-[#8B95A8] mb-1">Minimum Owed</div>
-              <div className="tabular-nums text-[16px] font-semibold text-[#F5F5F5]">{fmt(result.minimum)}</div>
+            <div className="bg-[#F7F7F7] border border-[#D1D1D1] rounded-md p-3 text-center">
+              <div className="text-[10px] text-[#9E9E9E] mb-1">Minimum Owed</div>
+              <div className="tabular-nums text-[16px] font-semibold text-[#000000]">{fmt(result.minimum)}</div>
             </div>
-            <div className="bg-[#101827] border border-[#1F2937] rounded-md p-3 text-center">
-              <div className="text-[10px] text-[#8B95A8] mb-1">Actual Pay</div>
-              <div className="tabular-nums text-[16px] font-semibold text-[#F5F5F5]">{fmt(result.actual)}</div>
+            <div className="bg-[#F7F7F7] border border-[#D1D1D1] rounded-md p-3 text-center">
+              <div className="text-[10px] text-[#9E9E9E] mb-1">Actual Pay</div>
+              <div className="tabular-nums text-[16px] font-semibold text-[#000000]">{fmt(result.actual)}</div>
             </div>
-            <div className="bg-[#101827] rounded-md p-3 text-center border"
-              style={{ borderColor: result.diff >= 0 ? "rgba(52,211,153,0.3)" : "rgba(232,163,23,0.3)" }}>
-              <div className="text-[10px] text-[#8B95A8] mb-1">Difference</div>
+            <div className="bg-[#F7F7F7] rounded-md p-3 text-center border"
+              style={{ borderColor: result.diff >= 0 ? "#9E9E9E" : "#9E9E9E" }}>
+              <div className="text-[10px] text-[#9E9E9E] mb-1">Difference</div>
               <div className="tabular-nums text-[16px] font-semibold"
-                style={{ color: result.diff >= 0 ? "#34D399" : "#E8A317" }}>
+                style={{ color: result.diff >= 0 ? "#4F4F4F" : "#000000" }}>
                 {result.diff >= 0 ? "+" : "–"}{fmt(result.diff)}
               </div>
             </div>
           </div>
           {result.diff < 0 && (
             <div className="flex items-start gap-2 px-3 py-2.5 rounded-md border"
-              style={{ background: "rgba(232,163,23,0.08)", borderColor: "rgba(232,163,23,0.25)" }}>
-              <AlertTriangle size={12} style={{ color: "#E8A317" }} className="mt-0.5 shrink-0" />
-              <div className="text-[10px] text-[#A3AEC0] leading-relaxed">
-                <span className="font-medium text-[#E8A317]">Your pay may be below Seattle's minimum.</span>{" "}
+              style={{ background: "#F2F2F2", borderColor: "#D1D1D1" }}>
+              <AlertTriangle size={12} style={{ color: "#000000" }} className="mt-0.5 shrink-0" />
+              <div className="text-[10px] text-[#4F4F4F] leading-relaxed">
+                <span className="font-medium text-[#000000]">Your pay may be below Seattle's minimum.</span>{" "}
                 Contact the Office of Labor Standards: <a href="tel:2062565297" className="underline" style={{ color: TEAL }}>206-256-5297</a>
               </div>
             </div>
@@ -289,10 +289,10 @@ function DeactivationChecklist() {
   const answered = checks.filter(c => c !== null).length;
 
   return (
-    <div className="bg-[#151d2e] border border-[#1F2937] rounded-md p-5 flex flex-col">
+    <div className="bg-[#F7F7F7] border border-[#D1D1D1] rounded-md p-5 flex flex-col">
       <div className="mb-4">
-        <div className="text-[13px] font-semibold text-[#F5F5F5]">Deactivation Rights Checklist</div>
-        <div className="text-[10px] text-[#8B95A8] mt-0.5">Know your rights under Seattle Municipal Code 8.40</div>
+        <div className="text-[13px] font-semibold text-[#000000]">Deactivation Rights Checklist</div>
+        <div className="text-[10px] text-[#9E9E9E] mt-0.5">Know your rights under Seattle Municipal Code 8.40</div>
       </div>
 
       <div className="space-y-3 flex-1">
@@ -308,16 +308,16 @@ function DeactivationChecklist() {
 
           return (
             <div key={i} className="rounded-md border p-3 transition-colors"
-              style={{ borderColor: isViolation ? "rgba(232,163,23,0.3)" : "#1F2937", background: isViolation ? "rgba(232,163,23,0.05)" : "#101827" }}>
-              <div className="text-[11px] text-[#F5F5F5] mb-2 leading-relaxed">{item.question}</div>
+              style={{ borderColor: isViolation ? "#9E9E9E" : "#D1D1D1", background: isViolation ? "#F2F2F2" : "#F7F7F7" }}>
+              <div className="text-[11px] text-[#000000] mb-2 leading-relaxed">{item.question}</div>
               <div className="flex items-center gap-2">
                 <button
                   data-testid={`checklist-yes-${i}`}
                   onClick={() => toggle(i, "yes")}
                   className="flex items-center gap-1.5 px-3 py-1 rounded-md text-[11px] font-medium transition-all border"
                   style={state === "yes"
-                    ? { background: "rgba(52,211,153,0.15)", color: "#34D399", borderColor: "rgba(52,211,153,0.3)" }
-                    : { background: "transparent", color: "#8B95A8", borderColor: "#1F2937" }}
+                    ? { background: "#E8E8E8", color: "#4F4F4F", borderColor: "#9E9E9E" }
+                    : { background: "transparent", color: "#9E9E9E", borderColor: "#D1D1D1" }}
                 >
                   {state === "yes" ? <CheckCircle2 size={11} /> : <Circle size={11} />} Yes
                 </button>
@@ -326,15 +326,15 @@ function DeactivationChecklist() {
                   onClick={() => toggle(i, "no")}
                   className="flex items-center gap-1.5 px-3 py-1 rounded-md text-[11px] font-medium transition-all border"
                   style={state === "no"
-                    ? { background: "rgba(232,163,23,0.15)", color: "#E8A317", borderColor: "rgba(232,163,23,0.3)" }
-                    : { background: "transparent", color: "#8B95A8", borderColor: "#1F2937" }}
+                    ? { background: "#E0E0E0", color: "#000000", borderColor: "#9E9E9E" }
+                    : { background: "transparent", color: "#9E9E9E", borderColor: "#D1D1D1" }}
                 >
                   {state === "no" ? <CheckCircle2 size={11} /> : <Circle size={11} />} No
                 </button>
               </div>
               {(showNote || showYesWarn || showNoWarn) && (
                 <div className="mt-2 text-[10px] leading-relaxed flex items-start gap-1.5"
-                  style={{ color: isViolation ? "#E8A317" : TEAL }}>
+                  style={{ color: isViolation ? "#000000" : TEAL }}>
                   {isViolation && <AlertTriangle size={10} className="mt-0.5 shrink-0" />}
                   {showNote && <span style={{ color: TEAL }}>{item.yesNote}</span>}
                   {showYesWarn && <span>{item.yesWarning}</span>}
@@ -349,25 +349,25 @@ function DeactivationChecklist() {
       {/* Summary */}
       {answered > 0 && (
         <div className="mt-4 p-3 rounded-md border"
-          style={{ background: violations > 0 ? "rgba(232,163,23,0.08)" : "rgba(38,166,154,0.08)", borderColor: violations > 0 ? "rgba(232,163,23,0.3)" : "rgba(38,166,154,0.3)" }}>
-          <div className="text-[11px] font-medium" style={{ color: violations > 0 ? "#E8A317" : TEAL }}>
+          style={{ background: violations > 0 ? "#F2F2F2" : "#F2F2F2", borderColor: violations > 0 ? "#9E9E9E" : "#D1D1D1" }}>
+          <div className="text-[11px] font-medium" style={{ color: violations > 0 ? "#000000" : TEAL }}>
             {violations === 0 ? "No violations detected in your answers." : `${violations} potential rights violation${violations > 1 ? "s" : ""} detected.`}
           </div>
           {violations > 0 && (
-            <div className="text-[10px] text-[#A3AEC0] mt-1">Document everything and contact OLS immediately.</div>
+            <div className="text-[10px] text-[#4F4F4F] mt-1">Document everything and contact OLS immediately.</div>
           )}
         </div>
       )}
 
       {/* OLS Callout */}
-      <div className="mt-4 p-3 rounded-md bg-[#0E3D39]/30 border border-[#1F2937]">
+      <div className="mt-4 p-3 rounded-md bg-[#E0E0E0]/30 border border-[#D1D1D1]">
         <div className="text-[10px] font-medium mb-2" style={{ color: TEAL }}>Office of Labor Standards</div>
         <div className="space-y-1.5">
-          <a href="tel:2062565297" className="flex items-center gap-2 text-[10px] text-[#A3AEC0] hover:text-[#F5F5F5] transition-colors">
+          <a href="tel:2062565297" className="flex items-center gap-2 text-[10px] text-[#4F4F4F] hover:text-[#000000] transition-colors">
             <Phone size={10} style={{ color: TEAL }} />
             206-256-5297
           </a>
-          <a href="mailto:laborstandards@seattle.gov" className="flex items-center gap-2 text-[10px] text-[#A3AEC0] hover:text-[#F5F5F5] transition-colors">
+          <a href="mailto:laborstandards@seattle.gov" className="flex items-center gap-2 text-[10px] text-[#4F4F4F] hover:text-[#000000] transition-colors">
             <Mail size={10} style={{ color: TEAL }} />
             laborstandards@seattle.gov
           </a>
@@ -386,7 +386,7 @@ export default function PayCalculatorPage() {
             <PayCalculator />
             <DeactivationChecklist />
           </div>
-          <div className="text-[9px] text-[#8B95A8] mt-5 pb-2">
+          <div className="text-[9px] text-[#9E9E9E] mt-5 pb-2">
             bullecloud.com · Rate information sourced from Seattle Office of Labor Standards. Not legal advice.
           </div>
         </main>
