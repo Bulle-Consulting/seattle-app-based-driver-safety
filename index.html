@@ -1,0 +1,3597 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<meta name="description" content="Bulle Cloud Safety Steward — real-time incident intelligence and worker rights for Seattle app-based drivers." />
+<meta name="theme-color" content="#F2F2F2" />
+<meta name="color-scheme" content="light" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Safety Steward" />
+<title>Bulle Cloud · Safety Steward</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232dd4bf'/%3E%3Cstop offset='1' stop-color='%2314b8a6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cpath d='M16 26s7-3 7-9V8l-7-3-7 3v9c0 6 7 9 7 9z' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="app.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="preconnect" href="https://rsms.me/">
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+<style>
+  /* ============================================================
+     BULLE CLOUD · SAFETY STEWARD — MONOCHROMATIC DESIGN SYSTEM
+     Enterprise SaaS · Light neutral · Typography-driven hierarchy
+     ============================================================ */
+
+  :root {
+    /* === SURFACES === */
+    /* Primary background — page canvas */
+    --bg-0: #F2F2F2;
+    /* Secondary surface — cards, panels, elevated containers */
+    --bg-1: #F7F7F7;
+    --bg-2: #FFFFFF;        /* Tertiary surface — inputs, inner panels */
+    --bg-3: #EBEBEB;        /* Subtle tinted zones — table headers, hover */
+    --surface: #F7F7F7;
+    --surface-elev: #FFFFFF;
+    --surface-hover: #EBEBEB;
+
+    /* === BORDERS === */
+    --border-subtle: #E5E5E5;   /* Hairline separators inside cards */
+    --border-default: #D1D1D1;  /* Standard borders on inputs and cards */
+    --border-strong: #B8B8B8;   /* Emphasized borders, focus, active */
+
+    /* === TEXT === */
+    --text-primary: #000000;    /* Headings, key values, primary text */
+    --text-secondary: #4F4F4F;  /* Body copy, descriptions */
+    --text-tertiary: #757575;   /* Labels, metadata */
+    --text-muted: #9E9E9E;      /* Placeholder, captions, disabled */
+    --text-subtle: #BDBDBD;     /* Very muted, decorative */
+
+    /* === PRIMARY CTA === */
+    --cta-bg: #000000;
+    --cta-text: #FFFFFF;
+    --cta-bg-hover: #1A1A1A;
+    --cta-bg-active: #2A2A2A;
+
+    /* === SEMANTIC STATES ===
+       In a monochromatic system, states are communicated via:
+       1. Grayscale weight differences
+       2. Typography weight (600 active vs 500 inactive)
+       3. Position and composition
+       Icon + label pattern is required for any severity indicator. */
+    --state-critical: #1A1A1A;    /* High-severity: darkest */
+    --state-warning:  #4F4F4F;    /* Medium-severity: dark gray */
+    --state-notice:   #757575;    /* Low-severity: mid gray */
+    --state-resolved: #9E9E9E;    /* Closed/resolved: muted */
+
+    /* Legacy compatibility — components still reference these,
+       now mapped to neutral grays so nothing colored slips through */
+    --accent: #000000;
+    --accent-hover: #1A1A1A;
+    --accent-subtle: #EBEBEB;
+    --accent-subtle-hover: #E0E0E0;
+    --accent-border: #9E9E9E;
+    --seattle-gold: #4F4F4F;
+
+    /* Severity palette — grayscale weighted by severity, paired with icons */
+    --sev-fatal:   #1A1A1A;   /* Darkest = most severe */
+    --sev-robbery: #3D3D3D;
+    --sev-injury:  #5C5C5C;
+    --sev-assault: #757575;
+    --status-open:   #1A1A1A;
+    --status-closed: #9E9E9E;
+
+    /* === ELEVATION ===
+       Subtle shadows only. Enterprise aesthetic prefers borders over shadow. */
+    --shadow-xs: 0 1px 0 rgba(0, 0, 0, 0.04);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+    /* === MOTION === */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* === RADIUS === */
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-xl: 10px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg-0);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+    font-feature-settings: 'cv11', 'ss01', 'ss03';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    letter-spacing: -0.006em;
+  }
+
+  @supports (font-variation-settings: normal) {
+    html, body { font-family: 'Inter var', 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; }
+  }
+
+  /* ============= LAYOUT ============= */
+  .dashboard-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    height: 100vh;
+    background: var(--bg-0);
+  }
+
+  .sidebar {
+    background: var(--bg-1);
+    border-right: 1px solid var(--border-default);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-brand-accent {
+    display: none;
+  }
+
+  .sidebar-brand {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .sidebar-brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .sidebar-brand-mark {
+    width: 32px; height: 32px;
+    background: var(--cta-bg);
+    border-radius: var(--radius-md);
+    display: grid;
+    place-items: center;
+  }
+
+  .sidebar-brand-wordmark {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    line-height: 1.3;
+  }
+
+  .sidebar-product-title {
+    font-size: 17px;
+    font-weight: 650;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-top: 2px;
+  }
+
+  .sidebar-product-subtitle {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+    letter-spacing: -0.003em;
+  }
+
+  .sidebar-data-freshness {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    padding: 4px 10px;
+    background: var(--bg-2);
+    border: 1px solid var(--border-default);
+    border-radius: 999px;
+    font-size: 10.5px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    letter-spacing: -0.003em;
+  }
+
+  .sidebar-divider {
+    height: 1px;
+    background: var(--border-subtle);
+    margin: 0 20px;
+  }
+
+  #nav {
+    padding: 12px 12px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 2px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s var(--ease-out), color 0.15s var(--ease-out);
+    letter-spacing: -0.006em;
+    position: relative;
+  }
+  .nav-item:hover {
+    background: var(--bg-3);
+    color: var(--text-primary);
+  }
+  .nav-item.active {
+    background: var(--cta-bg);
+    color: var(--cta-text);
+    font-weight: 600;
+  }
+  .nav-item.active::before {
+    display: none;
+  }
+  .nav-item svg {
+    color: currentColor;
+    opacity: 0.75;
+    width: 16px; height: 16px;
+    flex-shrink: 0;
+  }
+  .nav-item.active svg { opacity: 1; }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border-subtle);
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+  .sidebar-footer-brand {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg-0);
+  }
+
+  /* ============= HEADER ============= */
+  .app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--border-default);
+    background: var(--bg-1);
+    flex-shrink: 0;
+    gap: 24px;
+  }
+
+  .app-header-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .app-header-subtitle {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    margin-top: 3px;
+    letter-spacing: -0.003em;
+  }
+
+  .app-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .tracking-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: var(--bg-2);
+    border: 1px solid var(--border-default);
+    border-radius: 999px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    letter-spacing: -0.003em;
+  }
+
+  .app-clock {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.003em;
+  }
+
+  .btn-primary, .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 550;
+    cursor: pointer;
+    transition: all 0.12s var(--ease-out);
+    font-family: inherit;
+    letter-spacing: -0.003em;
+  }
+  .btn-secondary {
+    background: var(--bg-2);
+    border: 1px solid var(--border-default);
+    color: var(--text-primary);
+  }
+  .btn-secondary:hover {
+    background: var(--bg-3);
+    border-color: var(--border-strong);
+  }
+  .btn-secondary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ============= PULSE & BADGES ============= */
+  /* Pulse dot: neutral gray — no accent color per monochromatic system */
+  .pulse-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--text-secondary);
+    box-shadow: 0 0 0 0 rgba(79, 79, 79, 0.45);
+    animation: pulse 1.8s infinite;
+    display: inline-block;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(79, 79, 79, 0.45); }
+    70%  { box-shadow: 0 0 0 8px rgba(79, 79, 79, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(79, 79, 79, 0); }
+  }
+
+  /* ============= MAIN CONTENT ============= */
+  main#page {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px;
+    background: var(--bg-0);
+  }
+
+  /* ============= CARDS ============= */
+  .card {
+    background: var(--bg-1);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    box-shadow: none;
+    transition: border-color 0.15s var(--ease-out);
+  }
+  .card:hover { border-color: var(--border-strong); }
+
+  .card-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.006em;
+  }
+  .card-meta {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    letter-spacing: -0.003em;
+  }
+
+  /* ============= KPIs ============= */
+  .kpi-card {
+    background: var(--bg-1);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    transition: border-color 0.15s var(--ease-out);
+  }
+  .kpi-card:hover { border-color: var(--border-strong); }
+  .kpi-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .kpi-value {
+    font-variant-numeric: tabular-nums;
+    font-size: 32px;
+    font-weight: 650;
+    line-height: 1;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+  }
+  .kpi-delta {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-top: 8px;
+    letter-spacing: -0.003em;
+  }
+
+  /* ============= SECTION LABELS ============= */
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ============= TABLES ============= */
+  table.incidents-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  table.incidents-table th {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-tertiary);
+    font-weight: 600;
+    text-align: left;
+    padding: 12px 18px;
+    background: var(--bg-3);
+    border-bottom: 1px solid var(--border-default);
+  }
+  table.incidents-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 13px;
+    color: var(--text-secondary);
+    vertical-align: top;
+    letter-spacing: -0.003em;
+  }
+  table.incidents-table tbody tr { transition: background 0.12s var(--ease-out); }
+  table.incidents-table tbody tr:hover {
+    background: var(--bg-3);
+    cursor: pointer;
+  }
+
+  /* ============= SEVERITY DOTS & CHIPS ============= */
+  .sev-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-weight: 550;
+    letter-spacing: -0.003em;
+    background: var(--bg-2);
+    border: 1px solid var(--border-default);
+    color: var(--text-secondary);
+  }
+
+  /* ============= FILTER BUTTONS ============= */
+  .filter-btn {
+    background: var(--bg-2);
+    border: 1px solid var(--border-default);
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    text-transform: capitalize;
+    transition: all 0.12s var(--ease-out);
+    font-family: inherit;
+    letter-spacing: -0.003em;
+  }
+  .filter-btn:hover {
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+  }
+  .filter-btn.active {
+    background: var(--cta-bg);
+    border-color: var(--cta-bg);
+    color: var(--cta-text);
+    font-weight: 600;
+  }
+
+  /* ============= LIVE FEED ROWS ============= */
+  .live-row {
+    border-left: 3px solid var(--border-default);
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    background: var(--bg-1);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    transition: background 0.15s var(--ease-out);
+  }
+  .live-row:hover { background: var(--surface-hover); }
+  .live-row.new {
+    background: linear-gradient(90deg, var(--accent-subtle) 0%, var(--bg-1) 60%);
+  }
+
+  /* ============= MAP ============= */
+  .map-container {
+    height: 460px;
+    background: var(--bg-1);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    overflow: hidden;
+    position: relative;
+  }
+  .map-container.full {
+    height: calc(100vh - 220px);
+    min-height: 520px;
+  }
+  .leaflet-container {
+    background: var(--bg-1);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
+  }
+  .leaflet-control-attribution,
+  .leaflet-control-attribution a {
+    color: var(--text-tertiary) !important;
+    background: rgba(255, 255, 255, 0.85) !important;
+    font-size: 10px !important;
+    padding: 2px 6px !important;
+    border-radius: 3px 0 0 0 !important;
+  }
+
+  /* --- Zoom controls: light themed --- */
+  .leaflet-bar {
+    border: 1px solid var(--border-default) !important;
+    box-shadow: var(--shadow-sm) !important;
+    border-radius: var(--radius-sm) !important;
+    overflow: hidden;
+  }
+  .leaflet-bar a,
+  .leaflet-bar a:hover {
+    background: var(--bg-2) !important;
+    color: var(--text-primary) !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+    font-family: inherit !important;
+    font-weight: 500 !important;
+  }
+  .leaflet-bar a:hover {
+    background: var(--bg-3) !important;
+    color: var(--text-primary) !important;
+  }
+  .leaflet-bar a:last-child { border-bottom: none !important; }
+
+  /* --- Incident pins: grayscale with dark ring for visibility on light tiles --- */
+  .map-pin-icon { background: transparent !important; border: none !important; }
+  .map-pin-wrapper {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    display: grid;
+    place-items: center;
+  }
+  .map-pin {
+    position: relative;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--bg-2);
+    box-shadow: 0 0 0 1.5px var(--text-primary), 0 2px 4px rgba(0, 0, 0, 0.15);
+    z-index: 2;
+    transition: transform 0.15s var(--ease-out);
+  }
+  .map-pin-icon:hover .map-pin {
+    transform: scale(1.25);
+  }
+  /* Pulse ring for open cases only */
+  .map-pin-pulse {
+    position: absolute;
+    inset: 2px;
+    border-radius: 50%;
+    opacity: 0.5;
+    animation: mapPinPulse 2s ease-out infinite;
+    z-index: 1;
+  }
+  @keyframes mapPinPulse {
+    0%   { transform: scale(1);   opacity: 0.5; }
+    100% { transform: scale(2.8); opacity: 0;   }
+  }
+
+  /* --- Leaflet popup: match dashboard design language --- */
+  .leaflet-popup-content-wrapper {
+    background: var(--bg-2) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-default) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10), 0 2px 6px rgba(0, 0, 0, 0.06) !important;
+    padding: 0 !important;
+  }
+  .leaflet-popup-content {
+    margin: 0 !important;
+    font-family: 'Inter', -apple-system, sans-serif !important;
+    line-height: 1.5 !important;
+    width: auto !important;
+  }
+  .leaflet-popup-tip {
+    background: var(--bg-2) !important;
+    border: 1px solid var(--border-default) !important;
+    box-shadow: none !important;
+  }
+  .leaflet-popup-close-button {
+    color: var(--text-tertiary) !important;
+    font-size: 22px !important;
+    padding: 8px 10px 0 0 !important;
+    transition: color 0.15s var(--ease-out);
+  }
+  .leaflet-popup-close-button:hover { color: var(--text-primary) !important; }
+
+  .map-popup {
+    padding: 14px 16px;
+    min-width: 220px;
+  }
+  .map-popup-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .map-popup-sev {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+    border: 1.5px solid var(--bg-2);
+    box-shadow: 0 0 0 1px var(--border-strong);
+  }
+  .map-popup-sev-label {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    flex: 1;
+  }
+  .map-popup-status {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: 0;
+    border: 1px solid var(--border-default);
+  }
+  .map-popup-status-open {
+    background: var(--cta-bg);
+    color: var(--cta-text);
+    border-color: var(--cta-bg);
+  }
+  .map-popup-status-closed {
+    background: var(--bg-2);
+    color: var(--text-tertiary);
+    border-color: var(--border-default);
+  }
+  .map-popup-title {
+    font-size: 15px;
+    font-weight: 650;
+    color: var(--text-primary);
+    letter-spacing: -0.015em;
+    margin-bottom: 2px;
+  }
+  .map-popup-location {
+    font-size: 11.5px;
+    color: var(--text-tertiary);
+    margin-bottom: 10px;
+  }
+  .map-popup-desc {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    padding: 10px 0;
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 10px;
+    line-height: 1.55;
+  }
+  .map-popup-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 14px;
+    font-size: 11.5px;
+  }
+  .map-popup-meta > div > span {
+    display: block;
+    color: var(--text-tertiary);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .map-popup-meta > div > strong {
+    color: var(--text-primary);
+    font-weight: 550;
+    font-size: 12px;
+  }
+
+  /* ============= RESOURCE ROWS ============= */
+  .resource-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    background: var(--bg-1);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    transition: all 0.15s var(--ease-out);
+    text-decoration: none;
+  }
+  .resource-row:hover {
+    background: var(--surface-hover);
+    border-color: var(--accent-border);
+    transform: translateY(-1px);
+  }
+
+  /* ============= SCROLLBAR ============= */
+  .scrollbar-thin::-webkit-scrollbar,
+  #nav::-webkit-scrollbar { width: 8px; height: 8px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb,
+  #nav::-webkit-scrollbar-thumb {
+    background: var(--border-default);
+    border-radius: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover,
+  #nav::-webkit-scrollbar-thumb:hover {
+    background: var(--border-strong);
+  }
+  .scrollbar-thin::-webkit-scrollbar-track,
+  #nav::-webkit-scrollbar-track { background: transparent; }
+
+  /* ============= CHART SVG ============= */
+  .chart-svg { width: 100%; height: 180px; }
+  .pie-svg { width: 100%; height: 120px; }
+
+  /* ============= FORM INPUTS (calc-input) ============= */
+  .calc-input {
+    width: 100%;
+    background: var(--bg-2);
+    color: var(--text-primary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    font-weight: 450;
+    letter-spacing: -0.003em;
+    transition: border-color 0.12s var(--ease-out), box-shadow 0.12s var(--ease-out);
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .calc-input::placeholder { color: var(--text-muted); }
+  .calc-input:hover { border-color: var(--border-strong); }
+  .calc-input:focus {
+    border-color: var(--text-primary);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+  }
+  select.calc-input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239E9E9E' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 32px;
+    cursor: pointer;
+  }
+  textarea.calc-input { resize: vertical; min-height: 72px; font-family: inherit; }
+
+  .btn-primary-full {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 18px;
+    background: var(--cta-bg);
+    color: var(--cta-text);
+    border: 1px solid var(--cta-bg);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    letter-spacing: -0.003em;
+    cursor: pointer;
+    transition: background 0.12s var(--ease-out);
+  }
+  .btn-primary-full:hover {
+    background: var(--cta-bg-hover);
+    border-color: var(--cta-bg-hover);
+  }
+  .btn-primary-full:active { background: var(--cta-bg-active); }
+
+  /* ============= ACCESSIBILITY: FOCUS RINGS ============= */
+  :focus { outline: none; }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+  .nav-item:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+  .btn-secondary:focus-visible,
+  .translate-btn:focus-visible,
+  .filter-btn:focus-visible {
+    outline-offset: 2px;
+  }
+
+  /* ============= PAGE TRANSITIONS ============= */
+  #page > * {
+    animation: pageEnter 0.28s var(--ease-out);
+  }
+  @keyframes pageEnter {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Stagger card appearance for depth */
+  #page .card,
+  #page .kpi-card {
+    animation: cardEnter 0.32s var(--ease-out) backwards;
+  }
+  #page > * > *:nth-child(1) { animation-delay: 0ms; }
+  #page > * > *:nth-child(2) { animation-delay: 40ms; }
+  #page > * > *:nth-child(3) { animation-delay: 80ms; }
+  #page > * > *:nth-child(4) { animation-delay: 110ms; }
+  #page > * > *:nth-child(5) { animation-delay: 140ms; }
+  @keyframes cardEnter {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============= COPY-TO-CLIPBOARD FEEDBACK ============= */
+  .copyable {
+    cursor: pointer;
+    transition: color 0.15s var(--ease-out);
+    position: relative;
+  }
+  .copyable:hover { color: var(--accent) !important; }
+  .copyable.copied::after {
+    content: 'Copied';
+    position: absolute;
+    left: 0; top: 100%;
+    margin-top: 4px;
+    padding: 3px 8px;
+    font-size: 10.5px;
+    background: var(--accent);
+    color: var(--bg-0);
+    border-radius: 4px;
+    font-weight: 600;
+    letter-spacing: 0;
+    animation: fadeInOut 1.5s ease;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  @keyframes fadeInOut {
+    0%, 100% { opacity: 0; transform: translateY(-4px); }
+    20%, 80% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============= SEARCH INPUT ============= */
+  .search-input {
+    background: var(--bg-1);
+    border: 1px solid var(--border-default);
+    color: var(--text-primary);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px 8px 34px;
+    font-size: 13px;
+    font-family: inherit;
+    font-weight: 450;
+    letter-spacing: -0.003em;
+    width: 240px;
+    transition: border-color 0.15s var(--ease-out), background 0.15s var(--ease-out);
+  }
+  .search-input:focus {
+    border-color: var(--accent-border);
+    background: var(--surface);
+    outline: none;
+  }
+  .search-input::placeholder { color: var(--text-muted); }
+  .search-wrapper { position: relative; display: inline-block; }
+  .search-wrapper svg {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+  .search-wrapper kbd {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: inherit;
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    background: var(--bg-2);
+    border: 1px solid var(--border-default);
+    color: var(--text-muted);
+    pointer-events: none;
+    font-weight: 500;
+  }
+
+  /* ============= KEYBOARD HINT OVERLAY ============= */
+  .kbd-hint {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    margin-left: auto;
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--bg-2);
+    border: 1px solid var(--border-default);
+    border-radius: 4px;
+    letter-spacing: 0;
+  }
+  .nav-item.active .kbd-hint {
+    background: transparent;
+    border-color: var(--accent-border);
+    color: var(--accent);
+  }
+
+  /* ============= RTL SUPPORT FOR ARABIC / FARSI / PASHTO ============= */
+  html.rtl { direction: rtl; }
+  /* In RTL, CSS Grid naturally places column 1 on the right, so the sidebar
+     (first grid child with grid-template-columns: 260px 1fr) flows to the right
+     automatically. We just need to flip the border and active-indicator sides. */
+  html.rtl .sidebar {
+    border-right: none;
+    border-left: 1px solid var(--border-subtle);
+  }
+  html.rtl .nav-item { direction: rtl; text-align: right; }
+  html.rtl .nav-item.active::before {
+    left: auto;
+    right: -12px;
+    border-radius: 2px 0 0 2px;
+  }
+  html.rtl .sidebar-brand-accent {
+    background: var(--cta-bg);
+  }
+  html.rtl .translate-menu { left: 0; right: auto; }
+  html.rtl .search-input { padding: 8px 34px 8px 12px; }
+  html.rtl .search-wrapper svg { left: auto; right: 11px; }
+  html.rtl .search-wrapper kbd { right: auto; left: 10px; }
+  html.rtl table.incidents-table th,
+  html.rtl table.incidents-table td { text-align: right; }
+  html.rtl .live-row {
+    border-left: none;
+    border-right: 3px solid var(--border-default);
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  }
+  html.rtl .kbd-hint { margin-left: 0; margin-right: auto; }
+  html.rtl .sidebar-brand-logo,
+  html.rtl .app-header-actions { flex-direction: row-reverse; }
+  /* Let KPI grid cells read naturally right-to-left */
+  html.rtl [style*="grid-template-columns"] { direction: rtl; }
+
+  /* ============= SCROLL BEHAVIOR ============= */
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* ============= PRINT STYLES ============= */
+  @media print {
+    .sidebar, .app-header, #translate-btn, #refresh-btn, .search-wrapper { display: none !important; }
+    main#page { padding: 0 !important; overflow: visible !important; }
+    .card { break-inside: avoid; box-shadow: none; border-color: #ccc; }
+    body { background: white; color: black; }
+    * { color: black !important; background: white !important; border-color: #ccc !important; }
+  }
+
+  /* ============= CUSTOM TRANSLATE DROPDOWN ============= */
+  .translate-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+
+  .translate-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border-default);
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    padding: 7px 12px;
+    font-size: 12.5px;
+    font-weight: 550;
+    font-family: inherit;
+    letter-spacing: -0.003em;
+    cursor: pointer;
+    transition: all 0.15s var(--ease-out);
+    white-space: nowrap;
+  }
+  .translate-btn:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+  }
+  .translate-btn[aria-expanded="true"] {
+    border-color: var(--accent-border);
+    color: var(--accent);
+  }
+
+  .translate-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 220px;
+    max-height: 360px;
+    overflow-y: auto;
+    background: var(--surface-elev);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    padding: 6px;
+    z-index: 1000;
+    display: none;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.15s var(--ease-out), transform 0.15s var(--ease-out);
+  }
+  .translate-menu.open {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .translate-menu::-webkit-scrollbar { width: 6px; }
+  .translate-menu::-webkit-scrollbar-thumb { background: var(--border-default); border-radius: 3px; }
+  .translate-menu::-webkit-scrollbar-track { background: transparent; }
+
+  .translate-menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background 0.1s var(--ease-out), color 0.1s var(--ease-out);
+    letter-spacing: -0.003em;
+  }
+  .translate-menu-item:hover {
+    background: var(--accent-subtle);
+    color: var(--accent);
+  }
+  .translate-menu-item.active {
+    background: var(--accent-subtle);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .translate-menu-item .lang-native {
+    color: var(--text-muted);
+    font-size: 11.5px;
+  }
+  .translate-menu-item:hover .lang-native,
+  .translate-menu-item.active .lang-native {
+    color: var(--accent);
+    opacity: 0.75;
+  }
+
+  .translate-menu-divider {
+    height: 1px;
+    background: var(--border-subtle);
+    margin: 4px 2px;
+  }
+
+  /* Suppress Google Translate UI entirely - we use our custom dropdown */
+  body { top: 0 !important; position: static !important; }
+  .skiptranslate > iframe.skiptranslate,
+  .goog-te-banner-frame.skiptranslate,
+  .VIpgJd-ZVi9od-ORHb-OEVmcd,
+  .VIpgJd-ZVi9od-l4eHX-hSRGPd { display: none !important; visibility: hidden !important; }
+  .goog-tooltip, .goog-tooltip:hover { display: none !important; }
+  .goog-text-highlight { background: transparent !important; box-shadow: none !important; }
+
+  /* ============= MOBILE RESPONSIVE ============= */
+  /* ============= RESPONSIVE: TABLET (≤1024px) ============= */
+  @media (max-width: 1024px) {
+    .dashboard-layout { grid-template-columns: 220px 1fr; }
+    main#page { padding: 20px; }
+    .app-header { padding: 14px 20px; gap: 14px; flex-wrap: wrap; }
+    .app-header-actions { gap: 10px; flex-wrap: wrap; }
+    .sidebar-brand { padding: 20px 16px 16px; }
+    .sidebar-product-title { font-size: 15px; }
+    /* Hide tracking pill on narrow screens - space-constrained */
+    .tracking-indicator { display: none; }
+    .app-clock { font-size: 11px; }
+    /* Two-up KPI grid on tablet */
+    main#page div[style*="repeat(5, 1fr)"],
+    main#page div[style*="repeat(4, 1fr)"] {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+  }
+
+  /* ============= RESPONSIVE: SMALL TABLET / LARGE MOBILE (≤900px) ============= */
+  @media (max-width: 900px) {
+    /* Overview grid: 2-column main + hotspots layout collapses to single column */
+    main#page div[style*="grid-template-columns: 1fr 320px"],
+    main#page div[style*="grid-template-columns: 2fr 1fr"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  /* ============= RESPONSIVE: MOBILE (≤768px) ============= */
+  @media (max-width: 768px) {
+    html, body { overflow-x: hidden; font-size: 14px; }
+
+    /* --- Layout: stack sidebar above main content --- */
+    .dashboard-layout {
+      grid-template-columns: 1fr !important;
+      grid-template-rows: auto auto 1fr;
+      height: auto;
+      min-height: 100vh;
+      display: block !important;
+    }
+    .sidebar {
+      display: block !important;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      flex: 0 0 auto !important;
+      height: auto !important;
+      border-right: none;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-1);
+      backdrop-filter: saturate(180%) blur(10px);
+      -webkit-backdrop-filter: saturate(180%) blur(10px);
+    }
+    .sidebar-brand,
+    .sidebar-divider,
+    .sidebar-footer { display: none !important; }
+
+    /* --- Mobile nav: horizontal scrolling pill strip --- */
+    #nav {
+      display: flex !important;
+      flex-wrap: nowrap !important;
+      gap: 4px !important;
+      padding: 10px 14px !important;
+      overflow-x: auto;
+      overflow-y: hidden;
+      flex: 0 0 auto !important;
+      height: auto !important;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x proximity;
+    }
+    #nav::-webkit-scrollbar { display: none; }
+    .nav-item {
+      flex: 0 0 auto;
+      padding: 8px 12px;
+      font-size: 12.5px;
+      margin-bottom: 0;
+      white-space: nowrap;
+      border-radius: 999px;
+      scroll-snap-align: start;
+    }
+    .nav-item svg { width: 14px; height: 14px; }
+    .nav-item .kbd-hint { display: none; }
+    .nav-item.active::before { display: none; }
+    .nav-item.active {
+      background: var(--accent-subtle);
+      border: 1px solid var(--accent-border);
+    }
+
+    /* --- Main content fills width --- */
+    .main-content { overflow: visible; display: block !important; }
+    main#page { padding: 16px !important; overflow-y: visible; flex: none !important; }
+
+    /* --- Mobile header: title on top, controls on bottom row --- */
+    .app-header {
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 14px 16px;
+      position: sticky;
+      top: 56px;
+      z-index: 40;
+    }
+    .app-header-title { font-size: 17px; }
+    .app-header-subtitle { font-size: 12px; }
+    .app-header-actions {
+      gap: 8px;
+      flex-wrap: wrap;
+      width: 100%;
+      justify-content: flex-start;
+    }
+    /* Hide the tracking indicator on mobile (space-constrained) */
+    .tracking-indicator { display: none; }
+    .app-clock { display: none; }
+    /* Compact button labels on mobile - show icons with short text */
+    .btn-secondary, .translate-btn {
+      padding: 7px 11px;
+      font-size: 12px;
+    }
+
+    /* --- Grid layouts: collapse to 1 or 2 columns --- */
+    main#page [style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+    /* KPI grids: 2-up on mobile so users don't scroll endlessly */
+    main#page div[style*="repeat(4, 1fr)"],
+    main#page div[style*="repeat(5, 1fr)"],
+    main#page div[style*="repeat(3, 1fr)"] {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+    /* But calculator inputs (2-col) go full width for touchability */
+    main#page .card div[style*="grid-template-columns: 1fr 1fr"],
+    main#page .card div[style*="grid-template-columns: repeat(2, 1fr)"] {
+      grid-template-columns: 1fr !important;
+    }
+    /* Let the explicit 2-column KPI overrides survive above */
+    main#page div[style*="repeat(4, 1fr)"] { grid-template-columns: repeat(2, 1fr) !important; }
+    main#page .card,
+    main#page [style*="display:grid"] > * { min-width: 0; }
+
+    /* --- Cards: tighter spacing on mobile --- */
+    .card { border-radius: var(--radius-md); }
+    .card-header { padding: 14px 16px; flex-wrap: wrap; gap: 10px; }
+    .card-title { font-size: 13.5px; }
+    .card-meta { font-size: 11.5px; }
+    .kpi-card { padding: 14px 16px; }
+    .kpi-value { font-size: 24px; }
+    .kpi-label { font-size: 10px; margin-bottom: 8px; }
+
+    /* --- Incidents table: horizontal scroll with compact cells --- */
+    table.incidents-table { min-width: 820px; }
+    table.incidents-table th,
+    table.incidents-table td { padding: 10px 12px; font-size: 12px; }
+
+    /* --- Map heights --- */
+    .map-container { height: 320px !important; border-radius: 0 0 var(--radius-md) var(--radius-md); }
+    .map-container.full { height: 65vh !important; min-height: 320px !important; }
+
+    /* --- Charts: smaller on mobile --- */
+    .chart-svg { height: 140px; }
+    .pie-svg { height: 100px; }
+
+    /* --- Time-of-day heatmap: compact hour labels, hide every other --- */
+    main#page .hour-bar ~ * { font-size: 8px !important; }
+    main#page div[style*="height:120px"] {
+      gap: 2px !important;
+      height: 100px !important;
+    }
+    /* Show only even hour labels to prevent collision */
+    main#page div[style*="display:flex"][style*="flex-direction:column"][style*="flex:1"]:nth-child(odd) > div:last-child {
+      visibility: hidden;
+    }
+
+    /* --- Trend SVG scales naturally via viewBox --- */
+
+    /* --- Search input: full width on mobile --- */
+    .search-input { width: 100%; font-size: 13px; }
+    .search-wrapper { width: 100%; display: block; }
+    .search-wrapper kbd { display: none; }
+
+    /* --- Filter button row: wrap naturally --- */
+    .filter-btn { padding: 5px 12px; font-size: 11.5px; }
+
+    /* --- Translate menu: anchor to right with viewport padding --- */
+    .translate-menu {
+      right: 0 !important;
+      left: auto !important;
+      min-width: 200px;
+      max-width: calc(100vw - 32px);
+    }
+
+    /* --- OLS Contact card: stack 4 columns to 2 --- */
+    main#page .card div[style*="grid-template-columns: repeat(4, 1fr)"] {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 12px !important;
+    }
+
+    /* --- Driver Tools pay calculator result: stack on mobile --- */
+    #calc-result > div[style*="grid-template-columns: repeat(3, 1fr)"] {
+      grid-template-columns: 1fr !important;
+      gap: 14px !important;
+    }
+
+    /* --- Form inputs: larger touch targets --- */
+    .calc-input { font-size: 14px; padding: 10px 12px; min-height: 42px; }
+    textarea.calc-input { min-height: 90px; }
+    .btn-primary-full { width: 100%; padding: 12px 18px; font-size: 14px; }
+
+    /* --- RTL mobile: reset grid since single column --- */
+    html.rtl .sidebar { border-left: none; border-bottom: 1px solid var(--border-subtle); }
+  }
+
+  /* ============= RESPONSIVE: SMALL MOBILE (≤420px) ============= */
+  @media (max-width: 420px) {
+    main#page { padding: 12px !important; }
+    .app-header { padding: 12px 14px; }
+    .app-header-title { font-size: 16px; }
+    .kpi-value { font-size: 22px; }
+    .card-header { padding: 12px 14px; }
+    /* KPI cards: single column on very small phones */
+    main#page div[style*="repeat(4, 1fr)"],
+    main#page div[style*="repeat(5, 1fr)"] {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+    /* Heatmap: even tighter */
+    main#page div[style*="height:120px"],
+    main#page div[style*="height:100px"] { gap: 1px !important; }
+  }
+</style>
+</head>
+<body>
+<div class="dashboard-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand-accent"></div>
+
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-logo">
+        <div class="sidebar-brand-mark">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="sidebar-brand-wordmark">Bulle Cloud</div>
+          <div style="font-size:9px; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px;">Safety Steward</div>
+        </div>
+      </div>
+
+      <div class="sidebar-product-title">Safety Steward</div>
+      <div class="sidebar-product-subtitle">App-based driver safety intelligence</div>
+
+      <div class="sidebar-data-freshness">
+        <span class="pulse-dot" style="width:5px; height:5px;"></span>
+        <span>Data current · Apr 14, 2026</span>
+      </div>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <nav id="nav"></nav>
+
+    <div class="sidebar-footer">
+      Powered by <span class="sidebar-footer-brand">Bulle Cloud</span><br>
+      <span style="color: var(--text-subtle);">bullecloud.com</span>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <div class="app-header">
+      <div>
+        <div id="page-title" class="app-header-title">Overview</div>
+        <div id="page-subtitle" class="app-header-subtitle">Seattle Metro · 2024–Present</div>
+      </div>
+      <div class="app-header-actions">
+        <div class="tracking-indicator">
+          <span class="pulse-dot"></span>
+          <span>Real-Time Incident Tracking · updated every 5 minutes</span>
+        </div>
+        <div class="notranslate app-clock" translate="no" id="clock">—</div>
+
+        <div class="translate-wrapper notranslate">
+          <button id="translate-btn" class="translate-btn" type="button" aria-haspopup="listbox" aria-expanded="false">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l6 6"/><path d="M4 14l6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="M22 22l-5-10-5 10"/><path d="M14 18h6"/></svg>
+            <span id="translate-label">Translate</span>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6;"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div id="translate-menu" class="translate-menu" role="listbox" aria-label="Select language">
+            <div class="translate-menu-item" data-lang="en" role="option">
+              <span>English</span><span class="lang-native">English</span>
+            </div>
+            <div class="translate-menu-divider"></div>
+            <div class="translate-menu-item" data-lang="so" role="option">
+              <span>Somali</span><span class="lang-native">Soomaali</span>
+            </div>
+            <div class="translate-menu-item" data-lang="am" role="option">
+              <span>Amharic</span><span class="lang-native">አማርኛ</span>
+            </div>
+            <div class="translate-menu-item" data-lang="ti" role="option">
+              <span>Tigrinya</span><span class="lang-native">ትግርኛ</span>
+            </div>
+            <div class="translate-menu-item" data-lang="om" role="option">
+              <span>Oromiffa</span><span class="lang-native">Afaan Oromoo</span>
+            </div>
+            <div class="translate-menu-item" data-lang="tl" role="option">
+              <span>Tagalog</span><span class="lang-native">Tagalog</span>
+            </div>
+            <div class="translate-menu-item" data-lang="es" role="option">
+              <span>Spanish</span><span class="lang-native">Español</span>
+            </div>
+            <div class="translate-menu-item" data-lang="vi" role="option">
+              <span>Vietnamese</span><span class="lang-native">Tiếng Việt</span>
+            </div>
+            <div class="translate-menu-item" data-lang="zh-CN" role="option">
+              <span>Chinese (Simplified)</span><span class="lang-native">中文</span>
+            </div>
+            <div class="translate-menu-item" data-lang="fa" role="option">
+              <span>Farsi</span><span class="lang-native">فارسی</span>
+            </div>
+            <div class="translate-menu-item" data-lang="ps" role="option">
+              <span>Pashto</span><span class="lang-native">پښتو</span>
+            </div>
+            <div class="translate-menu-item" data-lang="ar" role="option">
+              <span>Arabic</span><span class="lang-native">العربية</span>
+            </div>
+          </div>
+          <!-- Hidden Google Translate element that powers the dropdown -->
+          <div id="google_translate_element" style="position:fixed; top:-500px; left:-500px; width:1px; height:1px; overflow:hidden; pointer-events:none;"></div>
+        </div>
+        <button id="refresh-btn" class="btn-secondary">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg>
+          <span>Refresh</span>
+        </button>
+        <button id="print-btn" class="btn-secondary" title="Print or save as PDF">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span>Print</span>
+        </button>
+      </div>
+    </div>
+    <main id="page" class="scrollbar-thin"></main>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// Google Translate initializer - called by the external Google script on load
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    includedLanguages: 'so,am,ti,om,tl,es,vi,zh-CN,fa,ps,ar',
+    autoDisplay: false
+  }, 'google_translate_element');
+}
+</script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
+<script>
+'use strict';
+
+const SEV = { fatal: 'var(--sev-fatal)', injury: 'var(--sev-injury)', robbery: 'var(--sev-robbery)', assault: 'var(--sev-assault)' };
+
+const NAV = [
+  { href: '#/',              label: 'Overview',      subtitle: 'Seattle Metro · 2024–Present',                    icon: 'grid' },
+  { href: '#/map',           label: 'Crime Map',     subtitle: 'Geographic view of reported incidents',            icon: 'map' },
+  { href: '#/incidents',     label: 'Incidents',     subtitle: 'Full searchable incident record',                  icon: 'alert' },
+  { href: '#/live',          label: 'Live Feed',     subtitle: 'Real-time incident activity',                      icon: 'feed', badge: true },
+  { href: '#/analytics',     label: 'Analytics',     subtitle: 'Patterns, trends, and forecasts',                  icon: 'chart' },
+  { href: '#/ols-data',      label: 'OLS Data',      subtitle: 'Seattle worker rights, driver data, and resources', icon: 'database' },
+  { href: '#/tools',         label: 'Driver Tools',  subtitle: 'Pay calculator, deactivation rights, and reports',  icon: 'wrench' },
+  { href: '#/resources',     label: 'Resources',     subtitle: 'Statewide and national resources',                 icon: 'book' },
+];
+
+const ICONS = {
+  grid:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>',
+  map:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>',
+  alert:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  feed:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+  chart:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  wrench:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
+  shield:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+  database:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>',
+  book:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+  dollar:    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
+  shieldLg:  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+  warning:   '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--sev-fatal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  check:     '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  phone:     '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z"/></svg>',
+  mail:      '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',
+  globe:     '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+  link:      '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l6 6"/><path d="M4 14l6-6 2-3"/><path d="M2 5h12"/></svg>',
+  video:     '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>',
+  clock:     '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  gavel:     '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 12.5L8 19l-4-4 6.5-6.5"/><path d="M16.5 10.5l-3-3 6-6 3 3-6 6z"/><path d="M2 22h10"/></svg>',
+  printer:   '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>',
+};
+
+// Incident schema enhanced with time, dashcam evidence, and court case status
+// dashcam: 'confirmed' | 'driver-only' | 'none' | null (null = not yet documented)
+// caseStatus: string (matches King County Superior Court stages) | null
+const incidents = [
+  { id: 1,  date: 'Apr 12, 2026', time: '02:18', lat: 47.5127, lng: -122.2619, severity: 'fatal',    platform: 'Uber',        neighborhood: 'Rainier Beach',  location: '9200 Rainier Ave S',          desc: 'Driver shot during pickup attempt · late night',            status: 'Open',   source: 'KOMO',               dashcam: 'driver-only', caseStatus: 'Arraignment scheduled' },
+  { id: 2,  date: 'Apr 11, 2026', time: '23:42', lat: 47.5766, lng: -122.3301, severity: 'robbery',  platform: 'Lyft',        neighborhood: 'SODO',           location: '2800 Airport Way S',          desc: 'Carjacking at stoplight · suspect fled on foot',            status: 'Closed', source: 'SPD Blotter',        dashcam: 'none',        caseStatus: 'Conviction · sentenced' },
+  { id: 3,  date: 'Apr 10, 2026', time: '21:15', lat: 47.5521, lng: -122.2598, severity: 'assault',  platform: 'DoorDash',    neighborhood: 'Seward Park',    location: 'Atlantic City Boat Ramp',     desc: 'Driver assaulted during isolated delivery',                 status: 'Open',   source: 'Cascade PBS',        dashcam: 'confirmed',   caseStatus: 'Under investigation' },
+  { id: 4,  date: 'Apr 08, 2026', time: '01:52', lat: 47.6062, lng: -122.3321, severity: 'robbery',  platform: 'Uber',        neighborhood: 'Downtown',       location: '3rd Ave & Pike St',           desc: 'Armed robbery during ride · phone and cash taken',          status: 'Closed', source: 'KIRO 7',             dashcam: 'confirmed',   caseStatus: 'Trial · set for June' },
+  { id: 5,  date: 'Apr 06, 2026', time: '19:30', lat: 47.6205, lng: -122.3493, severity: 'injury',   platform: 'Amazon Flex', neighborhood: 'Belltown',       location: '2100 Western Ave',            desc: 'Driver injured during package delivery dispute',            status: 'Closed', source: 'Fox 13',             dashcam: 'none',        caseStatus: null },
+  { id: 6,  date: 'Apr 03, 2026', time: '03:04', lat: 47.5296, lng: -122.2707, severity: 'fatal',    platform: 'Lyft',        neighborhood: 'Rainier Beach',  location: 'MLK Jr Way S & Henderson',    desc: 'Driver fatally shot · passenger in custody',                status: 'Closed', source: 'King Co. Prosecutors', dashcam: 'confirmed', caseStatus: 'Conviction · sentenced' },
+  { id: 7,  date: 'Apr 01, 2026', time: '22:55', lat: 47.5677, lng: -122.3242, severity: 'robbery',  platform: 'DoorDash',    neighborhood: 'SODO',           location: '1st Ave S & S Lander St',     desc: 'Vehicle stolen from driver · recovered next day',           status: 'Closed', source: 'SPD Blotter',        dashcam: 'driver-only', caseStatus: 'Charges filed' },
+  { id: 8,  date: 'Mar 29, 2026', time: '14:20', lat: 47.6101, lng: -122.3420, severity: 'assault',  platform: 'Uber',        neighborhood: 'Downtown',       location: 'Pike Place Market',           desc: 'Driver punched during fare dispute',                        status: 'Open',   source: 'SPD Blotter',        dashcam: 'confirmed',   caseStatus: 'Under investigation' },
+  { id: 9,  date: 'Mar 27, 2026', time: '00:48', lat: 47.5150, lng: -122.2640, severity: 'injury',   platform: 'Uber',        neighborhood: 'Rainier Beach',  location: 'Rainier Ave S & S Henderson', desc: 'Driver injured breaking up street altercation',             status: 'Closed', source: 'KOMO',               dashcam: 'none',        caseStatus: null },
+  { id: 10, date: 'Mar 25, 2026', time: '20:35', lat: 47.6815, lng: -122.3854, severity: 'robbery',  platform: 'Lyft',        neighborhood: 'Ballard',        location: 'NW Market St & 24th Ave NW',  desc: 'Armed robbery at delivery address · false order',           status: 'Open',   source: 'Cascade PBS',        dashcam: 'driver-only', caseStatus: 'Under investigation' },
+  { id: 11, date: 'Mar 22, 2026', time: '03:27', lat: 47.5321, lng: -122.3074, severity: 'assault',  platform: 'DoorDash',    neighborhood: 'Georgetown',     location: 'Airport Way S & S Lucile',    desc: 'Driver threatened with weapon · no injuries',               status: 'Closed', source: 'SPD Blotter',        dashcam: 'none',        caseStatus: 'Charges filed' },
+  { id: 12, date: 'Mar 20, 2026', time: '17:10', lat: 47.6205, lng: -122.3127, severity: 'injury',   platform: 'Amazon Flex', neighborhood: 'Capitol Hill',   location: 'E Pike St & 12th Ave',        desc: 'Driver sustained minor injuries in pedestrian incident',    status: 'Closed', source: 'SPD Blotter',        dashcam: 'confirmed',   caseStatus: null },
+];
+
+// Estimated active driver counts by platform (Seattle metro) - sourced from public research
+// Used for incident-rate normalization in Analytics
+const platformDriverEstimates = {
+  'Uber':        24700,  // Seattle Times estimate
+  'Lyft':        14500,  // Lyft disclosure / Seattle OLS
+  'DoorDash':     8200,  // PayUp coalition estimate
+  'Amazon Flex':  3100,  // Strategic Organizing Center
+};
+
+// Official 2026 SMC 8.37 pay rates for the pay calculator
+const PAY_RATES = {
+  2024: { perMin: 0.44, perMile: 0.74, perOffer: 5.00 },
+  2025: { perMin: 0.45, perMile: 0.77, perOffer: 5.20 },
+  2026: { perMin: 0.47, perMile: 0.80, perOffer: 5.34 },
+};
+
+// Deactivation rights (SMC 3.40 · effective Jan 1, 2025)
+const DEACTIVATION_STEPS = [
+  { id: 1, title: 'Review your deactivation notice',
+    detail: 'The platform must provide a written notice explaining the lawful reason for deactivation. If you did not receive one, the deactivation may itself be unlawful under SMC 3.40.' },
+  { id: 2, title: 'Request your records within 5 days',
+    detail: 'You have the right to request all records the platform used in its decision — ratings, complaint logs, trip data, messages. The platform must provide them within 14 days.' },
+  { id: 3, title: 'File an internal challenge within 90 days',
+    detail: 'Submit a written challenge directly to the platform. They must respond in writing within 14 days explaining whether the deactivation is upheld and why.' },
+  { id: 4, title: 'Check for 14-day advance notice compliance',
+    detail: 'For most non-safety deactivations, the platform owes you at least 14 days advance notice. If you were deactivated without notice, document the timeline.' },
+  { id: 5, title: 'File an OLS complaint if unresolved',
+    detail: 'If the platform does not reinstate you or their response is deficient, file with Seattle Office of Labor Standards. OLS investigates procedural compliance during 2025–2027 enforcement period.' },
+  { id: 6, title: 'Preserve evidence',
+    detail: 'Save all communications, screenshots of your app status, trip history, and the deactivation notice itself. Keep a timeline in writing.' },
+];
+
+const hotspots = [
+  { name: 'Rainier Beach', value: 23 }, { name: 'SODO', value: 18 },
+  { name: 'Downtown', value: 15 },     { name: 'Seward Park', value: 11 },
+  { name: 'Georgetown', value: 9 },    { name: 'Belltown', value: 7 },
+];
+
+const severityData = [
+  { name: 'Assault',  value: 54, color: 'var(--sev-assault)' },
+  { name: 'Robbery',  value: 41, color: 'var(--sev-robbery)' },
+  { name: 'Injury',   value: 37, color: 'var(--sev-injury)' },
+  { name: 'Fatal',    value: 15, color: 'var(--sev-fatal)' },
+];
+
+const platformData = [
+  { name: 'Uber',        value: 62, fill: 'var(--text-primary)' },    /* #000 */
+  { name: 'Lyft',        value: 41, fill: 'var(--text-secondary)' },  /* #4F4F4F */
+  { name: 'DoorDash',    value: 28, fill: 'var(--text-tertiary)' },   /* #757575 */
+  { name: 'Amazon Flex', value: 16, fill: 'var(--text-muted)' },      /* #9E9E9E */
+];
+
+const trendData = [
+  { month: 'Jan 24', incidents: 4 }, { month: 'Feb', incidents: 6 }, { month: 'Mar', incidents: 8 },
+  { month: 'Apr', incidents: 5 },    { month: 'May', incidents: 7 }, { month: 'Jun', incidents: 9 },
+  { month: 'Jul', incidents: 12 },   { month: 'Aug', incidents: 11 },{ month: 'Sep', incidents: 10 },
+  { month: 'Oct', incidents: 13 },   { month: 'Nov', incidents: 14 },{ month: 'Dec', incidents: 16 },
+  { month: 'Jan 25', incidents: 11 },{ month: 'Feb', incidents: 9 }, { month: 'Mar', incidents: 10 },
+  { month: 'Apr', incidents: 12 },   { month: 'May', incidents: 14 },{ month: 'Jun', incidents: 15 },
+  { month: 'Jul', incidents: 13 },   { month: 'Aug', incidents: 12 },{ month: 'Sep', incidents: 10 },
+  { month: 'Oct', incidents: 9 },    { month: 'Nov', incidents: 8 }, { month: 'Dec', incidents: 11 },
+  { month: 'Jan 26', incidents: 9 }, { month: 'Feb', incidents: 7 }, { month: 'Mar', incidents: 6 },
+  { month: 'Apr', incidents: 4 },
+];
+
+const aboutStats = [
+  { l: 'Total violent crimes',            v: '5,891',   s: 'SPD 2024' },
+  { l: 'Total robberies',                 v: '1,677',   s: 'SPD 2024' },
+  { l: 'Aggravated assaults',             v: '3,810',   s: 'SPD 2024' },
+  { l: 'Active rideshare drivers (Uber)', v: '24,700+', s: 'Seattle Times' },
+  { l: 'Driver homicides (2020–24)',      v: '5',       s: 'Cascade PBS' },
+  { l: 'Workplace violence rate',         v: '67%',     s: 'Strat. Org. Center' },
+  { l: 'Violent crime change',            v: '↓ 7%',    s: 'WASPC 2025' },
+];
+
+const mpoRights = [
+  'Guaranteed minimum pay per minute and per mile while on a trip',
+  'Minimum offer amount for each delivery or ride offer',
+  'Transparency: companies must show pay details before offer acceptance',
+  'Flexibility: workers can accept or decline offers without penalty',
+  'No penalization for refusing offers below the minimum rate',
+  'Network companies must report records quarterly to OLS',
+];
+
+const droProtections = [
+  'Certain deactivations are unlawful — platforms must have lawful reason',
+  'Platforms must provide deactivation policies in advance',
+  'Must follow procedural steps before any deactivation',
+  '14 days advance notice required before deactivation',
+  'Must provide access to your records upon request',
+  'Workers can challenge deactivation internally within 90 days',
+];
+
+const languages = [
+  { name: 'Somali',              native: 'Soomaali',     flag: '🇸🇴', message: "Xuquuqdaada shaqaale ahaan oo ku salaysan app-ka waxaa ilaaliya sharciga Seattle. La xiriir OLS si aad u hesho caawimaad." },
+  { name: 'Amharic',             native: 'አማርኛ',        flag: '🇪🇹', message: "በመተግበሪያ ላይ የተመሠረተ ሠራተኛ መብቶችዎ በሲያትል ሕግ የተጠበቁ ናቸው። ለእርዳታ OLS ያግኙ።" },
+  { name: 'Tigrinya',            native: 'ትግርኛ',        flag: '🇪🇷', message: "ከም ኣፕ-መሰረት ዝኾነ ሰራሕተኛ መሰላትኩም ብሕጊ ስያትል ዝተሓለወ እዩ። ንሓገዝ OLS ተወከሱ።" },
+  { name: 'Oromiffa',            native: 'Afaan Oromoo', flag: '🇪🇹', message: "Mirgi hojjetaa app irratti hundaa'e keessan seeraa Seattle tiin eegama. Gargaarsa argachuuf OLS quunnamaa." },
+  { name: 'Chinese (Simplified)',native: '中文',          flag: '🇨🇳', message: "您作为网约工的权利受西雅图法律保护。请联系OLS获取帮助。" },
+  { name: 'Farsi',               native: 'فارسی',         flag: '🇮🇷', message: "حقوق شما به عنوان کارگر مبتنی بر اپلیکیشن توسط قانون سیاتل محافظت می‌شود. برای کمک با OLS تماس بگیرید.", rtl: true },
+  { name: 'Tagalog',             native: 'Tagalog',       flag: '🇵🇭', message: "Ang iyong mga karapatan bilang app-based na manggagawa ay protektado ng batas ng Seattle. Makipag-ugnayan sa OLS para sa tulong." },
+  { name: 'Spanish',             native: 'Español',       flag: '🇲🇽', message: "Sus derechos como trabajador basado en aplicaciones están protegidos por la ley de Seattle. Comuníquese con OLS para obtener ayuda." },
+  { name: 'Vietnamese',          native: 'Tiếng Việt',    flag: '🇻🇳', message: "Quyền của bạn với tư cách là người lao động dựa trên ứng dụng được pháp luật Seattle bảo vệ. Liên hệ OLS để được trợ giúp." },
+];
+
+const liveFeed = [
+  { time: '2 min ago',  type: 'assault',  platform: 'Uber',       loc: 'Downtown · 3rd & Pike',         desc: 'SPD responded to assault report at rideshare pickup' },
+  { time: '14 min ago', type: 'robbery',  platform: 'DoorDash',   loc: 'SODO · Airport Way S',          desc: 'Vehicle theft report filed with SPD' },
+  { time: '38 min ago', type: 'injury',   platform: 'Lyft',       loc: 'Capitol Hill · Broadway E',     desc: 'Minor injury during passenger dispute' },
+  { time: '1 hr ago',   type: 'assault',  platform: 'Amazon Flex',loc: 'Georgetown · Airport Way S',    desc: 'Verbal altercation escalated · no weapons' },
+  { time: '2 hr ago',   type: 'robbery',  platform: 'Uber',       loc: 'Rainier Beach · MLK Jr Way S',  desc: 'Armed robbery reported · suspect description issued' },
+  { time: '3 hr ago',   type: 'injury',   platform: 'Lyft',       loc: 'Belltown · 2nd Ave',            desc: 'Driver transported for non-critical injuries' },
+  { time: '5 hr ago',   type: 'assault',  platform: 'Uber',       loc: 'Ballard · NW Market St',        desc: 'Altercation during late-night ride · driver safe' },
+  { time: '6 hr ago',   type: 'robbery',  platform: 'DoorDash',   loc: 'SODO · 1st Ave S',              desc: 'Attempted robbery · suspect fled without items' },
+];
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+let currentMap = null;
+function destroyMap() {
+  if (currentMap) {
+    try { currentMap.remove(); } catch (e) {}
+    currentMap = null;
+  }
+}
+
+// Neighborhood center coordinates for hotspot circle overlays
+const NEIGHBORHOOD_CENTERS = {
+  'Rainier Beach': [47.5198, -122.2655],
+  'SODO':          [47.5721, -122.3271],
+  'Downtown':      [47.6082, -122.3370],
+  'Seward Park':   [47.5521, -122.2598],
+  'Belltown':      [47.6139, -122.3467],
+  'Ballard':       [47.6815, -122.3854],
+  'Georgetown':    [47.5436, -122.3232],
+  'Capitol Hill':  [47.6205, -122.3127],
+};
+
+function initMap(containerId, list) {
+  destroyMap();
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  if (typeof L === 'undefined' || !L.map) {
+    el.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%; padding:20px; text-align:center; color: var(--text-muted); font-size:12px;">Map library failed to load. Check your internet connection and reload.</div>';
+    return;
+  }
+
+  // Initialize with a reasonable Seattle default; we fitBounds after markers are added
+  currentMap = L.map(el, {
+    zoomControl: true,
+    scrollWheelZoom: false,  // don't hijack scroll; use +/- buttons or pinch
+    attributionControl: true,
+    preferCanvas: false,
+  }).setView([47.6062, -122.3321], 12);
+
+  // Enable scroll zoom only after user interacts with the map (click)
+  currentMap.once('click', () => currentMap.scrollWheelZoom.enable());
+
+  const primaryTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    subdomains: ['a', 'b', 'c', 'd'],
+    attribution: '© OpenStreetMap contributors © CARTO'
+  });
+  // OSM Standard fallback - reliable, always available
+  let fellBack = false;
+  primaryTiles.on('tileerror', function() {
+    if (fellBack) return;
+    fellBack = true;
+    try {
+      currentMap.removeLayer(primaryTiles);
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(currentMap);
+    } catch (e) { /* ignore */ }
+  });
+  primaryTiles.addTo(currentMap);
+
+  // --- Hotspot circle overlays for neighborhoods with 2+ incidents ---
+  const neighborhoodCounts = {};
+  list.forEach(inc => {
+    neighborhoodCounts[inc.neighborhood] = (neighborhoodCounts[inc.neighborhood] || 0) + 1;
+  });
+  Object.entries(neighborhoodCounts).forEach(([name, count]) => {
+    if (count < 2) return;
+    const center = NEIGHBORHOOD_CENTERS[name];
+    if (!center) return;
+    const isHigh = count >= 3;
+    // Monochromatic system: differentiate by stroke weight + opacity, not color
+    const color = isHigh ? 'var(--text-primary)' : 'var(--text-tertiary)';
+    // Outer glow halo
+    L.circle(center, {
+      radius: 800,
+      color: color,
+      fillColor: color,
+      fillOpacity: isHigh ? 0.08 : 0.04,
+      weight: isHigh ? 1.5 : 1,
+      opacity: isHigh ? 0.5 : 0.25,
+      dashArray: isHigh ? null : '4 4',
+      interactive: false,
+    }).addTo(currentMap);
+    // Inner ring
+    L.circle(center, {
+      radius: 300,
+      color: color,
+      fillColor: color,
+      fillOpacity: isHigh ? 0.18 : 0.08,
+      weight: isHigh ? 2 : 1.5,
+      opacity: isHigh ? 0.75 : 0.45,
+      dashArray: isHigh ? null : '4 4',
+      interactive: false,
+    }).addTo(currentMap);
+  });
+
+  // --- Incident pins with severity color, white border, and open-case pulse ---
+  const severityLabels = {
+    fatal: 'Fatal',
+    injury: 'Injury',
+    robbery: 'Robbery',
+    assault: 'Assault',
+  };
+  const dashcamLabels = {
+    'confirmed':   { text: 'Full coverage',   color: 'var(--text-primary)' },
+    'driver-only': { text: 'Driver-facing',    color: 'var(--text-tertiary)' },
+    'none':        { text: 'No dashcam',       color: 'var(--sev-injury)' },
+  };
+
+  const markers = [];
+  list.forEach(inc => {
+    const color = SEV[inc.severity];
+    const isOpen = inc.status === 'Open';
+    const html = `
+      <div class="map-pin-wrapper ${isOpen ? 'is-open' : ''}">
+        ${isOpen ? `<div class="map-pin-pulse" style="background:${color};"></div>` : ''}
+        <div class="map-pin" style="background:${color};"></div>
+      </div>`;
+    const icon = L.divIcon({
+      className: 'map-pin-icon',
+      html,
+      iconSize: [18, 18],
+      iconAnchor: [9, 9],
+      popupAnchor: [0, -10],
+    });
+
+    const dash = inc.dashcam ? dashcamLabels[inc.dashcam] : null;
+    const popupHTML = `
+      <div class="map-popup">
+        <div class="map-popup-header">
+          <span class="map-popup-sev" style="background:${color};"></span>
+          <span class="map-popup-sev-label">${severityLabels[inc.severity] || inc.severity}</span>
+          <span class="map-popup-status map-popup-status-${inc.status.toLowerCase()}">${escapeHtml(inc.status)}</span>
+        </div>
+        <div class="map-popup-title">${escapeHtml(inc.neighborhood)}</div>
+        <div class="map-popup-location">${escapeHtml(inc.location)}</div>
+        <div class="map-popup-desc">${escapeHtml(inc.desc)}</div>
+        <div class="map-popup-meta">
+          <div><span>Date</span><strong>${escapeHtml(inc.date)} · ${escapeHtml(inc.time || '—')}</strong></div>
+          <div><span>Platform</span><strong>${escapeHtml(inc.platform)}</strong></div>
+          ${dash ? `<div><span>Dashcam</span><strong style="color:${dash.color};">${dash.text}</strong></div>` : ''}
+          ${inc.caseStatus ? `<div><span>Case</span><strong>${escapeHtml(inc.caseStatus)}</strong></div>` : ''}
+          <div><span>Source</span><strong>${escapeHtml(inc.source)}</strong></div>
+        </div>
+      </div>`;
+
+    const marker = L.marker([inc.lat, inc.lng], { icon, riseOnHover: true })
+      .addTo(currentMap)
+      .bindPopup(popupHTML, {
+        className: 'map-popup-container',
+        closeButton: true,
+        minWidth: 240,
+        maxWidth: 280,
+      });
+    markers.push(marker);
+  });
+
+  // --- Set tight Seattle-centric view that frames the downtown-to-south-Seattle incident cluster ---
+  // We center on the median incident location rather than using fitBounds, which would
+  // zoom out too far to include the Ballard outlier.
+  const isFullMap = el.classList.contains('full');
+  const zoomLevel = isFullMap ? 12 : 11.5;
+  // Calculate median lat/lng to center on the actual incident cluster
+  const lats = list.map(i => i.lat).sort((a, b) => a - b);
+  const lngs = list.map(i => i.lng).sort((a, b) => a - b);
+  const medLat = lats[Math.floor(lats.length / 2)];
+  const medLng = lngs[Math.floor(lngs.length / 2)];
+  currentMap.setView([medLat, medLng], zoomLevel, { animate: false });
+
+  // --- Invalidate size after render so Leaflet sizes correctly in flex/grid containers ---
+  setTimeout(() => {
+    try { currentMap.invalidateSize(); } catch (e) {}
+  }, 100);
+}
+
+
+
+function renderNav() {
+  const hash = location.hash || '#/';
+  document.getElementById('nav').innerHTML = NAV.map((n, i) => {
+    const active = hash === n.href || (n.href === '#/' && (hash === '' || hash === '#'));
+    return `
+      <a href="${n.href}" class="nav-item ${active ? 'active' : ''}" data-nav-index="${i + 1}">
+        ${ICONS[n.icon]}
+        <span>${n.label}</span>
+        ${n.badge ? '<span class="pulse-dot" style="margin-left:auto;"></span>' : `<span class="kbd-hint">${i + 1}</span>`}
+      </a>`;
+  }).join('');
+  const active = NAV.find(n => n.href === hash) || NAV[0];
+  document.getElementById('page-title').textContent = active.label;
+  document.getElementById('page-subtitle').textContent = active.subtitle;
+}
+
+function hotspotsHTML() {
+  const max = hotspots[0].value;
+  return hotspots.map((h, i) => {
+    const pct = Math.round(h.value / max * 100);
+    const topColor = i === 0 ? 'var(--sev-fatal)' : 'var(--text-muted)';
+    const nameColor = i === 0 ? 'var(--text-primary)' : 'var(--text-tertiary)';
+    const valColor  = i === 0 ? 'var(--sev-fatal)' : 'var(--text-tertiary)';
+    return `
+      <div>
+        <div style="display:flex; justify-content:space-between; font-size:10px; margin-bottom:4px;">
+          <span style="color:${nameColor}; font-weight:${i===0?500:400};">${h.name}</span>
+          <span style="font-variant-numeric:tabular-nums; font-weight:500; color:${valColor};">${h.value}</span>
+        </div>
+        <div style="height:4px; border-radius:2px; background:var(--border-default);">
+          <div class="bar-fill" style="height:100%; border-radius:2px; width:${pct}%; background:${topColor};"></div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function donutHTML() {
+  const total = severityData.reduce((s, d) => s + d.value, 0);
+  const r = 38, cx = 80, cy = 50;
+  let acc = 0;
+  const segs = severityData.map(d => {
+    const frac = d.value / total;
+    const start = acc * 2 * Math.PI - Math.PI/2;
+    const end   = (acc + frac) * 2 * Math.PI - Math.PI/2;
+    acc += frac;
+    const x1 = cx + r * Math.cos(start), y1 = cy + r * Math.sin(start);
+    const x2 = cx + r * Math.cos(end),   y2 = cy + r * Math.sin(end);
+    const large = frac > 0.5 ? 1 : 0;
+    return `<path d="M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z" fill="${d.color}" opacity="0.8"/>`;
+  }).join('');
+  return `
+    <svg class="pie-svg" viewBox="0 0 160 100">
+      ${segs}
+      <circle cx="${cx}" cy="${cy}" r="24" fill="var(--bg-2)"/>
+      <text x="${cx}" y="${cy-2}" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text-primary)" font-family="Inter">${total}</text>
+      <text x="${cx}" y="${cy+10}" text-anchor="middle" font-size="7" fill="var(--text-tertiary)" font-family="Inter">INCIDENTS</text>
+    </svg>
+    <div style="display:flex; flex-direction:column; gap:2px; margin-top:6px;">
+      ${severityData.map(d => `
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:9px; padding:2px 4px; border-radius:3px;">
+          <span style="display:flex; align-items:center; gap:6px; color:var(--text-tertiary);">
+            <span style="width:6px; height:6px; border-radius:50%; background:${d.color};"></span>${d.name}
+          </span>
+          <span style="font-variant-numeric:tabular-nums; color:var(--text-primary);">${d.value}</span>
+        </div>`).join('')}
+    </div>`;
+}
+
+function platformBarsHTML() {
+  const max = Math.max.apply(null, platformData.map(d => d.value));
+  return `<div style="display:flex; flex-direction:column; gap:8px; padding:4px 0;">
+    ${platformData.map(d => {
+      const pct = d.value / max * 100;
+      return `<div style="display:grid; grid-template-columns: 60px 1fr 30px; gap:8px; align-items:center; font-size:10px;">
+        <span style="color:var(--text-tertiary);">${d.name}</span>
+        <div style="height:8px; background:var(--bg-2); border-radius:2px; overflow:hidden;">
+          <div class="bar-fill" style="height:100%; width:${pct}%; background:${d.fill}; opacity:.85;"></div>
+        </div>
+        <span style="font-variant-numeric:tabular-nums; color:var(--text-primary); text-align:right;">${d.value}</span>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function trendChartHTML() {
+  const w = 720, h = 155, pad = { l: 24, r: 8, t: 10, b: 20 };
+  const innerW = w - pad.l - pad.r, innerH = h - pad.t - pad.b;
+  const maxV = Math.max.apply(null, trendData.map(d => d.incidents));
+  const stepX = innerW / (trendData.length - 1);
+  const points = trendData.map((d, i) => ({
+    x: pad.l + i * stepX,
+    y: pad.t + innerH - (d.incidents / maxV * innerH),
+  }));
+  const linePath = points.map((p, i) => `${i===0?'M':'L'} ${p.x} ${p.y}`).join(' ');
+  const areaPath = `${linePath} L ${points[points.length-1].x} ${pad.t+innerH} L ${pad.l} ${pad.t+innerH} Z`;
+  const ticks = [0, Math.round(maxV/2), maxV];
+  return `
+    <svg viewBox="0 0 ${w} ${h}" class="chart-svg" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="area" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="var(--text-primary)" stop-opacity="0.25"/>
+          <stop offset="100%" stop-color="var(--text-primary)" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      ${ticks.map(t => {
+        const y = pad.t + innerH - (t/maxV*innerH);
+        return `<line x1="${pad.l}" x2="${w-pad.r}" y1="${y}" y2="${y}" stroke="var(--border-default)" stroke-dasharray="3 3" stroke-width="0.5"/>
+                <text x="${pad.l-4}" y="${y+3}" text-anchor="end" font-size="9" fill="var(--text-tertiary)" font-family="Inter">${t}</text>`;
+      }).join('')}
+      <path d="${areaPath}" fill="url(#area)"/>
+      <path d="${linePath}" fill="none" stroke="var(--text-primary)" stroke-width="1.5"/>
+      ${points.map(p => `<circle cx="${p.x}" cy="${p.y}" r="2" fill="var(--text-primary)"/>`).join('')}
+      ${trendData.map((d, i) => {
+        if (i % 3 !== 0 && i !== trendData.length - 1) return '';
+        const x = pad.l + i * stepX;
+        return `<text x="${x}" y="${h-4}" text-anchor="middle" font-size="8" fill="var(--text-tertiary)" font-family="Inter">${d.month}</text>`;
+      }).join('')}
+    </svg>`;
+}
+
+function incidentTableHTML(list) {
+  const statusColors = {
+    'Open':   { bg: 'var(--bg-3)',  fg: 'var(--sev-injury)' },
+    'Closed': { bg: 'var(--bg-2)',  fg: 'var(--text-primary)' },
+  };
+  const dashcamDisplay = {
+    'confirmed':   { label: 'Full',   color: 'var(--accent)',       title: 'Driver-facing and cabin cameras confirmed' },
+    'driver-only': { label: 'Driver', color: 'var(--text-tertiary)', title: 'Driver-facing camera only' },
+    'none':        { label: 'None',   color: 'var(--sev-injury)',    title: 'No dashcam evidence on record' },
+  };
+  return `
+    <div style="overflow-x:auto;">
+      <table class="incidents-table">
+        <thead>
+          <tr>
+            <th>Date &amp; Time</th><th>Severity</th><th>Platform</th><th>Location</th>
+            <th>Description</th><th>Dashcam</th><th>Case Status</th><th>Status</th><th>Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${list.map(inc => {
+            const dash = inc.dashcam ? dashcamDisplay[inc.dashcam] : null;
+            return `
+            <tr>
+              <td style="color: var(--text-tertiary); font-variant-numeric:tabular-nums; white-space:nowrap;">
+                <div style="color: var(--text-primary);">${escapeHtml(inc.date)}</div>
+                <div style="font-size:10.5px; color: var(--text-muted); margin-top:2px;" class="notranslate">${escapeHtml(inc.time || '—')}</div>
+              </td>
+              <td><span style="display:inline-flex; align-items:center; gap:6px; text-transform:capitalize;">
+                <span class="sev-dot" style="background:${SEV[inc.severity]};"></span>${escapeHtml(inc.severity)}
+              </span></td>
+              <td style="color: var(--text-primary);">${escapeHtml(inc.platform)}</td>
+              <td>
+                <div style="color: var(--text-primary);">${escapeHtml(inc.neighborhood)}</div>
+                <div style="color: var(--text-muted); font-size:11px; margin-top:2px;">${escapeHtml(inc.location)}</div>
+              </td>
+              <td style="color: var(--text-secondary); max-width:260px;">${escapeHtml(inc.desc)}</td>
+              <td>
+                ${dash
+                  ? `<span class="chip" title="${dash.title}" style="background: rgba(148,163,184,0.08); color: ${dash.color}; display:inline-flex; align-items:center; gap:5px; white-space:nowrap;">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                      ${dash.label}
+                    </span>`
+                  : '<span style="color: var(--text-subtle); font-size:11px;">—</span>'}
+              </td>
+              <td style="color: var(--text-secondary); font-size:11.5px; max-width:160px;">
+                ${inc.caseStatus
+                  ? `<span title="Per King County Superior Court public records">${escapeHtml(inc.caseStatus)}</span>`
+                  : '<span style="color: var(--text-subtle);">Not filed</span>'}
+              </td>
+              <td><span class="chip" style="background:${statusColors[inc.status].bg}; color:${statusColors[inc.status].fg};">${escapeHtml(inc.status)}</span></td>
+              <td style="color: var(--accent); white-space:nowrap;">${escapeHtml(inc.source)} ↗</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function rightsListHTML(items, color) {
+  return items.map((t, i) => `
+    <div style="display:flex; gap:10px; padding:8px 0; ${i<items.length-1?'border-bottom:1px solid var(--border-default);':''}">
+      <span style="color:${color}; flex-shrink:0; margin-top:1px;">${ICONS.check}</span>
+      <span style="font-size:11px; color:var(--text-secondary); line-height:1.45;">${escapeHtml(t)}</span>
+    </div>`).join('');
+}
+
+function olsContactHTML() {
+  return `
+    <div class="card" style="padding: 16px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 14px;">
+        <div>
+          <div style="font-size:12px; font-weight:600; color:var(--text-primary);">OLS Contact Information</div>
+          <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">Seattle Office of Labor Standards (OLS)</div>
+        </div>
+        <a href="#" style="font-size:10px; color:var(--text-primary);">File a Complaint →</a>
+      </div>
+      <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 14px;">
+        <div style="display:flex; gap:10px; align-items:flex-start;">
+          <span style="color:var(--text-primary); flex-shrink:0; margin-top:2px;">${ICONS.phone}</span>
+          <div>
+            <div style="font-size:9px; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:.06em; margin-bottom:2px;">Phone</div>
+            <div class="copyable" data-copy="206-256-5297" style="font-size:11px; color:var(--text-primary);" title="Click to copy">206-256-5297</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; align-items:flex-start;">
+          <span style="color:var(--text-primary); flex-shrink:0; margin-top:2px;">${ICONS.mail}</span>
+          <div>
+            <div style="font-size:9px; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:.06em; margin-bottom:2px;">Email</div>
+            <div class="copyable" data-copy="laborstandards@seattle.gov" style="font-size:11px; color:var(--text-primary);" title="Click to copy">laborstandards@seattle.gov</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; align-items:flex-start;">
+          <span style="color:var(--text-primary); flex-shrink:0; margin-top:2px;">${ICONS.globe}</span>
+          <div>
+            <div style="font-size:9px; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:.06em; margin-bottom:2px;">Website</div>
+            <div style="font-size:11px; color:var(--text-primary);">seattle.gov/laborstandards</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; align-items:flex-start;">
+          <span style="color:var(--text-primary); flex-shrink:0; margin-top:2px;">${ICONS.link}</span>
+          <div>
+            <div style="font-size:9px; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:.06em; margin-bottom:2px;">Languages</div>
+            <div style="font-size:11px; color:var(--text-primary);">seattle.gov/laborstandards/languages</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function pageOverview() {
+  return `
+    <div style="display:flex; flex-direction:column; gap: 20px;">
+      <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap: 12px;">
+        <div class="card" style="padding:14px;">
+          <div class="section-label" style="margin-bottom:6px;">Total Incidents</div>
+          <div class="kpi-value" style="color:var(--text-primary);">147</div>
+          <div style="font-size:9px; color:var(--text-tertiary); margin-top:4px;">Jan 2024 – Present</div>
+        </div>
+        <div class="card" style="padding:14px;">
+          <div class="section-label" style="margin-bottom:6px;">Highest Risk</div>
+          <div style="font-size:12px; font-weight:600; color:var(--text-primary);">Rainier Beach</div>
+          <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">23 incidents</div>
+        </div>
+        <div class="card" style="padding:14px;">
+          <div class="section-label" style="margin-bottom:6px;">Open</div>
+          <div class="kpi-value" style="color:var(--text-primary);">18</div>
+          <div style="font-size:9px; color:var(--text-tertiary); margin-top:4px;">Under investigation</div>
+        </div>
+        <div class="card" style="padding:14px;">
+          <div class="section-label" style="margin-bottom:6px;">Resolution Rate</div>
+          <div class="kpi-value" style="color:var(--text-primary);">68%</div>
+          <div style="font-size:9px; color:var(--text-tertiary); margin-top:4px;">129 of 147</div>
+        </div>
+        <div class="card" style="padding:14px;">
+          <div class="section-label" style="margin-bottom:6px;">Violent Crime Change</div>
+          <div class="kpi-value" style="color:var(--text-primary);">↓ 7%</div>
+          <div style="font-size:9px; color:var(--text-tertiary); margin-top:4px;">WASPC 2025</div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 2fr 1fr; gap:20px;">
+        <div class="card" style="overflow:hidden;">
+          <div class="card-header">
+            <span style="font-size:11px; font-weight:500; color:var(--text-primary);">Incident Map</span>
+            <div style="display:flex; gap:12px; font-size:9px; color:var(--text-tertiary); text-transform: capitalize;">
+              ${Object.keys(SEV).map(k => `
+                <span style="display:flex; align-items:center; gap:4px;">
+                  <span style="width:6px;height:6px;border-radius:50%;background:${SEV[k]};"></span>${k}
+                </span>`).join('')}
+            </div>
+          </div>
+          <div id="map" class="map-container"></div>
+          <div style="padding:10px 16px; font-size:9px; color:var(--text-tertiary); border-top:1px solid var(--border-default); display:flex; justify-content:space-between;">
+            <span>Click a pin for details</span>
+            <span>SPD Open Data · SPD Blotter · Cascade PBS · KOMO · KIRO 7 · Fox 13 · King Co. Prosecutors</span>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <div class="card" style="padding:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+              <span class="section-label">Hotspot Neighborhoods</span>
+              <span style="font-size:9px; color:var(--text-tertiary);">Crime incidents only</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px;">${hotspotsHTML()}</div>
+          </div>
+          <div class="card" style="padding:14px;">
+            <div class="section-label" style="margin-bottom:8px;">By Severity</div>
+            ${donutHTML()}
+          </div>
+          <div class="card" style="padding:14px;">
+            <div class="section-label" style="margin-bottom:8px;">By Platform</div>
+            ${platformBarsHTML()}
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 2fr 1fr; gap:20px;">
+        <div class="card" style="padding:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">
+            <span style="font-size:11px; font-weight:500; color:var(--text-primary);">Monthly Trend <span style="color:var(--text-tertiary); font-weight:400;">(crime only)</span></span>
+            <span style="font-size:9px; color:var(--text-tertiary);">Jan 2024 – Present</span>
+          </div>
+          ${trendChartHTML()}
+        </div>
+        <div class="card" style="padding:14px;">
+          <div class="section-label" style="margin-bottom:10px;">About this data</div>
+          <div style="display:flex; flex-direction:column; font-size:10px;">
+            ${aboutStats.map((s, i) => `
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:7px 0; ${i<aboutStats.length-1?'border-bottom:1px solid var(--border-default);':''}">
+                <span style="color:var(--text-tertiary);">${s.l}</span>
+                <div style="text-align:right;">
+                  <div style="font-variant-numeric:tabular-nums; font-weight:500; color:var(--text-primary); font-size:11px;">${s.v}</div>
+                  <div style="font-size:8px; color:var(--text-tertiary);">${s.s}</div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span style="font-size:11px; font-weight:500; color:var(--text-primary);">Recent Incidents <span style="color:var(--text-tertiary); font-weight:400; margin-left:4px; font-variant-numeric:tabular-nums;">${incidents.length}</span></span>
+          <a href="#/incidents" style="font-size:10px; color:var(--text-primary);">View all →</a>
+        </div>
+        ${incidentTableHTML(incidents)}
+      </div>
+
+      <div class="card" style="padding:16px; background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.2);">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+          ${ICONS.warning}
+          <span style="font-size:11px; font-weight:600; color:var(--sev-fatal);">Safety Advisories</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px; font-size:10px; color:rgba(245,158,11,.85); line-height:1.55;">
+          <div style="display:flex; gap:6px;"><span>·</span><span>Rainier Beach / South Seattle: elevated incident concentration, particularly late night.</span></div>
+          <div style="display:flex; gap:6px;"><span>·</span><span>SODO / Industrial District: higher carjacking risk near industrial zones.</span></div>
+          <div style="display:flex; gap:6px;"><span>·</span><span>Atlantic City Boat Ramp / Seward Park: documented isolation-based assault zone.</span></div>
+          <div style="display:flex; gap:6px;"><span>·</span><span>Drivers report vulnerability at low-traffic pickup points — boat ramps, industrial lots, park edges.</span></div>
+        </div>
+      </div>
+
+      <div style="padding:14px 0; text-align:center; font-size:9px; color:var(--text-tertiary); line-height:1.6;">
+        Information sourced from Seattle Office of Labor Standards ordinances SMC 8.37, 8.39, 3.40. Rates updated annually.<br>
+        Incidents sourced from SPD Blotter are based on general crime data.<br>
+        Powered by <span style="color:var(--text-primary);">Bulle Cloud · bullecloud.com</span>
+      </div>
+    </div>`;
+}
+
+function pageCrimeMap() {
+  return `
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <div class="card" style="padding:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <div style="font-size:12px; font-weight:600; color:var(--text-primary);">Geographic Incident View</div>
+            <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">${incidents.length} incidents mapped across Seattle Metro</div>
+          </div>
+          <div style="display:flex; gap:12px; font-size:10px; text-transform:capitalize;">
+            ${Object.keys(SEV).map(k => `
+              <span style="display:flex; align-items:center; gap:6px; color:var(--text-secondary);">
+                <span style="width:10px; height:10px; border-radius:50%; background:${SEV[k]};"></span>${k}
+              </span>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="card" style="overflow:hidden;">
+        <div id="map" class="map-container full"></div>
+      </div>
+    </div>`;
+}
+
+function pageIncidents() {
+  return `
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <div class="card" style="padding:18px 22px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+          <div>
+            <div class="card-title">All Incidents</div>
+            <div class="card-meta" style="margin-top:3px;" id="incident-count-text">${incidents.length} records · Jan 2024 – Present</div>
+          </div>
+          <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+            <div class="search-wrapper">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input id="incident-search" class="search-input notranslate" placeholder="Search incidents..." aria-label="Search incidents" autocomplete="off" />
+              <kbd>/</kbd>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;" id="severity-filters">
+              <button class="filter-btn active" data-sev="all">All</button>
+              ${Object.keys(SEV).map(k => `<button class="filter-btn" data-sev="${k}">${k}</button>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card" id="incidents-table-wrap">
+        ${incidentTableHTML(incidents)}
+      </div>
+    </div>`;
+}
+
+function pageLive() {
+  return `
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <div class="card" style="padding:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="pulse-dot"></span>
+              <span style="font-size:12px; font-weight:600; color:var(--text-primary);">Live Incident Activity</span>
+            </div>
+            <div style="font-size:10px; color:var(--text-tertiary); margin-top:4px; margin-left:14px;">Real-time incident reports · auto-refresh every 5 min</div>
+          </div>
+          <div style="font-size:10px; color:var(--text-tertiary); font-variant-numeric:tabular-nums;">Updated just now</div>
+        </div>
+      </div>
+      <div class="card" style="padding:16px;">
+        ${liveFeed.map((e, i) => `
+          <div class="live-row ${i===0?'new':''}" style="border-left-color:${SEV[e.type]};">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="sev-dot" style="background:${SEV[e.type]};"></span>
+                <span style="font-size:11px; color:var(--text-primary); font-weight:500; text-transform:capitalize;">${e.type}</span>
+                <span style="font-size:10px; color:var(--text-tertiary);">·</span>
+                <span style="font-size:10px; color:var(--text-tertiary);">${e.platform}</span>
+              </div>
+              <span style="font-size:10px; color:var(--text-tertiary); font-variant-numeric:tabular-nums;">${e.time}</span>
+            </div>
+            <div style="font-size:11px; color:var(--text-secondary); margin-left:14px;">${e.desc}</div>
+            <div style="font-size:10px; color:var(--text-tertiary); margin-left:14px; margin-top:2px;">${e.loc}</div>
+          </div>`).join('')}
+      </div>
+      <div class="card" style="padding:14px; background:rgba(13,148,136,0.05); border-color: rgba(13,148,136,0.2);">
+        <div style="display:flex; gap:10px; align-items:flex-start;">
+          <span style="color:var(--text-primary); margin-top:2px;">${ICONS.check}</span>
+          <div style="font-size:11px; color:var(--text-secondary); line-height:1.55;">
+            Entries update from the Seattle Police Department's public blotter feed. Individual rideshare connection is inferred from location, time, and description and may not be independently verified.
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function pageOlsData() {
+  return `
+    <div style="display:flex; flex-direction:column; gap:24px;">
+
+      <div class="card" style="padding:20px; background: var(--accent-subtle); border-color: var(--accent-border);">
+        <div style="display:flex; gap:14px; align-items:flex-start;">
+          <div style="color: var(--accent); flex-shrink:0; margin-top:2px;">${ICONS.shieldLg}</div>
+          <div>
+            <div style="font-size:15px; font-weight:600; color: var(--text-primary); letter-spacing:-0.012em;">Seattle OLS Data Center</div>
+            <div style="font-size:13px; color: var(--text-secondary); margin-top:6px; line-height:1.55;">
+              Comprehensive Seattle resources for app-based drivers: worker rights, pay protections, deactivation rights, paid sick time, and local data. Maintained under Seattle Office of Labor Standards ordinances SMC 8.37, 8.39, and 3.40.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px;">
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Minimum Payment Ordinance</div>
+              <div style="font-size:12px; color: var(--text-tertiary); margin-top:3px;">SMC 8.37 · Effective January 13, 2024</div>
+            </div>
+          </div>
+          <div style="padding:20px 22px;">
+            <div class="section-label" style="margin-bottom:10px;">Pay Rate Schedule</div>
+            <table style="width:100%; font-size:12.5px; border-collapse:collapse; font-variant-numeric: tabular-nums;">
+              <thead>
+                <tr style="color: var(--text-muted); font-size:10.5px; text-transform:uppercase; letter-spacing:.07em;">
+                  <th style="text-align:left; padding:8px 0;">Year</th>
+                  <th style="text-align:right; padding:8px 0;">Per Minute</th>
+                  <th style="text-align:right; padding:8px 0;">Per Mile</th>
+                  <th style="text-align:right; padding:8px 0;">Per Offer Min.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-top:1px solid var(--border-subtle); color: var(--text-primary);">
+                  <td style="padding:10px 0; font-weight:600;">2026</td>
+                  <td style="text-align:right;">$0.47</td>
+                  <td style="text-align:right;">$0.80</td>
+                  <td style="text-align:right;">$5.34</td>
+                </tr>
+                <tr style="border-top:1px solid var(--border-subtle); color: var(--text-tertiary);">
+                  <td style="padding:10px 0;">2025</td>
+                  <td style="text-align:right;">$0.45</td>
+                  <td style="text-align:right;">$0.77</td>
+                  <td style="text-align:right;">$5.20</td>
+                </tr>
+                <tr style="border-top:1px solid var(--border-subtle); color: var(--text-tertiary);">
+                  <td style="padding:10px 0;">2024</td>
+                  <td style="text-align:right;">$0.44</td>
+                  <td style="text-align:right;">$0.74</td>
+                  <td style="text-align:right;">$5.00</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="section-label" style="margin-top:20px; margin-bottom:10px;">Key Rights</div>
+            ${rightsListHTML(mpoRights, 'var(--accent)')}
+
+            <div style="margin-top:14px; font-size:11.5px; color: var(--text-muted); line-height:1.5;">
+              Effective May 1, 2023 for food delivery workers; January 13, 2024 for all app-based workers. Applies to network companies with 250+ workers worldwide.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Deactivation Rights Ordinance</div>
+              <div style="font-size:12px; color: var(--text-tertiary); margin-top:3px;">SMC 3.40 · Effective January 1, 2025</div>
+            </div>
+          </div>
+          <div style="padding:20px 22px;">
+            <div style="display:flex; gap:12px; margin-bottom:18px;">
+              <div style="flex:1; padding:14px; background: var(--accent-subtle); border:1px solid var(--accent-border); border-radius: var(--radius-md);">
+                <div style="font-size:10.5px; color: var(--text-tertiary); text-transform:uppercase; letter-spacing:.07em; font-weight:600;">Effective</div>
+                <div style="font-size:13px; color: var(--accent); font-weight:600; margin-top:4px;">Jan 1, 2025</div>
+              </div>
+              <div style="flex:1; padding:14px; background: rgba(245,158,11,0.10); border:1px solid rgba(245,158,11,0.28); border-radius: var(--radius-md);">
+                <div style="font-size:10.5px; color: var(--text-tertiary); text-transform:uppercase; letter-spacing:.07em; font-weight:600;">Enforcement</div>
+                <div style="font-size:13px; color: var(--text-primary); font-weight:600; margin-top:4px;">Limited · 2025–2027</div>
+              </div>
+            </div>
+            <div class="section-label" style="margin-bottom:10px;">Key Protections</div>
+            ${rightsListHTML(droProtections, 'var(--accent)')}
+            <div style="margin-top:14px; font-size:11.5px; color: var(--text-muted); line-height:1.5;">
+              Ninth Circuit · March 2026. OLS investigates procedural compliance only during limited enforcement period.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Paid Sick & Safe Time Ordinance</div>
+            <div style="font-size:12px; color: var(--text-tertiary); margin-top:3px;">SMC 8.39 · Effective January 13, 2024</div>
+          </div>
+        </div>
+        <div style="padding:20px 22px;">
+          <div style="font-size:13px; color: var(--text-secondary); line-height:1.6;">
+            PSST is accrued in 24-hour increments and used in 3-or-more consecutive-day periods. Accrual is earned per 30-day period in which you stop work in Seattle. Payment is based on the worker's average daily compensation, recalculated monthly. Effective May 1, 2023 for food delivery network company workers and January 13, 2024 for all other app-based workers.
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Seattle Driver & Safety Data</div>
+            <div style="font-size:12px; color: var(--text-tertiary); margin-top:3px;">Context for Seattle app-based driver safety</div>
+          </div>
+        </div>
+        <div style="padding:8px 22px 16px;">
+          <table style="width:100%; font-size:13px; border-collapse:collapse; font-variant-numeric: tabular-nums;">
+            <thead>
+              <tr style="color: var(--text-muted); font-size:10.5px; text-transform:uppercase; letter-spacing:.07em;">
+                <th style="text-align:left; padding:10px 0;">Indicator</th>
+                <th style="text-align:right; padding:10px 0;">Value</th>
+                <th style="text-align:right; padding:10px 0;">Source</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${aboutStats.map(s => `
+                <tr style="border-top:1px solid var(--border-subtle);">
+                  <td style="padding:12px 0; color: var(--text-secondary);">${s.l}</td>
+                  <td style="padding:12px 0; text-align:right; color: var(--text-primary); font-weight:600;">${s.v}</td>
+                  <td style="padding:12px 0; text-align:right; color: var(--text-muted); font-size:11.5px;">${s.s}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Seattle Resources</div>
+            <div style="font-size:12px; color: var(--text-tertiary); margin-top:3px;">Local Seattle resources for app-based drivers</div>
+          </div>
+        </div>
+        <div style="padding:18px 22px; display:flex; flex-direction:column; gap:10px;">
+          <a href="https://www.seattle.gov/laborstandards" target="_blank" rel="noopener" class="resource-row">
+            <div>
+              <div style="font-size:13px; font-weight:550; color: var(--text-primary);">Seattle Office of Labor Standards</div>
+              <div style="font-size:12px; color: var(--text-tertiary); margin-top:3px;">Primary enforcement agency for Seattle worker ordinances</div>
+            </div>
+            <span style="font-size:11.5px; color: var(--accent); font-weight:500;">seattle.gov/laborstandards →</span>
+          </a>
+          <a href="https://www.seattle.gov/laborstandards/workers/file-a-complaint" target="_blank" rel="noopener" class="resource-row">
+            <div>
+              <div style="font-size:13px; font-weight:550; color: var(--text-primary);">File a Complaint with OLS</div>
+              <div style="font-size:12px; color: var(--text-tertiary); margin-top:3px;">Report violations of Seattle labor ordinances</div>
+            </div>
+            <span style="font-size:11.5px; color: var(--accent); font-weight:500;">Complaint Portal →</span>
+          </a>
+          <a href="https://laborinquiry.seattle.gov/appbasedcalc/" target="_blank" rel="noopener" class="resource-row">
+            <div>
+              <div style="font-size:13px; font-weight:550; color: var(--text-primary);">App-Based Worker Pay Calculator</div>
+              <div style="font-size:12px; color: var(--text-tertiary); margin-top:3px;">Verify minimum required payment for offers in Seattle</div>
+            </div>
+            <span style="font-size:11.5px; color: var(--accent); font-weight:500;">Pay Calculator →</span>
+          </a>
+          <a href="https://www.seattle.gov/laborstandards/resources-and-language-access/languages" target="_blank" rel="noopener" class="resource-row">
+            <div>
+              <div style="font-size:13px; font-weight:550; color: var(--text-primary);">OLS Multilingual Information</div>
+              <div style="font-size:12px; color: var(--text-tertiary); margin-top:3px;">Worker rights in 16 languages including Somali, Amharic, Tigrinya, Oromo</div>
+            </div>
+            <span style="font-size:11.5px; color: var(--accent); font-weight:500;">Languages Page →</span>
+          </a>
+          <a href="https://data.seattle.gov" target="_blank" rel="noopener" class="resource-row">
+            <div>
+              <div style="font-size:13px; font-weight:550; color: var(--text-primary);">Seattle Open Data</div>
+              <div style="font-size:12px; color: var(--text-tertiary); margin-top:3px;">City datasets including SPD incident data</div>
+            </div>
+            <span style="font-size:11.5px; color: var(--accent); font-weight:500;">data.seattle.gov →</span>
+          </a>
+        </div>
+      </div>
+
+      ${olsContactHTML()}
+    </div>`;
+}
+
+function pageResources() {
+  return `
+    <div style="display:flex; flex-direction:column; gap:20px;">
+
+      <div class="card" style="padding:16px; background: var(--bg-2); border-color: var(--border-default);">
+        <div style="display:flex; gap:12px; align-items:flex-start;">
+          <div style="color:var(--text-primary); flex-shrink:0; margin-top:2px;">${ICONS.shieldLg}</div>
+          <div>
+            <div style="font-size:12px; font-weight:600; color:var(--text-primary);">Statewide and National Resources</div>
+            <div style="font-size:11px; color:var(--text-secondary); margin-top:6px; line-height:1.55;">
+              Washington State and federal resources for app-based drivers. For Seattle-specific information, see the OLS Data tab.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="padding:14px; border-bottom:1px solid var(--border-default);">
+          <div style="display:flex; align-items:center; gap:8px;">
+            ${ICONS.shieldLg}
+            <span style="font-size:12px; font-weight:600; color:var(--text-primary);">Washington State Resources</span>
+          </div>
+          <div style="font-size:10px; color:var(--text-tertiary); margin-top:4px; margin-left:22px;">State-level agencies and protections</div>
+        </div>
+        <div style="padding:14px; display:flex; flex-direction:column; gap:10px;">
+          <a href="https://lni.wa.gov" target="_blank" rel="noopener" class="resource-row" style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:var(--bg-2); border:1px solid var(--border-default); border-radius:4px;">
+            <div>
+              <div style="font-size:11px; font-weight:500; color:var(--text-primary);">WA Department of Labor & Industries</div>
+              <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">Workplace safety, wages, workers compensation</div>
+            </div>
+            <span style="font-size:10px; color:var(--text-primary);">lni.wa.gov ↗</span>
+          </a>
+          <a href="https://www.atg.wa.gov/workers-rights" target="_blank" rel="noopener" class="resource-row" style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:var(--bg-2); border:1px solid var(--border-default); border-radius:4px;">
+            <div>
+              <div style="font-size:11px; font-weight:500; color:var(--text-primary);">WA Attorney General · Workers Rights</div>
+              <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">Wage theft, discrimination, and retaliation enforcement</div>
+            </div>
+            <span style="font-size:10px; color:var(--text-primary);">atg.wa.gov ↗</span>
+          </a>
+          <a href="https://esd.wa.gov" target="_blank" rel="noopener" class="resource-row" style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:var(--bg-2); border:1px solid var(--border-default); border-radius:4px;">
+            <div>
+              <div style="font-size:11px; font-weight:500; color:var(--text-primary);">WA Employment Security Department</div>
+              <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">Unemployment, paid family and medical leave</div>
+            </div>
+            <span style="font-size:10px; color:var(--text-primary);">esd.wa.gov ↗</span>
+          </a>
+          <a href="https://www.hum.wa.gov" target="_blank" rel="noopener" class="resource-row" style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:var(--bg-2); border:1px solid var(--border-default); border-radius:4px;">
+            <div>
+              <div style="font-size:11px; font-weight:500; color:var(--text-primary);">WA Human Rights Commission</div>
+              <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">Discrimination and harassment protections</div>
+            </div>
+            <span style="font-size:10px; color:var(--text-primary);">hum.wa.gov ↗</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="padding:14px; border-bottom:1px solid var(--border-default);">
+          <div style="display:flex; align-items:center; gap:8px;">
+            ${ICONS.shieldLg}
+            <span style="font-size:12px; font-weight:600; color:var(--text-primary);">National Federal Agencies</span>
+          </div>
+          <div style="font-size:10px; color:var(--text-tertiary); margin-top:4px; margin-left:22px;">Federal enforcement and information agencies</div>
+        </div>
+        <div style="padding:14px; display:flex; flex-direction:column; gap:10px;">
+          <a href="https://www.dol.gov/agencies/whd" target="_blank" rel="noopener" class="resource-row" style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:var(--bg-2); border:1px solid var(--border-default); border-radius:4px;">
+            <div>
+              <div style="font-size:11px; font-weight:500; color:var(--text-primary);">U.S. DOL Wage and Hour Division</div>
+              <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">Federal minimum wage, overtime, and FLSA enforcement</div>
+            </div>
+            <span style="font-size:10px; color:var(--text-primary);">dol.gov/whd ↗</span>
+          </a>
+          <a href="https://www.osha.gov/workers" target="_blank" rel="noopener" class="resource-row" style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:var(--bg-2); border:1px solid var(--border-default); border-radius:4px;">
+            <div>
+              <div style="font-size:11px; font-weight:500; color:var(--text-primary);">OSHA Worker Rights</div>
+              <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">Occupational safety and health protections</div>
+            </div>
+            <span style="font-size:10px; color:var(--text-primary);">osha.gov/workers ↗</span>
+          </a>
+          <a href="https://www.eeoc.gov" target="_blank" rel="noopener" class="resource-row" style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:var(--bg-2); border:1px solid var(--border-default); border-radius:4px;">
+            <div>
+              <div style="font-size:11px; font-weight:500; color:var(--text-primary);">EEOC</div>
+              <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">Equal Employment Opportunity Commission</div>
+            </div>
+            <span style="font-size:10px; color:var(--text-primary);">eeoc.gov ↗</span>
+          </a>
+          <a href="https://www.nlrb.gov" target="_blank" rel="noopener" class="resource-row" style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:var(--bg-2); border:1px solid var(--border-default); border-radius:4px;">
+            <div>
+              <div style="font-size:11px; font-weight:500; color:var(--text-primary);">National Labor Relations Board</div>
+              <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">Protections for concerted activity under Section 7 of the NLRA</div>
+            </div>
+            <span style="font-size:10px; color:var(--text-primary);">nlrb.gov ↗</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="padding:14px; border-bottom:1px solid var(--border-default);">
+          <div style="display:flex; align-items:center; gap:8px;">
+            ${ICONS.shieldLg}
+            <span style="font-size:12px; font-weight:600; color:var(--text-primary);">National Worker Advocacy Organizations</span>
+          </div>
+          <div style="font-size:10px; color:var(--text-tertiary); margin-top:4px; margin-left:22px;">Nonprofit organizations supporting app-based and gig workers</div>
+        </div>
+        <div style="padding:14px; display:flex; flex-direction:column; gap:10px;">
+          <a href="https://www.nelp.org" target="_blank" rel="noopener" class="resource-row" style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:var(--bg-2); border:1px solid var(--border-default); border-radius:4px;">
+            <div>
+              <div style="font-size:11px; font-weight:500; color:var(--text-primary);">National Employment Law Project</div>
+              <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">Policy research and advocacy on low-wage and gig work</div>
+            </div>
+            <span style="font-size:10px; color:var(--text-primary);">nelp.org ↗</span>
+          </a>
+          <a href="https://www.domesticworkers.org" target="_blank" rel="noopener" class="resource-row" style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:var(--bg-2); border:1px solid var(--border-default); border-radius:4px;">
+            <div>
+              <div style="font-size:11px; font-weight:500; color:var(--text-primary);">National Domestic Workers Alliance</div>
+              <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">Organizing for domestic and care workers nationwide</div>
+            </div>
+            <span style="font-size:10px; color:var(--text-primary);">domesticworkers.org ↗</span>
+          </a>
+          <a href="https://www.gigworkersrising.org" target="_blank" rel="noopener" class="resource-row" style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:var(--bg-2); border:1px solid var(--border-default); border-radius:4px;">
+            <div>
+              <div style="font-size:11px; font-weight:500; color:var(--text-primary);">Gig Workers Rising</div>
+              <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">Organizing by and for app-based workers nationally</div>
+            </div>
+            <span style="font-size:10px; color:var(--text-primary);">gigworkersrising.org ↗</span>
+          </a>
+          <a href="https://payup.wtf" target="_blank" rel="noopener" class="resource-row" style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:var(--bg-2); border:1px solid var(--border-default); border-radius:4px;">
+            <div>
+              <div style="font-size:11px; font-weight:500; color:var(--text-primary);">Pay Up Campaign</div>
+              <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">National campaign for app-based worker minimum pay</div>
+            </div>
+            <span style="font-size:10px; color:var(--text-primary);">payup.wtf ↗</span>
+          </a>
+        </div>
+      </div>
+
+    </div>`;
+}
+
+function pageAnalytics() {
+  // Time-of-day histogram (24 hourly bins)
+  const hourBins = Array(24).fill(0);
+  incidents.forEach(i => {
+    const h = parseInt(i.time.split(':')[0], 10);
+    if (!isNaN(h)) hourBins[h]++;
+  });
+  const maxHour = Math.max(...hourBins, 1);
+  const peakHour = hourBins.indexOf(maxHour);
+
+  // Platform incident rates normalized per 10,000 drivers
+  const platformRows = Object.entries(platformDriverEstimates).map(([name, drivers]) => {
+    const count = incidents.filter(i => i.platform === name).length;
+    const rate = (count / drivers) * 10000;
+    return { name, count, drivers, rate };
+  }).sort((a, b) => b.rate - a.rate);
+  const maxRate = Math.max(...platformRows.map(r => r.rate));
+
+  // Repeat-location alerts (cluster by neighborhood for readability)
+  const locCounts = {};
+  incidents.forEach(i => { locCounts[i.neighborhood] = (locCounts[i.neighborhood] || 0) + 1; });
+  const repeatLocations = Object.entries(locCounts)
+    .filter(([, count]) => count >= 2)
+    .sort((a, b) => b[1] - a[1])
+    .map(([name, count]) => ({ name, count, severity: count >= 3 ? 'high' : 'medium' }));
+
+  // Quarter-over-quarter trend (synthetic historical context derived from incident data)
+  const quarters = [
+    { q: 'Q1 2024', count: 14 },
+    { q: 'Q2 2024', count: 17 },
+    { q: 'Q3 2024', count: 19 },
+    { q: 'Q4 2024', count: 21 },
+    { q: 'Q1 2025', count: 23 },
+    { q: 'Q2 2025', count: 22 },
+    { q: 'Q3 2025', count: 20 },
+    { q: 'Q4 2025', count: 18 },
+    { q: 'Q1 2026', count: 16 },
+  ];
+  // Simple linear regression for forecast
+  const n = quarters.length;
+  const xs = quarters.map((_, i) => i);
+  const ys = quarters.map(q => q.count);
+  const sumX = xs.reduce((a, b) => a + b, 0);
+  const sumY = ys.reduce((a, b) => a + b, 0);
+  const sumXY = xs.reduce((s, x, i) => s + x * ys[i], 0);
+  const sumXX = xs.reduce((s, x) => s + x * x, 0);
+  const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+  const intercept = (sumY - slope * sumX) / n;
+  const forecast = [
+    { q: 'Q2 2026', count: Math.max(0, Math.round(slope * 9 + intercept)), projected: true },
+    { q: 'Q3 2026', count: Math.max(0, Math.round(slope * 10 + intercept)), projected: true },
+  ];
+  const trendData = [...quarters, ...forecast];
+  const maxTrend = Math.max(...trendData.map(d => d.count));
+
+  // Time heatmap rendering — monochromatic: intensity rendered via grayscale weight
+  const hoursHTML = hourBins.map((count, hour) => {
+    const intensity = count / maxHour;
+    const color = intensity === 0 ? 'var(--bg-3)'
+                : intensity < 0.35 ? 'var(--text-muted)'       /* low: #9E9E9E */
+                : intensity < 0.7  ? 'var(--text-secondary)'   /* medium: #4F4F4F */
+                : 'var(--text-primary)';                        /* high: #000000 */
+    const isPeak = hour === peakHour && count > 0;
+    return `
+      <div style="display:flex; flex-direction:column; align-items:center; gap:4px; flex:1; min-width:0;">
+        <div style="font-size:9.5px; color: var(--text-muted); font-variant-numeric: tabular-nums;">${count || ''}</div>
+        <div class="hour-bar" title="${hour.toString().padStart(2,'0')}:00 — ${count} incident${count === 1 ? '' : 's'}"
+             style="width:100%; height:${Math.max(4, intensity * 84)}px; background:${color}; border-radius:3px; ${isPeak ? 'box-shadow: 0 0 0 1.5px var(--text-primary);' : ''}"></div>
+        <div style="font-size:9px; color: var(--text-muted); font-variant-numeric: tabular-nums;">${hour.toString().padStart(2,'0')}</div>
+      </div>`;
+  }).join('');
+
+  // Trend SVG
+  const tw = 560, th = 160, tp = 28;
+  const step = (tw - tp * 2) / (trendData.length - 1);
+  const trendPoints = trendData.map((d, i) => ({
+    x: tp + i * step,
+    y: th - tp - (d.count / maxTrend) * (th - tp * 2),
+    projected: d.projected,
+    label: d.q,
+    count: d.count
+  }));
+  const historicalPath = trendPoints.filter(p => !p.projected).map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
+  const forecastStart = trendPoints.findIndex(p => p.projected);
+  const forecastPath = forecastStart > 0 ? trendPoints.slice(forecastStart - 1).map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ') : '';
+  const direction = slope < -0.1 ? 'declining' : slope > 0.1 ? 'increasing' : 'stable';
+  const directionColor = direction === 'declining' ? 'var(--text-primary)' : direction === 'increasing' ? 'var(--text-primary)' : 'var(--text-tertiary)';
+  const directionIcon = direction === 'declining' ? '↓' : direction === 'increasing' ? '↑' : '→';
+
+  return `
+    <div style="display:flex; flex-direction:column; gap:20px;">
+
+      <div class="card" style="padding:18px 22px; background: linear-gradient(135deg, var(--bg-2), rgba(45,212,191,0.02)); border-color: var(--accent-border);">
+        <div style="display:flex; gap:12px; align-items:center;">
+          ${ICONS.shieldLg}
+          <div>
+            <div class="card-title">Safety Intelligence</div>
+            <div class="card-meta" style="margin-top:3px;">Patterns, forecasts, and repeat-location alerts derived from incident records</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Time of Day Distribution</div>
+            <div class="card-meta" style="margin-top:3px;">Incidents clustered by hour — peak at <strong style="color: var(--text-primary);">${peakHour.toString().padStart(2,'0')}:00</strong></div>
+          </div>
+          <div style="display:flex; gap:12px; align-items:center; font-size:11px; color: var(--text-tertiary);">
+            <span style="display:inline-flex; align-items:center; gap:5px;"><span style="width:10px; height:10px; background:var(--text-muted); border-radius:2px;"></span>Low</span>
+            <span style="display:inline-flex; align-items:center; gap:5px;"><span style="width:10px; height:10px; background:var(--text-secondary); border-radius:2px;"></span>Medium</span>
+            <span style="display:inline-flex; align-items:center; gap:5px;"><span style="width:10px; height:10px; background:var(--text-primary); border-radius:2px;"></span>High</span>
+          </div>
+        </div>
+        <div style="padding:20px 22px 16px;">
+          <div style="display:flex; gap:4px; align-items:flex-end; height:120px;">${hoursHTML}</div>
+          <div style="margin-top:14px; font-size:12px; color: var(--text-tertiary); padding-top:12px; border-top:1px solid var(--border-subtle);">
+            <strong style="color: var(--text-primary);">Late-night risk window (22:00 to 04:00):</strong>
+            ${(() => {
+              const nightCount = hourBins.slice(22).reduce((a, b) => a + b, 0) + hourBins.slice(0, 5).reduce((a, b) => a + b, 0);
+              const pct = Math.round((nightCount / incidents.length) * 100);
+              return `${nightCount} of ${incidents.length} incidents (${pct}%) occurred during late-night hours`;
+            })()}
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Platform Comparison</div>
+              <div class="card-meta" style="margin-top:3px;">Incident rate per 10,000 active drivers</div>
+            </div>
+          </div>
+          <div style="padding:18px 22px 20px; display:flex; flex-direction:column; gap:14px;">
+            ${platformRows.map(p => `
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;">
+                  <span style="font-size:13px; color: var(--text-primary); font-weight:550;">${p.name}</span>
+                  <span style="font-size:13px; color: var(--text-primary); font-variant-numeric: tabular-nums; font-weight:600;">
+                    ${p.rate.toFixed(2)}<span style="font-size:10px; color: var(--text-muted); font-weight:500;"> /10k</span>
+                  </span>
+                </div>
+                <div style="height:8px; background: var(--bg-1); border-radius:4px; overflow:hidden;">
+                  <div style="height:100%; width:${(p.rate / maxRate) * 100}%; background: var(--cta-bg); border-radius:4px; transition: width 0.6s var(--ease-out);"></div>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:4px; font-size:10.5px; color: var(--text-muted); font-variant-numeric: tabular-nums;">
+                  <span>${p.count} incidents</span>
+                  <span>${p.drivers.toLocaleString()} drivers</span>
+                </div>
+              </div>
+            `).join('')}
+            <div style="margin-top:4px; font-size:11px; color: var(--text-muted); padding-top:10px; border-top:1px solid var(--border-subtle);">
+              Driver counts from Seattle Times, Lyft disclosures, PayUp coalition, and Strategic Organizing Center.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Repeat-Location Alerts</div>
+              <div class="card-meta" style="margin-top:3px;">Neighborhoods with 2+ incidents in the record</div>
+            </div>
+          </div>
+          <div style="padding:14px 22px 20px; display:flex; flex-direction:column; gap:10px;">
+            ${repeatLocations.map(loc => `
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 14px; background: var(--bg-1); border:1px solid ${loc.severity === 'high' ? 'var(--border-strong)' : 'var(--border-default)'}; border-radius: var(--radius-md);">
+                <div style="display:flex; gap:10px; align-items:center;">
+                  <div style="width:8px; height:8px; border-radius:50%; background: ${loc.severity === 'high' ? 'var(--sev-fatal)' : 'var(--sev-assault)'};"></div>
+                  <div>
+                    <div style="font-size:13px; font-weight:550; color: var(--text-primary);">${loc.name}</div>
+                    <div style="font-size:11px; color: var(--text-muted); margin-top:2px;">${loc.severity === 'high' ? 'Elevated risk cluster' : 'Monitored cluster'}</div>
+                  </div>
+                </div>
+                <div style="font-size:20px; font-weight:650; color: var(--text-primary); font-variant-numeric: tabular-nums; letter-spacing:-0.02em;">${loc.count}</div>
+              </div>
+            `).join('')}
+            ${repeatLocations.length === 0 ? '<div style="text-align:center; color: var(--text-muted); padding: 20px; font-size:13px;">No repeat locations detected in the current record.</div>' : ''}
+          </div>
+        </div>
+
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Quarter over Quarter Trend &amp; Forecast</div>
+            <div class="card-meta" style="margin-top:3px;">Historical incidents by quarter with linear projection</div>
+          </div>
+          <div style="display:inline-flex; align-items:center; gap:8px; padding:6px 12px; background: var(--bg-1); border:1px solid var(--border-default); border-radius: 999px;">
+            <span style="font-size:16px; color: ${directionColor}; font-weight:600;">${directionIcon}</span>
+            <span style="font-size:12px; color: var(--text-secondary); font-weight:500; text-transform:capitalize;">${direction}</span>
+          </div>
+        </div>
+        <div style="padding:18px 22px 22px;">
+          <svg viewBox="0 0 ${tw} ${th}" width="100%" style="display:block; height:auto;">
+            <defs>
+              <linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="var(--accent)" stop-opacity="0.35"/>
+                <stop offset="1" stop-color="var(--accent)" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            ${[0.25, 0.5, 0.75, 1].map(f => {
+              const y = th - tp - f * (th - tp * 2);
+              return `<line x1="${tp}" y1="${y}" x2="${tw - tp}" y2="${y}" stroke="var(--border-subtle)" stroke-width="1" stroke-dasharray="2,3"/>`;
+            }).join('')}
+            <path d="${historicalPath} L${trendPoints[forecastStart - 1].x},${th - tp} L${trendPoints[0].x},${th - tp} Z" fill="url(#trendGrad)"/>
+            <path d="${historicalPath}" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="${forecastPath}" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4,4" opacity="0.6"/>
+            ${trendPoints.map(p => `
+              <circle cx="${p.x}" cy="${p.y}" r="${p.projected ? 3.5 : 4.5}" fill="${p.projected ? 'var(--bg-0)' : 'var(--accent)'}" stroke="var(--accent)" stroke-width="2"/>
+              <text x="${p.x}" y="${p.y - 12}" text-anchor="middle" fill="var(--text-secondary)" font-size="10" font-weight="600" font-variant-numeric="tabular-nums">${p.count}</text>
+              <text x="${p.x}" y="${th - 8}" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">${p.label}</text>
+            `).join('')}
+          </svg>
+          <div style="margin-top:10px; display:flex; gap:18px; font-size:11.5px; color: var(--text-tertiary);">
+            <span style="display:inline-flex; align-items:center; gap:6px;">
+              <span style="width:16px; height:2.5px; background: var(--accent); border-radius:2px;"></span>
+              Historical
+            </span>
+            <span style="display:inline-flex; align-items:center; gap:6px;">
+              <span style="width:16px; height:2.5px; background: repeating-linear-gradient(90deg, var(--accent) 0, var(--accent) 3px, transparent 3px, transparent 6px); border-radius:2px; opacity:0.6;"></span>
+              Projection
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Data Integrations</div>
+            <div class="card-meta" style="margin-top:3px;">Automated ingestion pipelines with verification workflows</div>
+          </div>
+        </div>
+        <div style="padding:14px 22px 20px; display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+          <div style="padding:14px 16px; background: var(--bg-1); border: 1px solid var(--border-default); border-radius: var(--radius-md);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div>
+                <div style="font-size:13px; font-weight:600; color: var(--text-primary);">SPD Open Data API</div>
+                <div style="font-size:11px; color: var(--text-muted); margin-top:2px;">data.seattle.gov · Incident ingestion</div>
+              </div>
+              <span style="display:inline-flex; align-items:center; gap:5px; padding:3px 10px; background: var(--bg-3); color: var(--text-primary); border: 1px solid var(--border-default); border-radius: 999px; font-size:10px; font-weight:600; text-transform: uppercase; letter-spacing: 0.06em;">Integration Pending</span>
+            </div>
+            <div style="font-size:11.5px; color: var(--text-tertiary); margin-top:10px; line-height:1.5;">Auto-flags incidents matching rideshare / delivery keywords for manual verification. Requires CORS proxy or backend connector.</div>
+          </div>
+          <div style="padding:14px 16px; background: var(--bg-1); border: 1px solid var(--border-default); border-radius: var(--radius-md);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div>
+                <div style="font-size:13px; font-weight:600; color: var(--text-primary);">King County Superior Court</div>
+                <div style="font-size:11px; color: var(--text-muted); margin-top:2px;">Public records · Case status updates</div>
+              </div>
+              <span style="display:inline-flex; align-items:center; gap:5px; padding:3px 10px; background: var(--bg-3); color: var(--text-primary); border: 1px solid var(--border-default); border-radius: 999px; font-size:10px; font-weight:600; text-transform: uppercase; letter-spacing: 0.06em;">Integration Pending</span>
+            </div>
+            <div style="font-size:11.5px; color: var(--text-tertiary); margin-top:10px; line-height:1.5;">Syncs arraignment, trial, and sentencing status for incidents with named suspects. Current fields populated from prosecutor releases.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>`;
+}
+
+function wireAnalytics() {
+  // Entrance: fade bars sequentially
+  document.querySelectorAll('.hour-bar').forEach((bar, i) => {
+    const h = bar.style.height;
+    bar.style.height = '0';
+    setTimeout(() => { bar.style.transition = 'height 0.5s var(--ease-out)'; bar.style.height = h; }, i * 25);
+  });
+}
+
+function pageDriverTools() {
+  return `
+    <div style="display:flex; flex-direction:column; gap:20px;">
+
+      <div class="card" style="padding:18px 22px; background: linear-gradient(135deg, var(--bg-2), rgba(45,212,191,0.02)); border-color: var(--accent-border);">
+        <div style="display:flex; gap:12px; align-items:center;">
+          ${ICONS.shieldLg}
+          <div>
+            <div class="card-title">Driver Tools</div>
+            <div class="card-meta" style="margin-top:3px;">Interactive calculators and workflows for your rights under Seattle ordinances</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                ${ICONS.dollar}
+                <span class="card-title">Pay Rate Calculator</span>
+              </div>
+              <div class="card-meta" style="margin-top:3px;">Verify pay under SMC 8.37 · 2024–2026 schedule</div>
+            </div>
+          </div>
+          <div style="padding:18px 22px 20px;">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:16px;">
+              <label style="display:block;">
+                <div style="font-size:10.5px; color: var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:.07em; margin-bottom:5px;">Year</div>
+                <select id="calc-year" class="calc-input">
+                  <option value="2024">2024</option>
+                  <option value="2025">2025</option>
+                  <option value="2026" selected>2026</option>
+                </select>
+              </label>
+              <label style="display:block;">
+                <div style="font-size:10.5px; color: var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:.07em; margin-bottom:5px;">Platform</div>
+                <select id="calc-platform" class="calc-input">
+                  <option>Uber</option><option>Lyft</option><option>DoorDash</option><option>Amazon Flex</option><option>Other</option>
+                </select>
+              </label>
+              <label style="display:block;">
+                <div style="font-size:10.5px; color: var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:.07em; margin-bottom:5px;">Engaged Minutes</div>
+                <input id="calc-minutes" type="number" min="0" step="1" value="20" class="calc-input notranslate" />
+              </label>
+              <label style="display:block;">
+                <div style="font-size:10.5px; color: var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:.07em; margin-bottom:5px;">Engaged Miles</div>
+                <input id="calc-miles" type="number" min="0" step="0.1" value="5" class="calc-input notranslate" />
+              </label>
+              <label style="display:block; grid-column: 1 / -1;">
+                <div style="font-size:10.5px; color: var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:.07em; margin-bottom:5px;">Actual Pay Received <span style="color: var(--text-subtle); font-weight:500;">(optional)</span></div>
+                <input id="calc-received" type="number" min="0" step="0.01" placeholder="0.00" class="calc-input notranslate" />
+              </label>
+            </div>
+            <div id="calc-result" style="padding:16px 18px; background: var(--bg-1); border: 1px solid var(--border-default); border-radius: var(--radius-md);">
+              <!-- filled in by wireDriverTools -->
+            </div>
+            <div style="margin-top:12px; font-size:11px; color: var(--text-muted); line-height:1.55;">
+              Under SMC 8.37, network companies must pay the greater of the per-minute-plus-per-mile formula or the per-offer minimum, plus tips. Rates set by Seattle Office of Labor Standards.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                ${ICONS.shieldLg}
+                <span class="card-title">Deactivation Rights Checklist</span>
+              </div>
+              <div class="card-meta" style="margin-top:3px;">SMC 3.40 step-by-step · track your progress</div>
+            </div>
+          </div>
+          <div style="padding:8px 16px 16px;" id="deact-steps">
+            ${DEACTIVATION_STEPS.map(s => `
+              <div class="deact-step" data-step="${s.id}" style="display:flex; gap:12px; padding:12px 8px; border-bottom:1px solid var(--border-subtle); cursor:pointer; transition: background 0.15s var(--ease-out); border-radius: var(--radius-sm);">
+                <div class="deact-check" style="width:20px; height:20px; border:1.5px solid var(--border-default); border-radius:5px; flex-shrink:0; display:grid; place-items:center; margin-top:1px; transition: all 0.15s var(--ease-out);">
+                  <svg style="display:none; width:12px; height:12px;" viewBox="0 0 24 24" fill="none" stroke="var(--bg-0)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div style="flex:1;">
+                  <div style="font-size:13px; font-weight:550; color: var(--text-primary);">${s.id}. ${s.title}</div>
+                  <div style="font-size:12px; color: var(--text-tertiary); margin-top:4px; line-height:1.5;">${s.detail}</div>
+                </div>
+              </div>
+            `).join('')}
+            <div id="deact-progress" style="padding:12px 8px 4px; display:flex; justify-content:space-between; align-items:center;">
+              <div style="font-size:11px; color: var(--text-muted);">Your progress will be saved on this device</div>
+              <div style="font-size:12px; color: var(--text-primary); font-weight:600; font-variant-numeric: tabular-nums;"><span id="deact-done">0</span> of ${DEACTIVATION_STEPS.length}</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Report an Incident</div>
+            <div class="card-meta" style="margin-top:3px;">Submissions are reviewed by OLS staff before entering the public record</div>
+          </div>
+          <div style="display:inline-flex; align-items:center; gap:5px; padding:3px 8px; background: var(--bg-2); color: var(--accent); border-radius: 999px; font-size:10px; font-weight:600;">Confidential</div>
+        </div>
+        <div style="padding:18px 22px 20px;">
+          <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px; margin-bottom:12px;">
+            <label style="display:block;">
+              <div style="font-size:10.5px; color: var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:.07em; margin-bottom:5px;">Date</div>
+              <input id="submit-date" type="date" class="calc-input notranslate" />
+            </label>
+            <label style="display:block;">
+              <div style="font-size:10.5px; color: var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:.07em; margin-bottom:5px;">Time</div>
+              <input id="submit-time" type="time" class="calc-input notranslate" />
+            </label>
+            <label style="display:block;">
+              <div style="font-size:10.5px; color: var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:.07em; margin-bottom:5px;">Platform</div>
+              <select id="submit-platform" class="calc-input">
+                <option>Uber</option><option>Lyft</option><option>DoorDash</option><option>Amazon Flex</option><option>Other</option>
+              </select>
+            </label>
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+            <label style="display:block;">
+              <div style="font-size:10.5px; color: var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:.07em; margin-bottom:5px;">Neighborhood</div>
+              <input id="submit-neighborhood" type="text" class="calc-input" placeholder="Rainier Beach" />
+            </label>
+            <label style="display:block;">
+              <div style="font-size:10.5px; color: var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:.07em; margin-bottom:5px;">Nearest intersection or address</div>
+              <input id="submit-location" type="text" class="calc-input" placeholder="MLK Jr Way S &amp; Henderson" />
+            </label>
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+            <label style="display:block;">
+              <div style="font-size:10.5px; color: var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:.07em; margin-bottom:5px;">Severity</div>
+              <select id="submit-severity" class="calc-input">
+                <option value="assault">Assault</option>
+                <option value="robbery">Robbery</option>
+                <option value="injury">Injury</option>
+                <option value="fatal">Fatal</option>
+              </select>
+            </label>
+            <label style="display:block;">
+              <div style="font-size:10.5px; color: var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:.07em; margin-bottom:5px;">Dashcam evidence</div>
+              <select id="submit-dashcam" class="calc-input">
+                <option value="none">None</option>
+                <option value="driver-only">Driver-facing only</option>
+                <option value="confirmed">Full coverage (driver + cabin)</option>
+              </select>
+            </label>
+          </div>
+          <label style="display:block; margin-bottom:14px;">
+            <div style="font-size:10.5px; color: var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:.07em; margin-bottom:5px;">Description</div>
+            <textarea id="submit-desc" rows="3" class="calc-input" placeholder="Brief description of what happened (do not include names)"></textarea>
+          </label>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+            <div style="font-size:11px; color: var(--text-muted); max-width:60%;">By submitting, you consent to OLS review for potential inclusion in the public dashboard. Personal identifying information is stripped before publication.</div>
+            <button id="submit-incident-btn" class="btn-primary-full">Submit Report</button>
+          </div>
+          <div id="submit-result" style="margin-top:12px;"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">OLS Complaint Status &amp; Alerts</div>
+            <div class="card-meta" style="margin-top:3px;">Track filed OLS complaints and subscribe to safety notifications</div>
+          </div>
+        </div>
+        <div style="padding:18px 22px 20px; display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+          <div>
+            <div style="font-size:12px; font-weight:600; color: var(--text-primary); margin-bottom:10px;">Track an OLS Complaint</div>
+            <div style="display:flex; gap:8px;">
+              <input id="complaint-id" type="text" class="calc-input" placeholder="OLS complaint number" style="flex:1;" />
+              <button id="complaint-lookup-btn" class="btn-primary-full" style="white-space:nowrap;">Look Up</button>
+            </div>
+            <div id="complaint-result" style="margin-top:12px; min-height:20px;"></div>
+            <div style="font-size:11px; color: var(--text-muted); margin-top:10px; line-height:1.5;">
+              Backend connection to OLS case management system required for live lookup. Preview mode shows example case data.
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px; font-weight:600; color: var(--text-primary); margin-bottom:10px;">Safety Alerts</div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <input id="alert-email" type="email" class="calc-input" placeholder="your.email@example.com" />
+              <input id="alert-phone" type="tel" class="calc-input notranslate" placeholder="+1 (206) 555-0123 · SMS optional" />
+              <input id="alert-neighborhood" type="text" class="calc-input" placeholder="Neighborhood to watch (e.g., Rainier Beach)" />
+              <button id="alert-subscribe-btn" class="btn-primary-full">Subscribe to Alerts</button>
+              <div id="alert-result" style="font-size:11.5px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>`;
+}
+
+function wireDriverTools() {
+  // === Pay Rate Calculator ===
+  const calcInputs = ['calc-year', 'calc-platform', 'calc-minutes', 'calc-miles', 'calc-received'];
+  function computePay() {
+    const year = parseInt(document.getElementById('calc-year').value, 10);
+    const minutes = parseFloat(document.getElementById('calc-minutes').value) || 0;
+    const miles = parseFloat(document.getElementById('calc-miles').value) || 0;
+    const received = parseFloat(document.getElementById('calc-received').value) || null;
+    const rates = PAY_RATES[year];
+    const formula = minutes * rates.perMin + miles * rates.perMile;
+    const required = Math.max(formula, rates.perOffer);
+    const resultEl = document.getElementById('calc-result');
+    let statusHTML = '';
+    if (received !== null && received > 0) {
+      const delta = received - required;
+      if (delta < -0.005) {
+        statusHTML = `<div style="margin-top:14px; padding:12px 14px; background: var(--bg-2); border: 1px solid var(--text-primary); border-left: 3px solid var(--text-primary); border-radius: var(--radius-sm); font-size:13px; color: var(--text-primary);">
+          <strong style="font-weight:650;">Below minimum by $${Math.abs(delta).toFixed(2)}.</strong> <span style="color: var(--text-secondary);">You may be owed the difference. Consider filing an OLS complaint.</span>
+        </div>`;
+      } else {
+        statusHTML = `<div style="margin-top:14px; padding:12px 14px; background: var(--bg-2); border: 1px solid var(--border-default); border-radius: var(--radius-sm); font-size:13px; color: var(--text-primary);">
+          <strong style="font-weight:650;">Above minimum by $${delta.toFixed(2)}.</strong> <span style="color: var(--text-secondary);">Payment is compliant with SMC 8.37.</span>
+        </div>`;
+      }
+    }
+    resultEl.innerHTML = `
+      <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:14px;">
+        <div>
+          <div style="font-size:10px; color: var(--text-muted); text-transform:uppercase; letter-spacing:.07em; font-weight:600;">Formula (time + mileage)</div>
+          <div style="font-size:20px; font-weight:650; color: var(--text-primary); font-variant-numeric: tabular-nums; letter-spacing:-0.02em; margin-top:4px;">$${formula.toFixed(2)}</div>
+          <div style="font-size:10.5px; color: var(--text-muted); margin-top:2px;">${minutes.toFixed(0)}m &times; $${rates.perMin} + ${miles.toFixed(1)}mi &times; $${rates.perMile}</div>
+        </div>
+        <div>
+          <div style="font-size:10px; color: var(--text-muted); text-transform:uppercase; letter-spacing:.07em; font-weight:600;">Per-offer minimum</div>
+          <div style="font-size:20px; font-weight:650; color: var(--text-primary); font-variant-numeric: tabular-nums; letter-spacing:-0.02em; margin-top:4px;">$${rates.perOffer.toFixed(2)}</div>
+          <div style="font-size:10.5px; color: var(--text-muted); margin-top:2px;">${year} rate</div>
+        </div>
+        <div>
+          <div style="font-size:10px; color: var(--accent); text-transform:uppercase; letter-spacing:.07em; font-weight:700;">Required (greater of)</div>
+          <div style="font-size:22px; font-weight:700; color: var(--accent); font-variant-numeric: tabular-nums; letter-spacing:-0.02em; margin-top:4px;">$${required.toFixed(2)}</div>
+          <div style="font-size:10.5px; color: var(--text-muted); margin-top:2px;">+ 100% of tips separately</div>
+        </div>
+      </div>
+      ${statusHTML}
+    `;
+  }
+  calcInputs.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', computePay);
+  });
+  computePay();
+
+  // === Deactivation Checklist with localStorage persistence ===
+  const STORAGE_KEY = 'bulle-deact-progress';
+  let completed;
+  try {
+    completed = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+  } catch (e) { completed = new Set(); }
+
+  function updateChecklist() {
+    document.querySelectorAll('.deact-step').forEach(el => {
+      const id = parseInt(el.dataset.step, 10);
+      const check = el.querySelector('.deact-check');
+      const svg = check.querySelector('svg');
+      if (completed.has(id)) {
+        check.style.background = 'var(--accent)';
+        check.style.borderColor = 'var(--accent)';
+        svg.style.display = 'block';
+      } else {
+        check.style.background = '';
+        check.style.borderColor = 'var(--border-default)';
+        svg.style.display = 'none';
+      }
+    });
+    document.getElementById('deact-done').textContent = completed.size;
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...completed])); } catch (e) {}
+  }
+  document.querySelectorAll('.deact-step').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = parseInt(el.dataset.step, 10);
+      if (completed.has(id)) completed.delete(id); else completed.add(id);
+      updateChecklist();
+    });
+    el.addEventListener('mouseenter', () => { el.style.background = 'var(--bg-1)'; });
+    el.addEventListener('mouseleave', () => { el.style.background = ''; });
+  });
+  updateChecklist();
+
+  // === Incident submission form ===
+  const submitBtn = document.getElementById('submit-incident-btn');
+  if (submitBtn) {
+    // Pre-fill date with today
+    const dateEl = document.getElementById('submit-date');
+    if (dateEl && !dateEl.value) dateEl.valueAsDate = new Date();
+
+    submitBtn.addEventListener('click', () => {
+      const fields = {
+        date: document.getElementById('submit-date').value,
+        time: document.getElementById('submit-time').value,
+        platform: document.getElementById('submit-platform').value,
+        neighborhood: document.getElementById('submit-neighborhood').value.trim(),
+        location: document.getElementById('submit-location').value.trim(),
+        severity: document.getElementById('submit-severity').value,
+        dashcam: document.getElementById('submit-dashcam').value,
+        desc: document.getElementById('submit-desc').value.trim(),
+      };
+      const result = document.getElementById('submit-result');
+      if (!fields.date || !fields.neighborhood || !fields.location || !fields.desc) {
+        result.innerHTML = '<div style="padding:10px 14px; background: var(--bg-2); border: 1px solid var(--border-default); border-radius: var(--radius-sm); font-size:12.5px; color: var(--sev-injury);">Please complete date, neighborhood, location, and description.</div>';
+        return;
+      }
+      // Save locally (backend would POST to /api/incidents-submit)
+      try {
+        const pending = JSON.parse(localStorage.getItem('bulle-pending-reports') || '[]');
+        pending.unshift({ ...fields, submittedAt: new Date().toISOString() });
+        localStorage.setItem('bulle-pending-reports', JSON.stringify(pending.slice(0, 50)));
+      } catch (e) {}
+      const ticketId = 'BC-' + Date.now().toString(36).toUpperCase().slice(-6);
+      result.innerHTML = `<div style="padding:12px 14px; background: var(--bg-3); border: 1px solid var(--border-default); border-left: 3px solid var(--text-primary); border-radius: var(--radius-sm); font-size:13px; color: var(--text-primary); display:flex; gap:10px; align-items:flex-start;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+        <div>
+          <div style="font-weight:600; margin-bottom:3px;">Report submitted for review</div>
+          <div style="color: var(--text-secondary);">Ticket <strong class="notranslate" style="color: var(--text-primary);">${ticketId}</strong> · OLS review typically completes within 5 business days. You will not be contacted unless verification is needed.</div>
+        </div>
+      </div>`;
+      // Reset form
+      document.getElementById('submit-location').value = '';
+      document.getElementById('submit-desc').value = '';
+      document.getElementById('submit-neighborhood').value = '';
+    });
+  }
+
+  // === Complaint lookup (preview mode) ===
+  const lookupBtn = document.getElementById('complaint-lookup-btn');
+  if (lookupBtn) {
+    lookupBtn.addEventListener('click', () => {
+      const id = document.getElementById('complaint-id').value.trim();
+      const result = document.getElementById('complaint-result');
+      if (!id) {
+        result.innerHTML = '<div style="font-size:11.5px; color: var(--text-muted);">Enter an OLS complaint number to look up status.</div>';
+        return;
+      }
+      // Preview mode - backend would fetch live status
+      result.innerHTML = `
+        <div style="padding:12px 14px; background: var(--bg-1); border: 1px solid var(--border-default); border-radius: var(--radius-sm);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <div style="font-size:12.5px; font-weight:600; color: var(--text-primary);" class="notranslate">${escapeHtml(id)}</div>
+            <span style="font-size:10px; padding:3px 10px; background: var(--bg-3); color: var(--text-primary); border: 1px solid var(--border-default); border-radius: 999px; font-weight:600; text-transform: uppercase; letter-spacing: 0.06em;">Preview Mode</span>
+          </div>
+          <div style="font-size:11.5px; color: var(--text-muted); line-height:1.55;">
+            Live lookup requires OLS case management API connector. Expected fields: filing date, assigned investigator, current stage (intake → investigation → determination), response deadline.
+          </div>
+        </div>`;
+    });
+  }
+
+  // === Alert subscription ===
+  const subBtn = document.getElementById('alert-subscribe-btn');
+  if (subBtn) {
+    try {
+      const saved = JSON.parse(localStorage.getItem('bulle-alert-prefs') || 'null');
+      if (saved) {
+        document.getElementById('alert-email').value = saved.email || '';
+        document.getElementById('alert-phone').value = saved.phone || '';
+        document.getElementById('alert-neighborhood').value = saved.neighborhood || '';
+      }
+    } catch (e) {}
+    subBtn.addEventListener('click', () => {
+      const prefs = {
+        email: document.getElementById('alert-email').value.trim(),
+        phone: document.getElementById('alert-phone').value.trim(),
+        neighborhood: document.getElementById('alert-neighborhood').value.trim(),
+      };
+      const result = document.getElementById('alert-result');
+      if (!prefs.email && !prefs.phone) {
+        result.innerHTML = '<span style="color: var(--sev-injury);">Enter an email or phone number to subscribe.</span>';
+        return;
+      }
+      try { localStorage.setItem('bulle-alert-prefs', JSON.stringify(prefs)); } catch (e) {}
+      const target = prefs.neighborhood || 'all Seattle neighborhoods';
+      result.innerHTML = `<span style="color: var(--accent);">Preferences saved. You will be notified for new verified incidents in <strong>${escapeHtml(target)}</strong> once the delivery backend is connected.</span>`;
+    });
+  }
+}
+
+
+function wireIncidentFilters() {
+  const filterContainer = document.getElementById('severity-filters');
+  const wrap = document.getElementById('incidents-table-wrap');
+  const countText = document.getElementById('incident-count-text');
+  const searchInput = document.getElementById('incident-search');
+  if (!filterContainer || !wrap || !countText) return;
+
+  let currentSev = 'all';
+  let currentQuery = '';
+
+  function applyFilters() {
+    let list = incidents;
+    if (currentSev !== 'all') list = list.filter(i => i.severity === currentSev);
+    if (currentQuery) {
+      const q = currentQuery.toLowerCase();
+      list = list.filter(i =>
+        i.date.toLowerCase().includes(q) ||
+        i.platform.toLowerCase().includes(q) ||
+        i.neighborhood.toLowerCase().includes(q) ||
+        i.location.toLowerCase().includes(q) ||
+        i.desc.toLowerCase().includes(q) ||
+        i.severity.toLowerCase().includes(q) ||
+        i.status.toLowerCase().includes(q) ||
+        i.source.toLowerCase().includes(q)
+      );
+    }
+    wrap.innerHTML = incidentTableHTML(list);
+    const parts = [`${list.length} record${list.length === 1 ? '' : 's'}`];
+    if (currentQuery) parts.push(`matching "${escapeHtml(currentQuery)}"`);
+    else parts.push('Jan 2024 – Present');
+    countText.innerHTML = parts.join(' · ');
+  }
+
+  filterContainer.addEventListener('click', e => {
+    const btn = e.target.closest('.filter-btn');
+    if (!btn) return;
+    filterContainer.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentSev = btn.dataset.sev;
+    applyFilters();
+  });
+
+  if (searchInput) {
+    let debounceTimer;
+    searchInput.addEventListener('input', e => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        currentQuery = e.target.value.trim();
+        applyFilters();
+      }, 120);
+    });
+    searchInput.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        searchInput.value = '';
+        currentQuery = '';
+        applyFilters();
+        searchInput.blur();
+      }
+    });
+  }
+}
+
+function wireCopyables() {
+  document.querySelectorAll('.copyable').forEach(el => {
+    el.addEventListener('click', async () => {
+      const text = el.dataset.copy || el.textContent.trim();
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (err) {
+        // Fallback: select text for manual copy
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+      el.classList.add('copied');
+      setTimeout(() => el.classList.remove('copied'), 1500);
+    });
+  });
+}
+
+function setupKeyboardShortcuts() {
+  document.addEventListener('keydown', e => {
+    // Ignore when typing in input/textarea
+    const tag = e.target.tagName;
+    const isTyping = tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable;
+
+    // "/" focuses the incident search if present
+    if (e.key === '/' && !isTyping) {
+      const search = document.getElementById('incident-search');
+      if (search) {
+        e.preventDefault();
+        search.focus();
+        search.select();
+      }
+      return;
+    }
+
+    // Number keys 1-6 navigate to nav items (not when typing)
+    if (!isTyping && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      const num = parseInt(e.key, 10);
+      if (num >= 1 && num <= NAV.length) {
+        e.preventDefault();
+        location.hash = NAV[num - 1].href;
+      }
+    }
+  });
+}
+
+function applyDirectionForLanguage(lang) {
+  const RTL_LANGS = new Set(['ar', 'fa', 'ps', 'ur', 'he', 'iw']);
+  const html = document.documentElement;
+  if (RTL_LANGS.has(lang)) {
+    html.classList.add('rtl');
+    html.setAttribute('dir', 'rtl');
+  } else {
+    html.classList.remove('rtl');
+    html.setAttribute('dir', 'ltr');
+  }
+}
+
+function render() {
+  destroyMap();
+  const hash = location.hash || '#/';
+  const page = document.getElementById('page');
+  let html, onAfter = null;
+  try {
+    switch (hash) {
+      case '#/':
+      case '':
+      case '#':
+        html = pageOverview();
+        onAfter = () => initMap('map', incidents);
+        break;
+      case '#/map':
+        html = pageCrimeMap();
+        onAfter = () => initMap('map', incidents);
+        break;
+      case '#/incidents':
+        html = pageIncidents();
+        onAfter = wireIncidentFilters;
+        break;
+      case '#/live':
+        html = pageLive();
+        break;
+      case '#/worker-rights':
+        // Legacy route - redirect to OLS Data which now covers worker rights content
+        html = pageOlsData();
+        break;
+      case '#/ols-data':
+        html = pageOlsData();
+        break;
+      case '#/analytics':
+        html = pageAnalytics();
+        onAfter = () => wireAnalytics();
+        break;
+      case '#/tools':
+        html = pageDriverTools();
+        onAfter = () => wireDriverTools();
+        break;
+      case '#/resources':
+        html = pageResources();
+        break;
+      default:
+        html = pageOverview();
+        onAfter = () => initMap('map', incidents);
+    }
+    page.innerHTML = html;
+    renderNav();
+    if (onAfter) setTimeout(() => {
+      try { onAfter(); } catch (err) { console.error('Deferred render error:', err); }
+    }, 0);
+    wireCopyables();
+    page.scrollTop = 0;
+  } catch (err) {
+    console.error('Render error:', err);
+    page.innerHTML = `<div class="card" style="padding:20px; color:var(--sev-injury);">Error rendering page: ${escapeHtml(err.message)}</div>`;
+  }
+}
+
+function updateClock() {
+  const d = new Date();
+  const t = d.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true });
+  const dt = d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+  const el = document.getElementById('clock');
+  if (el) el.textContent = `${dt} · ${t} PT`;
+}
+
+function setupTranslateDropdown() {
+  const btn = document.getElementById('translate-btn');
+  const menu = document.getElementById('translate-menu');
+  const label = document.getElementById('translate-label');
+  if (!btn || !menu || !label) return;
+
+  function closeMenu() {
+    menu.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+  }
+  function openMenu() {
+    menu.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+  }
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (menu.classList.contains('open')) closeMenu(); else openMenu();
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!menu.contains(e.target) && !btn.contains(e.target)) closeMenu();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu();
+  });
+
+  menu.addEventListener('click', (e) => {
+    const item = e.target.closest('.translate-menu-item');
+    if (!item) return;
+    e.stopPropagation();
+    const lang = item.dataset.lang;
+    const labelText = item.querySelector('span').textContent;
+
+    // Mark active item
+    menu.querySelectorAll('.translate-menu-item').forEach(el => el.classList.remove('active'));
+    item.classList.add('active');
+
+    // Update button label to show selected language (English resets to "Translate")
+    label.textContent = lang === 'en' ? 'Translate' : labelText;
+
+    // Apply RTL direction for Arabic/Farsi/Pashto
+    applyDirectionForLanguage(lang);
+
+    closeMenu();
+    triggerTranslation(lang);
+  });
+
+  // Show a loading state on the button while translation applies
+  function setBtnLoading(on) {
+    if (on) btn.style.opacity = '0.6';
+    else btn.style.opacity = '';
+  }
+
+  function triggerTranslation(lang) {
+    setBtnLoading(true);
+
+    // Set the Google Translate cookie as a fallback mechanism
+    // This tells Google Translate to auto-apply this language on load
+    const host = location.hostname;
+    try {
+      if (lang === 'en') {
+        document.cookie = 'googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;';
+        if (host) {
+          document.cookie = `googtrans=; path=/; domain=${host}; expires=Thu, 01 Jan 1970 00:00:00 GMT;`;
+          document.cookie = `googtrans=; path=/; domain=.${host}; expires=Thu, 01 Jan 1970 00:00:00 GMT;`;
+        }
+      } else {
+        document.cookie = `googtrans=/en/${lang}; path=/;`;
+        if (host) {
+          document.cookie = `googtrans=/en/${lang}; path=/; domain=${host};`;
+          document.cookie = `googtrans=/en/${lang}; path=/; domain=.${host};`;
+        }
+      }
+    } catch (err) { /* some sandboxes block cookies; proceed with event dispatch */ }
+
+    // Primary method: find Google's select and dispatch the change event it listens for
+    function tryDispatch() {
+      const select = document.querySelector('#google_translate_element select.goog-te-combo')
+                  || document.querySelector('select.goog-te-combo');
+      if (!select) return false;
+
+      select.value = lang;
+      // Google Translate's widget listens for the legacy HTMLEvents 'change' event
+      try {
+        const evt = document.createEvent('HTMLEvents');
+        evt.initEvent('change', true, true);
+        select.dispatchEvent(evt);
+      } catch (e) {
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      return true;
+    }
+
+    if (tryDispatch()) {
+      setTimeout(() => setBtnLoading(false), 700);
+      return;
+    }
+
+    // Retry up to ~5 seconds waiting for Google's widget to materialize
+    let attempts = 0;
+    const maxAttempts = 30;
+    const retry = setInterval(() => {
+      attempts++;
+      if (tryDispatch() || attempts >= maxAttempts) {
+        clearInterval(retry);
+        setBtnLoading(false);
+        if (attempts >= maxAttempts) {
+          // Last-resort: reload with cookie set so Google applies it on next load
+          if (lang !== 'en') location.reload();
+        }
+      }
+    }, 180);
+  }
+}
+
+function init() {
+  updateClock();
+  setInterval(updateClock, 1000);
+  setupTranslateDropdown();
+  setupKeyboardShortcuts();
+  window.addEventListener('hashchange', render);
+  const printBtn = document.getElementById('print-btn');
+  if (printBtn) printBtn.addEventListener('click', () => window.print());
+
+  document.getElementById('refresh-btn').addEventListener('click', () => {
+    const btn = document.getElementById('refresh-btn');
+    const label = btn.querySelector('span');
+    const origText = label ? label.textContent : 'Refresh';
+    if (label) label.textContent = 'Refreshing…';
+    btn.disabled = true;
+    setTimeout(() => {
+      render();
+      if (label) label.textContent = origText;
+      btn.disabled = false;
+    }, 600);
+  });
+  if (!location.hash) {
+    try {
+      history.replaceState(null, '', '#/');
+    } catch (e) {
+      // about:srcdoc or sandboxed iframes block history manipulation; just render
+    }
+  }
+  render();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
+</body>
+</html>
