@@ -14,7 +14,6 @@
 <meta name="apple-mobile-web-app-title" content="Safety Steward" />
 <title>Bulle Cloud · Safety Steward</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232dd4bf'/%3E%3Cstop offset='1' stop-color='%2314b8a6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cpath d='M16 26s7-3 7-9V8l-7-3-7 3v9c0 6 7 9 7 9z' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
-<link rel="stylesheet" href="app.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="preconnect" href="https://rsms.me/">
 <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
@@ -25,75 +24,101 @@
      ============================================================ */
 
   :root {
-    /* === SURFACES === */
-    /* Primary background — page canvas */
-    --bg-0: #F2F2F2;
-    /* Secondary surface — cards, panels, elevated containers */
-    --bg-1: #F7F7F7;
-    --bg-2: #FFFFFF;        /* Tertiary surface — inputs, inner panels */
-    --bg-3: #EBEBEB;        /* Subtle tinted zones — table headers, hover */
-    --surface: #F7F7F7;
-    --surface-elev: #FFFFFF;
+    /* === BULLE CLOUD MONOCHROMATIC DESIGN SYSTEM ===
+       Light grayscale palette. No accent colors. No gradients.
+       Hierarchy expressed through typography weight, spacing, and grayscale weight.
+       Severity differentiation uses grayscale weight + icon + label position. */
+
+    /* === SURFACES === Light grayscale hierarchy */
+    --bg-0: #F2F2F2;        /* Primary background — page canvas */
+    --bg-1: #F7F7F7;        /* Secondary surfaces — cards, sidebar */
+    --bg-2: #FFFFFF;        /* Tertiary surfaces — inputs, inner panels, header */
+    --bg-3: #EBEBEB;        /* Hover states, table header tint, subtle zones */
+    --surface:       #F7F7F7;
+    --surface-elev:  #FFFFFF;
     --surface-hover: #EBEBEB;
 
-    /* === BORDERS === */
-    --border-subtle: #E5E5E5;   /* Hairline separators inside cards */
-    --border-default: #D1D1D1;  /* Standard borders on inputs and cards */
-    --border-strong: #B8B8B8;   /* Emphasized borders, focus, active */
+    /* === BORDERS === Hairline neutral grays */
+    --border-subtle:  #E5E5E5;   /* Hairline separators inside cards */
+    --border-default: #D1D1D1;   /* Standard borders on inputs and cards */
+    --border-strong:  #B8B8B8;   /* Emphasized borders, focus, active */
 
-    /* === TEXT === */
-    --text-primary: #000000;    /* Headings, key values, primary text */
-    --text-secondary: #4F4F4F;  /* Body copy, descriptions */
-    --text-tertiary: #757575;   /* Labels, metadata */
-    --text-muted: #9E9E9E;      /* Placeholder, captions, disabled */
-    --text-subtle: #BDBDBD;     /* Very muted, decorative */
+    /* === TEXT === Six-step grayscale */
+    --text-primary:   #000000;   /* Headings, key values, primary text */
+    --text-secondary: #4F4F4F;   /* Body copy, descriptions */
+    --text-tertiary:  #757575;   /* Labels, metadata */
+    --text-muted:     #9E9E9E;   /* Placeholder, captions, disabled */
+    --text-subtle:    #BDBDBD;   /* Decorative, very low emphasis */
 
-    /* === PRIMARY CTA === */
-    --cta-bg: #000000;
-    --cta-text: #FFFFFF;
-    --cta-bg-hover: #1A1A1A;
+    /* === PRIMARY CTA === Pure black on white */
+    --cta-bg:        #000000;
+    --cta-text:      #FFFFFF;
+    --cta-bg-hover:  #1A1A1A;
     --cta-bg-active: #2A2A2A;
 
-    /* === SEMANTIC STATES ===
-       In a monochromatic system, states are communicated via:
-       1. Grayscale weight differences
-       2. Typography weight (600 active vs 500 inactive)
-       3. Position and composition
-       Icon + label pattern is required for any severity indicator. */
-    --state-critical: #1A1A1A;    /* High-severity: darkest */
-    --state-warning:  #4F4F4F;    /* Medium-severity: dark gray */
-    --state-notice:   #757575;    /* Low-severity: mid gray */
-    --state-resolved: #9E9E9E;    /* Closed/resolved: muted */
+    /* === ACCENT === Removed in monochromatic system.
+       Variables remapped to grayscale so existing markup using them
+       falls back to neutral. Anywhere "accent" appears in the UI,
+       it now reads as black emphasis instead of teal highlight. */
+    --accent:               #000000;
+    --accent-hover:         #1A1A1A;
+    --accent-subtle:        #EBEBEB;
+    --accent-subtle-hover:  #E0E0E0;
+    --accent-border:        #9E9E9E;
+    --accent-deep:          #000000;
+    --seattle-gold:         #4F4F4F;   /* Was gold; now mid-gray emphasis */
 
-    /* Legacy compatibility — components still reference these,
-       now mapped to neutral grays so nothing colored slips through */
-    --accent: #000000;
-    --accent-hover: #1A1A1A;
-    --accent-subtle: #EBEBEB;
-    --accent-subtle-hover: #E0E0E0;
-    --accent-border: #9E9E9E;
-    --seattle-gold: #4F4F4F;
-
-    /* Severity palette — grayscale weighted by severity, paired with icons */
-    --sev-fatal:   #1A1A1A;   /* Darkest = most severe */
+    /* === SEVERITY === Grayscale weighted by severity (darkest = most severe).
+       Always paired with an icon and a text label so meaning never depends
+       on color alone — accessible to colorblind users by design. */
+    --sev-fatal:   #1A1A1A;   /* Most severe = darkest */
     --sev-robbery: #3D3D3D;
     --sev-injury:  #5C5C5C;
     --sev-assault: #757575;
-    --status-open:   #1A1A1A;
-    --status-closed: #9E9E9E;
 
-    /* === ELEVATION ===
-       Subtle shadows only. Enterprise aesthetic prefers borders over shadow. */
+    /* === STATUS === Open uses dark, closed uses muted */
+    --status-open:   #1A1A1A;   /* Darkest = needs attention */
+    --status-closed: #9E9E9E;   /* Muted = resolved, low emphasis */
+
+    /* === FUNCTIONAL SYSTEM COLORS ===
+       Reserved for non-decorative status feedback only:
+       success confirmations, validation errors, warning callouts, info banners.
+       Each comes with a foreground for text-on-tinted-bg and a tint for backgrounds.
+       Never used for branding, navigation, charts, or general accenting. */
+    --success-fg:    #1B5E20;   /* Forest green — confirmations, "live" status, sent state */
+    --success-tint:  #E8F5E9;   /* Pale green background for success banners */
+    --success-bd:    #C5E1C8;
+
+    --warning-fg:    #8B5A00;   /* Amber — caution, "estimated" data, draft state */
+    --warning-tint:  #FFF4E0;
+    --warning-bd:    #F2D9A6;
+
+    --error-fg:      #B71C1C;   /* Red — validation errors, critical failures, destructive */
+    --error-tint:    #FDECEC;
+    --error-bd:      #F2C4C4;
+
+    --info-fg:       #0D47A1;   /* Blue — informational, neutral notices, links in content */
+    --info-tint:     #E3F0FF;
+    --info-bd:       #C2D9F2;
+
+    /* Legacy semantic state aliases — mapped to grayscale */
+    --state-critical: #1A1A1A;
+    --state-warning:  #4F4F4F;
+    --state-notice:   #757575;
+    --state-resolved: #9E9E9E;
+
+    /* === ELEVATION === Subtle shadows only.
+       Enterprise aesthetic prefers borders over shadow. */
     --shadow-xs: 0 1px 0 rgba(0, 0, 0, 0.04);
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
 
-    /* === MOTION === */
+    /* === MOTION === Unchanged */
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-    /* === RADIUS === */
+    /* === RADIUS === Unchanged */
     --radius-sm: 4px;
     --radius-md: 6px;
     --radius-lg: 8px;
@@ -138,6 +163,7 @@
   }
 
   .sidebar-brand-accent {
+    /* Removed in monochromatic system — no gradient bars */
     display: none;
   }
 
@@ -154,11 +180,12 @@
   }
 
   .sidebar-brand-mark {
-    width: 32px; height: 32px;
+    width: 28px; height: 28px;
     background: var(--cta-bg);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
     display: grid;
     place-items: center;
+    flex-shrink: 0;
   }
 
   .sidebar-brand-wordmark {
@@ -199,6 +226,27 @@
     color: var(--text-secondary);
     font-weight: 500;
     letter-spacing: -0.003em;
+  }
+  .sidebar-data-freshness.is-live {
+    background: var(--success-tint);
+    border-color: var(--success-bd);
+    color: var(--success-fg);
+  }
+  .sidebar-data-freshness.is-live::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--success-fg);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .sidebar-data-freshness.is-sample {
+    background: var(--warning-tint);
+    border-color: var(--warning-bd);
+    color: var(--warning-fg);
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
   }
 
   .sidebar-divider {
@@ -472,11 +520,40 @@
     cursor: pointer;
   }
 
-  /* ============= SEVERITY DOTS & CHIPS ============= */
+  /* ============= SEVERITY DOTS & CHIPS =============
+     Each severity uses a distinct visual treatment beyond grayscale weight,
+     so the four levels remain instantly distinguishable in pure monochrome.
+     Fatal: filled solid black ring · Robbery: filled dark gray with inner ring
+     Injury: ring outline only (medium) · Assault: small filled circle (light) */
   .sev-dot {
-    width: 8px; height: 8px;
+    width: 12px; height: 12px;
     border-radius: 50%;
     display: inline-block;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .sev-dot.sev-fatal {
+    background: var(--sev-fatal);
+    box-shadow: 0 0 0 2px var(--bg-1), 0 0 0 3px var(--sev-fatal);
+  }
+  .sev-dot.sev-robbery {
+    background: var(--sev-robbery);
+    border: 2px solid var(--bg-1);
+    box-shadow: 0 0 0 1px var(--sev-robbery);
+    width: 14px; height: 14px;
+  }
+  .sev-dot.sev-injury {
+    background: transparent;
+    border: 2px solid var(--sev-injury);
+    width: 11px; height: 11px;
+  }
+  .sev-dot.sev-assault {
+    background: var(--sev-assault);
+    width: 8px; height: 8px;
+  }
+  .sev-dot.sev-incident {
+    background: var(--text-tertiary);
+    width: 8px; height: 8px;
   }
   .chip {
     display: inline-flex;
@@ -490,6 +567,10 @@
     border: 1px solid var(--border-default);
     color: var(--text-secondary);
   }
+  .chip.chip-success { background: var(--success-tint); border-color: var(--success-bd); color: var(--success-fg); }
+  .chip.chip-warning { background: var(--warning-tint); border-color: var(--warning-bd); color: var(--warning-fg); }
+  .chip.chip-error   { background: var(--error-tint);   border-color: var(--error-bd);   color: var(--error-fg); }
+  .chip.chip-info    { background: var(--info-tint);    border-color: var(--info-bd);    color: var(--info-fg); }
 
   /* ============= FILTER BUTTONS ============= */
   .filter-btn {
@@ -1359,18 +1440,14 @@
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
           </svg>
         </div>
-        <div>
-          <div class="sidebar-brand-wordmark">Bulle Cloud</div>
-          <div style="font-size:9px; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px;">Safety Steward</div>
-        </div>
+        <div style="font-size:9px; font-weight:600; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; line-height:1.3;">Bulle Cloud · Safety Steward</div>
       </div>
 
-      <div class="sidebar-product-title">Safety Steward</div>
-      <div class="sidebar-product-subtitle">App-based driver safety intelligence</div>
+      <div class="sidebar-product-title" style="margin-top:10px;">App-Based Driver<br>Safety Steward</div>
+      <div class="sidebar-product-subtitle">Safety Steward Dashboard</div>
 
       <div class="sidebar-data-freshness">
-        <span class="pulse-dot" style="width:5px; height:5px;"></span>
-        <span>Data current · Apr 14, 2026</span>
+        <span>Data current as of Apr 14, 2026</span>
       </div>
     </div>
 
@@ -1380,7 +1457,7 @@
 
     <div class="sidebar-footer">
       Powered by <span class="sidebar-footer-brand">Bulle Cloud</span><br>
-      <span style="color: var(--text-subtle);">bullecloud.com</span>
+      <a href="https://bullecloud.com" target="_blank" rel="noopener" style="color: var(--accent-deep); text-decoration: none;">bullecloud.com</a>
     </div>
   </aside>
 
@@ -1474,7 +1551,7 @@ function googleTranslateElementInit() {
 <script>
 'use strict';
 
-const SEV = { fatal: 'var(--sev-fatal)', injury: 'var(--sev-injury)', robbery: 'var(--sev-robbery)', assault: 'var(--sev-assault)' };
+const SEV = { fatal: 'var(--sev-fatal)', injury: 'var(--sev-injury)', robbery: 'var(--sev-robbery)', assault: 'var(--sev-assault)', incident: 'var(--text-secondary)' };
 
 const NAV = [
   { href: '#/',              label: 'Overview',      subtitle: 'Seattle Metro · 2024–Present',                    icon: 'grid' },
@@ -1514,19 +1591,39 @@ const ICONS = {
 // Incident schema enhanced with time, dashcam evidence, and court case status
 // dashcam: 'confirmed' | 'driver-only' | 'none' | null (null = not yet documented)
 // caseStatus: string (matches King County Superior Court stages) | null
-const incidents = [
-  { id: 1,  date: 'Apr 12, 2026', time: '02:18', lat: 47.5127, lng: -122.2619, severity: 'fatal',    platform: 'Uber',        neighborhood: 'Rainier Beach',  location: '9200 Rainier Ave S',          desc: 'Driver shot during pickup attempt · late night',            status: 'Open',   source: 'KOMO',               dashcam: 'driver-only', caseStatus: 'Arraignment scheduled' },
-  { id: 2,  date: 'Apr 11, 2026', time: '23:42', lat: 47.5766, lng: -122.3301, severity: 'robbery',  platform: 'Lyft',        neighborhood: 'SODO',           location: '2800 Airport Way S',          desc: 'Carjacking at stoplight · suspect fled on foot',            status: 'Closed', source: 'SPD Blotter',        dashcam: 'none',        caseStatus: 'Conviction · sentenced' },
-  { id: 3,  date: 'Apr 10, 2026', time: '21:15', lat: 47.5521, lng: -122.2598, severity: 'assault',  platform: 'DoorDash',    neighborhood: 'Seward Park',    location: 'Atlantic City Boat Ramp',     desc: 'Driver assaulted during isolated delivery',                 status: 'Open',   source: 'Cascade PBS',        dashcam: 'confirmed',   caseStatus: 'Under investigation' },
-  { id: 4,  date: 'Apr 08, 2026', time: '01:52', lat: 47.6062, lng: -122.3321, severity: 'robbery',  platform: 'Uber',        neighborhood: 'Downtown',       location: '3rd Ave & Pike St',           desc: 'Armed robbery during ride · phone and cash taken',          status: 'Closed', source: 'KIRO 7',             dashcam: 'confirmed',   caseStatus: 'Trial · set for June' },
-  { id: 5,  date: 'Apr 06, 2026', time: '19:30', lat: 47.6205, lng: -122.3493, severity: 'injury',   platform: 'Amazon Flex', neighborhood: 'Belltown',       location: '2100 Western Ave',            desc: 'Driver injured during package delivery dispute',            status: 'Closed', source: 'Fox 13',             dashcam: 'none',        caseStatus: null },
-  { id: 6,  date: 'Apr 03, 2026', time: '03:04', lat: 47.5296, lng: -122.2707, severity: 'fatal',    platform: 'Lyft',        neighborhood: 'Rainier Beach',  location: 'MLK Jr Way S & Henderson',    desc: 'Driver fatally shot · passenger in custody',                status: 'Closed', source: 'King Co. Prosecutors', dashcam: 'confirmed', caseStatus: 'Conviction · sentenced' },
-  { id: 7,  date: 'Apr 01, 2026', time: '22:55', lat: 47.5677, lng: -122.3242, severity: 'robbery',  platform: 'DoorDash',    neighborhood: 'SODO',           location: '1st Ave S & S Lander St',     desc: 'Vehicle stolen from driver · recovered next day',           status: 'Closed', source: 'SPD Blotter',        dashcam: 'driver-only', caseStatus: 'Charges filed' },
-  { id: 8,  date: 'Mar 29, 2026', time: '14:20', lat: 47.6101, lng: -122.3420, severity: 'assault',  platform: 'Uber',        neighborhood: 'Downtown',       location: 'Pike Place Market',           desc: 'Driver punched during fare dispute',                        status: 'Open',   source: 'SPD Blotter',        dashcam: 'confirmed',   caseStatus: 'Under investigation' },
-  { id: 9,  date: 'Mar 27, 2026', time: '00:48', lat: 47.5150, lng: -122.2640, severity: 'injury',   platform: 'Uber',        neighborhood: 'Rainier Beach',  location: 'Rainier Ave S & S Henderson', desc: 'Driver injured breaking up street altercation',             status: 'Closed', source: 'KOMO',               dashcam: 'none',        caseStatus: null },
-  { id: 10, date: 'Mar 25, 2026', time: '20:35', lat: 47.6815, lng: -122.3854, severity: 'robbery',  platform: 'Lyft',        neighborhood: 'Ballard',        location: 'NW Market St & 24th Ave NW',  desc: 'Armed robbery at delivery address · false order',           status: 'Open',   source: 'Cascade PBS',        dashcam: 'driver-only', caseStatus: 'Under investigation' },
-  { id: 11, date: 'Mar 22, 2026', time: '03:27', lat: 47.5321, lng: -122.3074, severity: 'assault',  platform: 'DoorDash',    neighborhood: 'Georgetown',     location: 'Airport Way S & S Lucile',    desc: 'Driver threatened with weapon · no injuries',               status: 'Closed', source: 'SPD Blotter',        dashcam: 'none',        caseStatus: 'Charges filed' },
-  { id: 12, date: 'Mar 20, 2026', time: '17:10', lat: 47.6205, lng: -122.3127, severity: 'injury',   platform: 'Amazon Flex', neighborhood: 'Capitol Hill',   location: 'E Pike St & 12th Ave',        desc: 'Driver sustained minor injuries in pedestrian incident',    status: 'Closed', source: 'SPD Blotter',        dashcam: 'confirmed',   caseStatus: null },
+// Hardcoded fallback data — used only if the live incidents.json fetch fails.
+// In normal operation, fetchLiveData() replaces these on page load and every 5 minutes.
+let incidents = [
+  { id: 1, date: 'Apr 22, 2026', time: '10:13', lat: 47.6062, lng: -122.3321, severity: 'injury', platform: 'Unverified', neighborhood: 'Seattle', location: 'Seattle area', desc: 'Police Investigating Stabbing in North Seattle', status: 'Reported', source: 'SPD Blotter', dashcam: null, caseStatus: null },
+  { id: 2, date: 'Apr 21, 2026', time: '17:25', lat: 47.68366976, lng: -122.344486327765, severity: 'robbery', platform: 'Unverified', neighborhood: 'ROOSEVELT/RAVENNA', location: '75XX BLOCK OF AURORA AVE N', desc: 'Robbery reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 3, date: 'Apr 21, 2026', time: '14:09', lat: 47.56923486, lng: -122.371818280297, severity: 'assault', platform: 'Unverified', neighborhood: 'NORTH DELRIDGE', location: '30XX BLOCK OF SW BRADFORD ST', desc: 'Aggravated Assault reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 4, date: 'Apr 21, 2026', time: '11:24', lat: 47.6249, lng: -122.321, severity: 'injury', platform: 'Unverified', neighborhood: 'Capitol Hill', location: 'Capitol Hill area', desc: 'Man Injured During Unprovoked Attack in Downtown Seattle', status: 'Reported', source: 'SPD Blotter', dashcam: null, caseStatus: null },
+  { id: 5, date: 'Apr 21, 2026', time: '04:53', lat: 47.6140898, lng: -122.318793870374, severity: 'assault', platform: 'Unverified', neighborhood: 'CAPITOL HILL', location: '10XX BLOCK OF E PIKE ST', desc: 'Aggravated Assault reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 6, date: 'Apr 21, 2026', time: '01:09', lat: 47.61370749, lng: -122.346083206729, severity: 'assault', platform: 'Unverified', neighborhood: 'BELLTOWN', location: '1XX BLOCK OF BELL ST', desc: 'Aggravated Assault reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 7, date: 'Apr 20, 2026', time: '22:16', lat: 47.7123018, lng: -122.338090377729, severity: 'assault', platform: 'Unverified', neighborhood: 'NORTHGATE', location: '15XX BLOCK OF N 115TH ST', desc: 'Aggravated Assault reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 8, date: 'Apr 20, 2026', time: '20:41', lat: 47.58062656, lng: -122.306565706796, severity: 'robbery', platform: 'Unverified', neighborhood: 'NORTH BEACON HILL', location: '25XX BLOCK OF 20TH AVE S', desc: 'Robbery reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 9, date: 'Apr 20, 2026', time: '14:53', lat: 47.51900846, lng: -122.264525106403, severity: 'assault', platform: 'Unverified', neighborhood: 'RAINIER BEACH', location: '54XX BLOCK OF S FLETCHER ST', desc: 'Aggravated Assault reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 10, date: 'Apr 20, 2026', time: '12:40', lat: 47.70139123, lng: -122.362729774703, severity: 'robbery', platform: 'Unverified', neighborhood: 'GREENWOOD', location: '97XX BLOCK OF HOLMAN RD NW', desc: 'Robbery reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 11, date: 'Apr 20, 2026', time: '11:04', lat: 47.6324, lng: -122.3565, severity: 'injury', platform: 'Unverified', neighborhood: 'Queen Anne', location: 'Queen Anne area', desc: 'Two People in Critical Condition After Queen Anne Collision', status: 'Reported', source: 'SPD Blotter', dashcam: null, caseStatus: null },
+  { id: 12, date: 'Apr 20, 2026', time: '10:20', lat: 47.61995899, lng: -122.313910193775, severity: 'robbery', platform: 'Unverified', neighborhood: 'CAPITOL HILL', location: '14XX BLOCK OF E JOHN ST', desc: 'Robbery reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 13, date: 'Apr 20, 2026', time: '10:19', lat: 47.6062, lng: -122.3321, severity: 'injury', platform: 'Unverified', neighborhood: 'Seattle', location: 'Seattle area', desc: 'Police Investigating Stabbing in North Seattle', status: 'Reported', source: 'SPD Blotter', dashcam: null, caseStatus: null },
+  { id: 14, date: 'Apr 20, 2026', time: '08:30', lat: 47.70685216, lng: -122.335083507147, severity: 'assault', platform: 'Unverified', neighborhood: 'NORTHGATE', location: '17XX BLOCK OF N 107TH ST', desc: 'Aggravated Assault reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 15, date: 'Apr 20, 2026', time: '06:14', lat: 47.59919493, lng: -122.327666993797, severity: 'robbery', platform: 'Unverified', neighborhood: 'CHINATOWN/INTERNATIONAL DISTRICT', location: '5TH AVE S / S JACKSON ST', desc: 'Robbery reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 16, date: 'Apr 19, 2026', time: '22:40', lat: 47.60000951, lng: -122.315020487112, severity: 'assault', platform: 'Unverified', neighborhood: 'JUDKINS PARK/NORTH BEACON HILL', location: '12XX BLOCK OF S MAIN ST', desc: 'Aggravated Assault reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 17, date: 'Apr 19, 2026', time: '21:51', lat: 47.60974973, lng: -122.337792915699, severity: 'assault', platform: 'Unverified', neighborhood: 'DOWNTOWN COMMERCIAL', location: 'PIKE ST / 3RD AVE', desc: 'Aggravated Assault reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 18, date: 'Apr 19, 2026', time: '17:59', lat: 47.62312892, lng: -122.320924263938, severity: 'assault', platform: 'Unverified', neighborhood: 'CAPITOL HILL', location: 'E REPUBLICAN ST / BROADWAY E', desc: 'Aggravated Assault reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 19, date: 'Apr 19, 2026', time: '12:04', lat: 47.65121107, lng: -122.36650060515218, severity: 'assault', platform: 'Unverified', neighborhood: 'QUEEN ANNE', location: '6XX BLOCK OF W EMERSON ST', desc: 'Aggravated Assault reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 20, date: 'Apr 19, 2026', time: '04:00', lat: 47.6005, lng: -122.334, severity: 'injury', platform: 'Unverified', neighborhood: 'Pioneer Square', location: 'Pioneer Square area', desc: 'Woman Injured in Pioneer Square Shooting   ', status: 'Reported', source: 'SPD Blotter', dashcam: null, caseStatus: null },
+  { id: 21, date: 'Apr 19, 2026', time: '02:17', lat: 47.65236054, lng: -122.35498383415, severity: 'assault', platform: 'Unverified', neighborhood: 'FREMONT', location: '3XX BLOCK OF N 36TH ST', desc: 'Aggravated Assault reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 22, date: 'Apr 19, 2026', time: '00:30', lat: 47.60218642, lng: -122.314925760424, severity: 'assault', platform: 'Unverified', neighborhood: 'FIRST HILL', location: '1XX BLOCK OF 13TH AVE', desc: 'Aggravated Assault reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 23, date: 'Apr 19, 2026', time: '00:00', lat: 47.73393647, lng: -122.311397618678, severity: 'robbery', platform: 'Unverified', neighborhood: 'LAKECITY', location: '15XX BLOCK OF NE 145TH ST', desc: 'Robbery reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 24, date: 'Apr 18, 2026', time: '22:21', lat: 47.70623772, lng: -122.280339098213, severity: 'assault', platform: 'Unverified', neighborhood: 'Seattle', location: '106XX BLOCK OF BARTLETT AVE NE', desc: 'Aggravated Assault reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 25, date: 'Apr 18, 2026', time: '22:00', lat: 47.60310003, lng: -122.316781663795, severity: 'assault', platform: 'Unverified', neighborhood: 'FIRST HILL', location: '1XX BLOCK OF 12TH AVE', desc: 'Aggravated Assault reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 26, date: 'Apr 18, 2026', time: '21:43', lat: 47.72503555, lng: -122.344996828047, severity: 'robbery', platform: 'Unverified', neighborhood: 'NORTHGATE', location: '132XX BLOCK OF AURORA AVE N', desc: 'Robbery reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 27, date: 'Apr 18, 2026', time: '21:00', lat: 47.7210914, lng: -122.29416074702085, severity: 'robbery', platform: 'Unverified', neighborhood: 'LAKECITY', location: 'LAKE CITY WAY NE / NE 127TH ST', desc: 'Robbery reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 28, date: 'Apr 18, 2026', time: '18:02', lat: 47.61032054, lng: -122.343636524492, severity: 'assault', platform: 'Unverified', neighborhood: 'DOWNTOWN COMMERCIAL', location: 'VIRGINIA ST / WESTERN AVE', desc: 'Aggravated Assault reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 29, date: 'Apr 18, 2026', time: '03:43', lat: 47.59919591, lng: -122.328317255401, severity: 'assault', platform: 'Unverified', neighborhood: 'CHINATOWN/INTERNATIONAL DISTRICT', location: '4XX BLOCK OF S JACKSON ST', desc: 'Aggravated Assault reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
+  { id: 30, date: 'Apr 18, 2026', time: '03:28', lat: 47.61299082, lng: -122.345863108862, severity: 'assault', platform: 'Unverified', neighborhood: 'BELLTOWN', location: '22XX BLOCK OF 1ST AVE', desc: 'Aggravated Assault reported (SPD record)', status: 'Reported', source: 'SPD Open Data', dashcam: null, caseStatus: null },
 ];
 
 // Estimated active driver counts by platform (Seattle metro) - sourced from public research
@@ -1540,25 +1637,43 @@ const platformDriverEstimates = {
 
 // Official 2026 SMC 8.37 pay rates for the pay calculator
 const PAY_RATES = {
+  // Source: OLS Memo 2026, Sept 30, 2025
+  // https://www.seattle.gov/documents/Departments/LaborStandards/Memo_2026_Seattle_MW_Increase.pdf
   2024: { perMin: 0.44, perMile: 0.74, perOffer: 5.00 },
   2025: { perMin: 0.45, perMile: 0.77, perOffer: 5.20 },
-  2026: { perMin: 0.47, perMile: 0.80, perOffer: 5.34 },
+  // 2026 per-mile = IRS standard mileage rate × 1.10 mileage factor (SMC 8.37.050.B.2)
+  // OLS lists this as TBD pending IRS publication. Estimate based on 2025 IRS rate of $0.70 × 1.10 = $0.77.
+  2026: { perMin: 0.47, perMile: 0.77, perOffer: 5.34, perMileNote: 'Estimated · OLS marks 2026 per-mile as TBD pending IRS rate' },
 };
 
-// Deactivation rights (SMC 3.40 · effective Jan 1, 2025)
+// Seattle Office of Labor Standards contact (verified Apr 2026)
+// Source: https://www.seattle.gov/laborstandards
+const OLS = {
+  email: 'laborstandards@seattle.gov',
+  phone: '(206) 256-5297',
+  address: '810 3rd Avenue, Suite 375, Seattle, WA 98104-1627',
+  director: 'Steven Marchese',
+  website: 'https://www.seattle.gov/laborstandards',
+  complaintFormUrl: 'https://www.seattle.gov/laborstandards/workers/file-a-complaint',
+  payCalculatorUrl: 'https://laborinquiry.seattle.gov/appbasedcalc/',
+  appBasedOrdinancesUrl: 'https://www.seattle.gov/laborstandards/ordinances/app-based-worker-ordinances',
+};
+
+// Deactivation rights (SMC 8.40 · effective Jan 1, 2025)
+// Source: https://www.seattle.gov/laborstandards/ordinances/app-based-worker-ordinances/app-based-worker-deactivation-rights-ordinance
 const DEACTIVATION_STEPS = [
   { id: 1, title: 'Review your deactivation notice',
-    detail: 'The platform must provide a written notice explaining the lawful reason for deactivation. If you did not receive one, the deactivation may itself be unlawful under SMC 3.40.' },
-  { id: 2, title: 'Request your records within 5 days',
-    detail: 'You have the right to request all records the platform used in its decision — ratings, complaint logs, trip data, messages. The platform must provide them within 14 days.' },
-  { id: 3, title: 'File an internal challenge within 90 days',
-    detail: 'Submit a written challenge directly to the platform. They must respond in writing within 14 days explaining whether the deactivation is upheld and why.' },
-  { id: 4, title: 'Check for 14-day advance notice compliance',
-    detail: 'For most non-safety deactivations, the platform owes you at least 14 days advance notice. If you were deactivated without notice, document the timeline.' },
-  { id: 5, title: 'File an OLS complaint if unresolved',
-    detail: 'If the platform does not reinstate you or their response is deficient, file with Seattle Office of Labor Standards. OLS investigates procedural compliance during 2025–2027 enforcement period.' },
-  { id: 6, title: 'Preserve evidence',
-    detail: 'Save all communications, screenshots of your app status, trip history, and the deactivation notice itself. Keep a timeline in writing.' },
+    detail: 'For deactivations reasonably related to a violation, the network company must give you 14 days advance notice plus notice on the actual date of deactivation. The notice must state the policy violated and the reasons for the decision (SMC 8.40).' },
+  { id: 2, title: 'Request access to your records',
+    detail: 'You have the right to access the records the company used to substantiate its decision (ratings, complaints, trip logs, messages). Request them in writing immediately.' },
+  { id: 3, title: 'Use the company internal challenge process',
+    detail: 'The company must offer a process to challenge the deactivation. Submit your written challenge promptly and keep a copy of everything you send.' },
+  { id: 4, title: 'Document the timeline',
+    detail: 'Save the deactivation notice, every email and chat message, screenshots of your app status, and your full trip history. Keep a written timeline of dates.' },
+  { id: 5, title: 'File an OLS complaint',
+    detail: 'Between Jan 1, 2025 and May 31, 2027, OLS enforces procedural requirements: whether you got proper notice, access to records, and the company followed required steps. File at seattle.gov/laborstandards or call (206) 256-5297.' },
+  { id: 6, title: 'Consider a private lawsuit',
+    detail: 'After challenging the deactivation through the company internal process, you have the right to file a lawsuit. Consult an employment attorney for substantive disputes (e.g., the deactivation reason itself), since OLS only enforces procedure during the 2025-2027 window.' },
 ];
 
 const hotspots = [
@@ -1634,15 +1749,15 @@ const languages = [
   { name: 'Vietnamese',          native: 'Tiếng Việt',    flag: '🇻🇳', message: "Quyền của bạn với tư cách là người lao động dựa trên ứng dụng được pháp luật Seattle bảo vệ. Liên hệ OLS để được trợ giúp." },
 ];
 
-const liveFeed = [
-  { time: '2 min ago',  type: 'assault',  platform: 'Uber',       loc: 'Downtown · 3rd & Pike',         desc: 'SPD responded to assault report at rideshare pickup' },
-  { time: '14 min ago', type: 'robbery',  platform: 'DoorDash',   loc: 'SODO · Airport Way S',          desc: 'Vehicle theft report filed with SPD' },
-  { time: '38 min ago', type: 'injury',   platform: 'Lyft',       loc: 'Capitol Hill · Broadway E',     desc: 'Minor injury during passenger dispute' },
-  { time: '1 hr ago',   type: 'assault',  platform: 'Amazon Flex',loc: 'Georgetown · Airport Way S',    desc: 'Verbal altercation escalated · no weapons' },
-  { time: '2 hr ago',   type: 'robbery',  platform: 'Uber',       loc: 'Rainier Beach · MLK Jr Way S',  desc: 'Armed robbery reported · suspect description issued' },
-  { time: '3 hr ago',   type: 'injury',   platform: 'Lyft',       loc: 'Belltown · 2nd Ave',            desc: 'Driver transported for non-critical injuries' },
-  { time: '5 hr ago',   type: 'assault',  platform: 'Uber',       loc: 'Ballard · NW Market St',        desc: 'Altercation during late-night ride · driver safe' },
-  { time: '6 hr ago',   type: 'robbery',  platform: 'DoorDash',   loc: 'SODO · 1st Ave S',              desc: 'Attempted robbery · suspect fled without items' },
+let liveFeed = [
+  { time: '8 hr ago', time_iso: '2026-04-22T10:13:37-07:00', type: 'injury', platform: 'SPD', loc: 'Seattle', desc: 'Police Investigating Stabbing in North Seattle', source: 'SPD Blotter', url: 'https://spdblotter.seattle.gov/2026/04/22/police-investigating-stabbing-in-north-seattle-3/' },
+  { time: '1 days ago', time_iso: '2026-04-21T11:24:07-07:00', type: 'injury', platform: 'SPD', loc: 'Capitol Hill', desc: 'Man Injured During Unprovoked Attack in Downtown Seattle', source: 'SPD Blotter', url: 'https://spdblotter.seattle.gov/2026/04/21/man-injured-during-unprovoked-attack-in-downtown-seattle/' },
+  { time: '2 days ago', time_iso: '2026-04-20T11:04:12-07:00', type: 'injury', platform: 'SPD', loc: 'Queen Anne', desc: 'Two People in Critical Condition After Queen Anne Collision', source: 'SPD Blotter', url: 'https://spdblotter.seattle.gov/2026/04/20/two-people-in-critical-condition-after-queen-anne-collision/' },
+  { time: '2 days ago', time_iso: '2026-04-20T10:19:33-07:00', type: 'injury', platform: 'SPD', loc: 'Seattle', desc: 'Police Investigating Stabbing in North Seattle', source: 'SPD Blotter', url: 'https://spdblotter.seattle.gov/2026/04/20/police-investigating-stabbing-in-north-seattle-2/' },
+  { time: '4 days ago', time_iso: '2026-04-19T04:00:00-07:00', type: 'injury', platform: 'SPD', loc: 'Pioneer Square', desc: 'Woman Injured in Pioneer Square Shooting   ', source: 'SPD Blotter', url: 'https://spdblotter.seattle.gov/2026/04/19/woman-injured-in-pioneer-square-shooting/' },
+  { time: '6 days ago', time_iso: '2026-04-16T11:42:40-07:00', type: 'injury', platform: 'SPD', loc: 'Seattle', desc: 'Cops Recover Knife During Warrant Arrest', source: 'SPD Blotter', url: 'https://spdblotter.seattle.gov/2026/04/16/cops-recover-knife-during-warrant-arrest/' },
+  { time: '6 days ago', time_iso: '2026-04-16T07:49:43-07:00', type: 'assault', platform: 'SPD', loc: 'Seattle', desc: 'Police Arrest Man After Roosevelt Standoff', source: 'SPD Blotter', url: 'https://spdblotter.seattle.gov/2026/04/16/police-arrest-man-after-roosevelt-standoff/' },
+  { time: '7 days ago', time_iso: '2026-04-15T12:57:42-07:00', type: 'robbery', platform: 'SPD', loc: 'Seattle', desc: 'Video: Seattle Police Officer Awarded the Medal of Courage', source: 'SPD Blotter', url: 'https://spdblotter.seattle.gov/2026/04/15/video-seattle-police-officer-awarded-the-medal-of-courage/' },
 ];
 
 function escapeHtml(s) {
@@ -1694,16 +1809,16 @@ function initMap(containerId, list) {
     subdomains: ['a', 'b', 'c', 'd'],
     attribution: '© OpenStreetMap contributors © CARTO'
   });
-  // OSM Standard fallback - reliable, always available
+  // Esri World Light Gray fallback for reliability
   let fellBack = false;
   primaryTiles.on('tileerror', function() {
     if (fellBack) return;
     fellBack = true;
     try {
       currentMap.removeLayer(primaryTiles);
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap contributors'
+      L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 16,
+        attribution: 'Tiles © Esri'
       }).addTo(currentMap);
     } catch (e) { /* ignore */ }
   });
@@ -1948,9 +2063,11 @@ function trendChartHTML() {
 
 function incidentTableHTML(list) {
   const statusColors = {
-    'Open':   { bg: 'var(--bg-3)',  fg: 'var(--sev-injury)' },
-    'Closed': { bg: 'var(--bg-2)',  fg: 'var(--text-primary)' },
+    'Open':     { bg: 'var(--bg-3)',  fg: 'var(--sev-injury)' },
+    'Closed':   { bg: 'var(--bg-2)',  fg: 'var(--text-primary)' },
+    'Reported': { bg: 'var(--bg-3)',  fg: 'var(--accent)' },
   };
+  const _defaultStatus = { bg: 'var(--bg-2)', fg: 'var(--text-tertiary)' };
   const dashcamDisplay = {
     'confirmed':   { label: 'Full',   color: 'var(--accent)',       title: 'Driver-facing and cabin cameras confirmed' },
     'driver-only': { label: 'Driver', color: 'var(--text-tertiary)', title: 'Driver-facing camera only' },
@@ -1975,7 +2092,7 @@ function incidentTableHTML(list) {
                 <div style="font-size:10.5px; color: var(--text-muted); margin-top:2px;" class="notranslate">${escapeHtml(inc.time || '—')}</div>
               </td>
               <td><span style="display:inline-flex; align-items:center; gap:6px; text-transform:capitalize;">
-                <span class="sev-dot" style="background:${SEV[inc.severity]};"></span>${escapeHtml(inc.severity)}
+                <span class="sev-dot sev-${escapeHtml(inc.severity)}"></span>${escapeHtml(inc.severity)}
               </span></td>
               <td style="color: var(--text-primary);">${escapeHtml(inc.platform)}</td>
               <td>
@@ -1996,7 +2113,7 @@ function incidentTableHTML(list) {
                   ? `<span title="Per King County Superior Court public records">${escapeHtml(inc.caseStatus)}</span>`
                   : '<span style="color: var(--text-subtle);">Not filed</span>'}
               </td>
-              <td><span class="chip" style="background:${statusColors[inc.status].bg}; color:${statusColors[inc.status].fg};">${escapeHtml(inc.status)}</span></td>
+              <td><span class="chip" style="background:${(statusColors[inc.status] || _defaultStatus).bg}; color:${(statusColors[inc.status] || _defaultStatus).fg};">${escapeHtml(inc.status)}</span></td>
               <td style="color: var(--accent); white-space:nowrap;">${escapeHtml(inc.source)} ↗</td>
             </tr>`;
           }).join('')}
@@ -2057,28 +2174,36 @@ function olsContactHTML() {
 }
 
 function pageOverview() {
+  // Compute KPIs from the current `incidents` array (which is live data after fetch)
+  const _total = incidents.length;
+  const _open = incidents.filter(i => i.status === 'Open' || i.status === 'Reported').length;
+  const _resolved = _total - _open;
+  const _resPct = _total ? Math.round((_resolved / _total) * 100) : 0;
+  const _byHood = {};
+  incidents.forEach(i => { _byHood[i.neighborhood] = (_byHood[i.neighborhood] || 0) + 1; });
+  const _hot = Object.entries(_byHood).sort((a,b) => b[1] - a[1])[0] || ['—', 0];
   return `
     <div style="display:flex; flex-direction:column; gap: 20px;">
       <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap: 12px;">
         <div class="card" style="padding:14px;">
           <div class="section-label" style="margin-bottom:6px;">Total Incidents</div>
-          <div class="kpi-value" style="color:var(--text-primary);">147</div>
-          <div style="font-size:9px; color:var(--text-tertiary); margin-top:4px;">Jan 2024 – Present</div>
+          <div class="kpi-value" style="color:var(--text-primary);">${_total}</div>
+          <div style="font-size:9px; color:var(--text-tertiary); margin-top:4px;">Live · last 30 days</div>
         </div>
         <div class="card" style="padding:14px;">
           <div class="section-label" style="margin-bottom:6px;">Highest Risk</div>
-          <div style="font-size:12px; font-weight:600; color:var(--text-primary);">Rainier Beach</div>
-          <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">23 incidents</div>
+          <div style="font-size:12px; font-weight:600; color:var(--text-primary);">${escapeHtml(_hot[0])}</div>
+          <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">${_hot[1]} incident${_hot[1] === 1 ? '' : 's'}</div>
         </div>
         <div class="card" style="padding:14px;">
           <div class="section-label" style="margin-bottom:6px;">Open</div>
-          <div class="kpi-value" style="color:var(--text-primary);">18</div>
-          <div style="font-size:9px; color:var(--text-tertiary); margin-top:4px;">Under investigation</div>
+          <div class="kpi-value" style="color:var(--text-primary);">${_open}</div>
+          <div style="font-size:9px; color:var(--text-tertiary); margin-top:4px;">Awaiting closure</div>
         </div>
         <div class="card" style="padding:14px;">
           <div class="section-label" style="margin-bottom:6px;">Resolution Rate</div>
-          <div class="kpi-value" style="color:var(--text-primary);">68%</div>
-          <div style="font-size:9px; color:var(--text-tertiary); margin-top:4px;">129 of 147</div>
+          <div class="kpi-value" style="color:var(--text-primary);">${_resPct}%</div>
+          <div style="font-size:9px; color:var(--text-tertiary); margin-top:4px;">${_resolved} of ${_total}</div>
         </div>
         <div class="card" style="padding:14px;">
           <div class="section-label" style="margin-bottom:6px;">Violent Crime Change</div>
@@ -2154,12 +2279,12 @@ function pageOverview() {
         ${incidentTableHTML(incidents)}
       </div>
 
-      <div class="card" style="padding:16px; background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.2);">
+      <div class="card" style="padding:16px; background: var(--bg-3); border-color: var(--border-default);">
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
           ${ICONS.warning}
           <span style="font-size:11px; font-weight:600; color:var(--sev-fatal);">Safety Advisories</span>
         </div>
-        <div style="display:flex; flex-direction:column; gap:6px; font-size:10px; color:rgba(245,158,11,.85); line-height:1.55;">
+        <div style="display:flex; flex-direction:column; gap:6px; font-size:10px; color: var(--text-secondary); line-height:1.55;">
           <div style="display:flex; gap:6px;"><span>·</span><span>Rainier Beach / South Seattle: elevated incident concentration, particularly late night.</span></div>
           <div style="display:flex; gap:6px;"><span>·</span><span>SODO / Industrial District: higher carjacking risk near industrial zones.</span></div>
           <div style="display:flex; gap:6px;"><span>·</span><span>Atlantic City Boat Ramp / Seward Park: documented isolation-based assault zone.</span></div>
@@ -2243,21 +2368,21 @@ function pageLive() {
       </div>
       <div class="card" style="padding:16px;">
         ${liveFeed.map((e, i) => `
-          <div class="live-row ${i===0?'new':''}" style="border-left-color:${SEV[e.type]};">
+          <div class="live-row ${i===0?'new':''}" style="border-left-color:${SEV[e.type] || 'var(--text-muted)'};">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
               <div style="display:flex; align-items:center; gap:8px;">
-                <span class="sev-dot" style="background:${SEV[e.type]};"></span>
-                <span style="font-size:11px; color:var(--text-primary); font-weight:500; text-transform:capitalize;">${e.type}</span>
+                <span class="sev-dot sev-${escapeHtml(e.type || 'assault')}"></span>
+                <span style="font-size:11px; color:var(--text-primary); font-weight:500; text-transform:capitalize;">${escapeHtml(e.type || 'incident')}</span>
                 <span style="font-size:10px; color:var(--text-tertiary);">·</span>
-                <span style="font-size:10px; color:var(--text-tertiary);">${e.platform}</span>
+                <span style="font-size:10px; color:var(--text-tertiary);">${escapeHtml(e.platform || 'SPD')}</span>
               </div>
-              <span style="font-size:10px; color:var(--text-tertiary); font-variant-numeric:tabular-nums;">${e.time}</span>
+              <span style="font-size:10px; color:var(--text-tertiary); font-variant-numeric:tabular-nums;">${escapeHtml(e.time)}</span>
             </div>
             <div style="font-size:11px; color:var(--text-secondary); margin-left:14px;">${e.desc}</div>
             <div style="font-size:10px; color:var(--text-tertiary); margin-left:14px; margin-top:2px;">${e.loc}</div>
           </div>`).join('')}
       </div>
-      <div class="card" style="padding:14px; background:rgba(13,148,136,0.05); border-color: rgba(13,148,136,0.2);">
+      <div class="card" style="padding:14px; background: var(--bg-3); border-color: var(--border-default);">
         <div style="display:flex; gap:10px; align-items:flex-start;">
           <span style="color:var(--text-primary); margin-top:2px;">${ICONS.check}</span>
           <div style="font-size:11px; color:var(--text-secondary); line-height:1.55;">
@@ -2278,7 +2403,7 @@ function pageOlsData() {
           <div>
             <div style="font-size:15px; font-weight:600; color: var(--text-primary); letter-spacing:-0.012em;">Seattle OLS Data Center</div>
             <div style="font-size:13px; color: var(--text-secondary); margin-top:6px; line-height:1.55;">
-              Comprehensive Seattle resources for app-based drivers: worker rights, pay protections, deactivation rights, paid sick time, and local data. Maintained under Seattle Office of Labor Standards ordinances SMC 8.37, 8.39, and 3.40.
+              Comprehensive Seattle resources for app-based drivers: worker rights, pay protections, deactivation rights, and paid sick &amp; safe time. Maintained under Seattle Office of Labor Standards ordinances SMC 8.37 (minimum payment), SMC 8.39 (paid sick &amp; safe time), and SMC 8.40 (deactivation rights).
             </div>
           </div>
         </div>
@@ -2308,7 +2433,7 @@ function pageOlsData() {
                 <tr style="border-top:1px solid var(--border-subtle); color: var(--text-primary);">
                   <td style="padding:10px 0; font-weight:600;">2026</td>
                   <td style="text-align:right;">$0.47</td>
-                  <td style="text-align:right;">$0.80</td>
+                  <td style="text-align:right;">$0.77 <span style="color: var(--text-secondary); font-size:10px; font-weight:600;">est.</span></td>
                   <td style="text-align:right;">$5.34</td>
                 </tr>
                 <tr style="border-top:1px solid var(--border-subtle); color: var(--text-tertiary);">
@@ -2329,8 +2454,8 @@ function pageOlsData() {
             <div class="section-label" style="margin-top:20px; margin-bottom:10px;">Key Rights</div>
             ${rightsListHTML(mpoRights, 'var(--accent)')}
 
-            <div style="margin-top:14px; font-size:11.5px; color: var(--text-muted); line-height:1.5;">
-              Effective May 1, 2023 for food delivery workers; January 13, 2024 for all app-based workers. Applies to network companies with 250+ workers worldwide.
+            <div style="margin-top:14px; font-size:11.5px; color: var(--text-muted); line-height:1.55;">
+              <span style="color: var(--text-secondary); font-weight:600;">est.</span> 2026 per-mile rate is officially TBD pending the IRS standard mileage rate. SMC 8.37.050.B.2 sets per-mile = IRS rate × 1.10 mileage factor. Applies to network companies with 250+ workers worldwide. Effective January 13, 2024 (May 1, 2023 for food delivery).
             </div>
           </div>
         </div>
@@ -2339,7 +2464,7 @@ function pageOlsData() {
           <div class="card-header">
             <div>
               <div class="card-title">Deactivation Rights Ordinance</div>
-              <div style="font-size:12px; color: var(--text-tertiary); margin-top:3px;">SMC 3.40 · Effective January 1, 2025</div>
+              <div style="font-size:12px; color: var(--text-tertiary); margin-top:3px;">SMC 8.40 · Effective January 1, 2025</div>
             </div>
           </div>
           <div style="padding:20px 22px;">
@@ -2348,7 +2473,7 @@ function pageOlsData() {
                 <div style="font-size:10.5px; color: var(--text-tertiary); text-transform:uppercase; letter-spacing:.07em; font-weight:600;">Effective</div>
                 <div style="font-size:13px; color: var(--accent); font-weight:600; margin-top:4px;">Jan 1, 2025</div>
               </div>
-              <div style="flex:1; padding:14px; background: rgba(245,158,11,0.10); border:1px solid rgba(245,158,11,0.28); border-radius: var(--radius-md);">
+              <div style="flex:1; padding:14px; background: var(--bg-3); border:1px solid var(--border-default); border-radius: var(--radius-md);">
                 <div style="font-size:10.5px; color: var(--text-tertiary); text-transform:uppercase; letter-spacing:.07em; font-weight:600;">Enforcement</div>
                 <div style="font-size:13px; color: var(--text-primary); font-weight:600; margin-top:4px;">Limited · 2025–2027</div>
               </div>
@@ -2365,13 +2490,55 @@ function pageOlsData() {
       <div class="card">
         <div class="card-header">
           <div>
-            <div class="card-title">Paid Sick & Safe Time Ordinance</div>
-            <div style="font-size:12px; color: var(--text-tertiary); margin-top:3px;">SMC 8.39 · Effective January 13, 2024</div>
+            <div class="card-title">Paid Sick &amp; Safe Time Ordinance</div>
+            <div style="font-size:12px; color: var(--text-tertiary); margin-top:3px;">SMC 8.39 · Effective January 13, 2024 (May 1, 2023 for food delivery)</div>
           </div>
         </div>
         <div style="padding:20px 22px;">
-          <div style="font-size:13px; color: var(--text-secondary); line-height:1.6;">
-            PSST is accrued in 24-hour increments and used in 3-or-more consecutive-day periods. Accrual is earned per 30-day period in which you stop work in Seattle. Payment is based on the worker's average daily compensation, recalculated monthly. Effective May 1, 2023 for food delivery network company workers and January 13, 2024 for all other app-based workers.
+
+          <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; margin-bottom:18px;">
+            <div style="padding:12px; background: var(--accent-subtle); border:1px solid var(--accent-border); border-radius: var(--radius-md);">
+              <div style="font-size:10px; color: var(--text-tertiary); text-transform:uppercase; letter-spacing:.07em; font-weight:600;">Accrual</div>
+              <div style="font-size:13px; color: var(--accent); font-weight:600; margin-top:4px;">1 day per 30 days</div>
+              <div style="font-size:10.5px; color: var(--text-muted); margin-top:3px; line-height:1.4;">with at least one Seattle stop</div>
+            </div>
+            <div style="padding:12px; background: var(--accent-subtle); border:1px solid var(--accent-border); border-radius: var(--radius-md);">
+              <div style="font-size:10px; color: var(--text-tertiary); text-transform:uppercase; letter-spacing:.07em; font-weight:600;">Use Increment</div>
+              <div style="font-size:13px; color: var(--accent); font-weight:600; margin-top:4px;">24-hour blocks</div>
+              <div style="font-size:10.5px; color: var(--text-muted); margin-top:3px; line-height:1.4;">paid as full days</div>
+            </div>
+            <div style="padding:12px; background: var(--accent-subtle); border:1px solid var(--accent-border); border-radius: var(--radius-md);">
+              <div style="font-size:10px; color: var(--text-tertiary); text-transform:uppercase; letter-spacing:.07em; font-weight:600;">Carryover</div>
+              <div style="font-size:13px; color: var(--accent); font-weight:600; margin-top:4px;">9 days minimum</div>
+              <div style="font-size:10.5px; color: var(--text-muted); margin-top:3px; line-height:1.4;">to following year</div>
+            </div>
+            <div style="padding:12px; background: var(--accent-subtle); border:1px solid var(--accent-border); border-radius: var(--radius-md);">
+              <div style="font-size:10px; color: var(--text-tertiary); text-transform:uppercase; letter-spacing:.07em; font-weight:600;">Eligibility to Use</div>
+              <div style="font-size:13px; color: var(--accent); font-weight:600; margin-top:4px;">Worked in past 90d</div>
+              <div style="font-size:10.5px; color: var(--text-muted); margin-top:3px; line-height:1.4;">at least one Seattle stop</div>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px;">
+            <div>
+              <div class="section-label" style="margin-bottom:10px;">How Pay Is Calculated</div>
+              <div style="font-size:13px; color: var(--text-secondary); line-height:1.6;">
+                Payment for each PSST day equals your <strong style="color: var(--text-primary); font-weight:600;">average daily compensation</strong> from the network company, recalculated monthly. Tips earned from customers are not included in average daily compensation.
+              </div>
+            </div>
+            <div>
+              <div class="section-label" style="margin-bottom:10px;">When You Can Use It</div>
+              <ul style="margin:0; padding-left:18px; font-size:13px; color: var(--text-secondary); line-height:1.7;">
+                <li>Your or a family member's physical or mental health condition, including doctor visits</li>
+                <li>Reasons related to domestic violence, sexual assault, or stalking</li>
+                <li>Family member's school or place of care has been closed</li>
+                <li>Place of business closed by public official for health reasons</li>
+              </ul>
+            </div>
+          </div>
+
+          <div style="margin-top:16px; padding:12px 14px; background: var(--bg-2); border:1px solid var(--border-subtle); border-radius: var(--radius-md); font-size:11.5px; color: var(--text-muted); line-height:1.55;">
+            Source: Seattle Office of Labor Standards · seattle.gov/laborstandards/ordinances/app-based-worker-ordinances. Applies to network companies with 250+ workers worldwide. Network companies must provide monthly notification of your average daily compensation, accrued, used, and available PSST.
           </div>
         </div>
       </div>
@@ -2686,7 +2853,7 @@ function pageAnalytics() {
   return `
     <div style="display:flex; flex-direction:column; gap:20px;">
 
-      <div class="card" style="padding:18px 22px; background: linear-gradient(135deg, var(--bg-2), rgba(45,212,191,0.02)); border-color: var(--accent-border);">
+      <div class="card" style="padding:18px 22px; background: var(--bg-2); border-color: var(--accent-border);">
         <div style="display:flex; gap:12px; align-items:center;">
           ${ICONS.shieldLg}
           <div>
@@ -2872,13 +3039,43 @@ function pageDriverTools() {
   return `
     <div style="display:flex; flex-direction:column; gap:20px;">
 
-      <div class="card" style="padding:18px 22px; background: linear-gradient(135deg, var(--bg-2), rgba(45,212,191,0.02)); border-color: var(--accent-border);">
+      <div class="card" style="padding:18px 22px; background: var(--bg-2); border-color: var(--accent-border);">
         <div style="display:flex; gap:12px; align-items:center;">
           ${ICONS.shieldLg}
           <div>
             <div class="card-title">Driver Tools</div>
             <div class="card-meta" style="margin-top:3px;">Interactive calculators and workflows for your rights under Seattle ordinances</div>
           </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:16px 22px;">
+        <div style="display:flex; flex-wrap:wrap; gap:18px; align-items:center; justify-content:space-between;">
+          <div style="display:flex; gap:14px; align-items:center; flex:1; min-width:280px;">
+            <div style="width:36px; height:36px; border-radius: var(--radius-sm); background: var(--accent-subtle); border: 1px solid var(--accent-border); display:grid; place-items:center; flex-shrink:0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div>
+              <div style="font-size:13px; font-weight:600; color: var(--text-primary);">Seattle Office of Labor Standards</div>
+              <div style="font-size:11.5px; color: var(--text-tertiary); margin-top:2px;">Director: Steven Marchese · 810 3rd Ave, Suite 375, Seattle, WA 98104</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <a href="tel:+12062565297" style="display:inline-flex; align-items:center; gap:6px; padding:7px 12px; font-size:11.5px; color: var(--text-primary); border:1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--bg-2); text-decoration:none;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <span class="notranslate">(206) 256-5297</span>
+            </a>
+            <a href="mailto:laborstandards@seattle.gov" style="display:inline-flex; align-items:center; gap:6px; padding:7px 12px; font-size:11.5px; color: var(--text-primary); border:1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--bg-2); text-decoration:none;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <span class="notranslate">laborstandards@seattle.gov</span>
+            </a>
+            <a href="https://www.seattle.gov/laborstandards" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; padding:7px 12px; font-size:11.5px; color: var(--accent); border:1px solid var(--accent-border); border-radius: var(--radius-sm); background: var(--accent-subtle); text-decoration:none;">
+              OLS website →
+            </a>
+          </div>
+        </div>
+        <div style="margin-top:10px; font-size:11px; color: var(--text-muted); line-height:1.5;">
+          Walk-in intake Tue–Thu 9 AM–3 PM. Translation and interpretation available in 17 languages. The forms below help you communicate with OLS — Bulle Cloud does not file complaints on your behalf.
         </div>
       </div>
 
@@ -2939,7 +3136,7 @@ function pageDriverTools() {
                 ${ICONS.shieldLg}
                 <span class="card-title">Deactivation Rights Checklist</span>
               </div>
-              <div class="card-meta" style="margin-top:3px;">SMC 3.40 step-by-step · track your progress</div>
+              <div class="card-meta" style="margin-top:3px;">SMC 8.40 step-by-step · track your progress</div>
             </div>
           </div>
           <div style="padding:8px 16px 16px;" id="deact-steps">
@@ -2958,6 +3155,15 @@ function pageDriverTools() {
               <div style="font-size:11px; color: var(--text-muted);">Your progress will be saved on this device</div>
               <div style="font-size:12px; color: var(--text-primary); font-weight:600; font-variant-numeric: tabular-nums;"><span id="deact-done">0</span> of ${DEACTIVATION_STEPS.length}</div>
             </div>
+            <div style="padding:8px; margin-top:6px; border-top:1px solid var(--border-subtle);">
+              <button id="deact-mail-btn" class="btn-primary-full" style="width:100%; padding:10px 14px; font-size:12px; display:inline-flex; align-items:center; justify-content:center; gap:8px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Generate OLS Deactivation Complaint Draft
+              </button>
+              <div style="margin-top:8px; font-size:10.5px; color: var(--text-muted); text-align:center; line-height:1.5;">
+                Opens your email app pre-addressed to OLS · review and send from your own account
+              </div>
+            </div>
           </div>
         </div>
 
@@ -2966,10 +3172,10 @@ function pageDriverTools() {
       <div class="card">
         <div class="card-header">
           <div>
-            <div class="card-title">Report an Incident</div>
-            <div class="card-meta" style="margin-top:3px;">Submissions are reviewed by OLS staff before entering the public record</div>
+            <div class="card-title">Report a Safety Incident to OLS</div>
+            <div class="card-meta" style="margin-top:3px;">Generates a pre-filled email to Seattle Office of Labor Standards · you review and send</div>
           </div>
-          <div style="display:inline-flex; align-items:center; gap:5px; padding:3px 8px; background: var(--bg-2); color: var(--accent); border-radius: 999px; font-size:10px; font-weight:600;">Confidential</div>
+          <div style="display:inline-flex; align-items:center; gap:5px; padding:3px 8px; background: var(--bg-2); color: var(--accent); border-radius: 999px; font-size:10px; font-weight:600;">Sent from your email</div>
         </div>
         <div style="padding:18px 22px 20px;">
           <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px; margin-bottom:12px;">
@@ -3022,8 +3228,8 @@ function pageDriverTools() {
             <textarea id="submit-desc" rows="3" class="calc-input" placeholder="Brief description of what happened (do not include names)"></textarea>
           </label>
           <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
-            <div style="font-size:11px; color: var(--text-muted); max-width:60%;">By submitting, you consent to OLS review for potential inclusion in the public dashboard. Personal identifying information is stripped before publication.</div>
-            <button id="submit-incident-btn" class="btn-primary-full">Submit Report</button>
+            <div style="font-size:11px; color: var(--text-muted); max-width:60%;">Bulle Cloud does not store this information. Clicking the button opens your own email app with a draft addressed to OLS at laborstandards@seattle.gov. You add your name, review, and send.</div>
+            <button id="submit-incident-btn" class="btn-primary-full">Generate OLS Email Draft</button>
           </div>
           <div id="submit-result" style="margin-top:12px;"></div>
         </div>
@@ -3032,32 +3238,36 @@ function pageDriverTools() {
       <div class="card">
         <div class="card-header">
           <div>
-            <div class="card-title">OLS Complaint Status &amp; Alerts</div>
-            <div class="card-meta" style="margin-top:3px;">Track filed OLS complaints and subscribe to safety notifications</div>
+            <div class="card-title">Quick OLS Complaint Drafts</div>
+            <div class="card-meta" style="margin-top:3px;">Pre-filled email templates for the most common app-based worker issues</div>
           </div>
         </div>
-        <div style="padding:18px 22px 20px; display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
-          <div>
-            <div style="font-size:12px; font-weight:600; color: var(--text-primary); margin-bottom:10px;">Track an OLS Complaint</div>
-            <div style="display:flex; gap:8px;">
-              <input id="complaint-id" type="text" class="calc-input" placeholder="OLS complaint number" style="flex:1;" />
-              <button id="complaint-lookup-btn" class="btn-primary-full" style="white-space:nowrap;">Look Up</button>
-            </div>
-            <div id="complaint-result" style="margin-top:12px; min-height:20px;"></div>
-            <div style="font-size:11px; color: var(--text-muted); margin-top:10px; line-height:1.5;">
-              Backend connection to OLS case management system required for live lookup. Preview mode shows example case data.
-            </div>
-          </div>
-          <div>
-            <div style="font-size:12px; font-weight:600; color: var(--text-primary); margin-bottom:10px;">Safety Alerts</div>
-            <div style="display:flex; flex-direction:column; gap:10px;">
-              <input id="alert-email" type="email" class="calc-input" placeholder="your.email@example.com" />
-              <input id="alert-phone" type="tel" class="calc-input notranslate" placeholder="+1 (206) 555-0123 · SMS optional" />
-              <input id="alert-neighborhood" type="text" class="calc-input" placeholder="Neighborhood to watch (e.g., Rainier Beach)" />
-              <button id="alert-subscribe-btn" class="btn-primary-full">Subscribe to Alerts</button>
-              <div id="alert-result" style="font-size:11.5px;"></div>
-            </div>
-          </div>
+        <div style="padding:18px 22px 20px; display:grid; grid-template-columns: 1fr 1fr 1fr; gap:14px;">
+
+          <a href="#" id="quick-pay-btn" style="display:block; padding:16px; background: var(--bg-2); border:1px solid var(--border-default); border-radius: var(--radius-md); text-decoration:none;">
+            <div style="font-size:11px; color: var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:.07em;">SMC 8.37</div>
+            <div style="font-size:13px; font-weight:600; color: var(--text-primary); margin-top:6px;">Underpayment</div>
+            <div style="font-size:11.5px; color: var(--text-tertiary); margin-top:4px; line-height:1.5;">Below the per-minute, per-mile, or per-offer minimum</div>
+            <div style="font-size:10.5px; color: var(--accent); margin-top:10px; font-weight:600;">Use the calculator above →</div>
+          </a>
+
+          <a href="#" id="quick-psst-btn" style="display:block; padding:16px; background: var(--bg-2); border:1px solid var(--border-default); border-radius: var(--radius-md); text-decoration:none;">
+            <div style="font-size:11px; color: var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:.07em;">SMC 8.39</div>
+            <div style="font-size:13px; font-weight:600; color: var(--text-primary); margin-top:6px;">Paid Sick &amp; Safe Time</div>
+            <div style="font-size:11.5px; color: var(--text-tertiary); margin-top:4px; line-height:1.5;">Denied PSST, missing accrual notices, or improper payment</div>
+            <div style="font-size:10.5px; color: var(--accent); margin-top:10px; font-weight:600;">Open email draft →</div>
+          </a>
+
+          <a href="#" id="quick-retal-btn" style="display:block; padding:16px; background: var(--bg-2); border:1px solid var(--border-default); border-radius: var(--radius-md); text-decoration:none;">
+            <div style="font-size:11px; color: var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:.07em;">All Ordinances</div>
+            <div style="font-size:13px; font-weight:600; color: var(--text-primary); margin-top:6px;">Retaliation</div>
+            <div style="font-size:11.5px; color: var(--text-tertiary); margin-top:4px; line-height:1.5;">Negative action after asserting your rights — protected under SMC 8.37/8.39/8.40</div>
+            <div style="font-size:10.5px; color: var(--accent); margin-top:10px; font-weight:600;">Open email draft →</div>
+          </a>
+
+        </div>
+        <div style="padding:0 22px 18px; font-size:11px; color: var(--text-muted); line-height:1.55;">
+          For complaints requiring sworn statements, signatures, or full case intake, use the official OLS complaint form at <a href="https://www.seattle.gov/laborstandards/workers/file-a-complaint" target="_blank" rel="noopener" style="color: var(--accent); text-decoration:none;">seattle.gov/laborstandards/workers/file-a-complaint</a>. OLS provides translation in 17 languages.
         </div>
       </div>
 
@@ -3069,6 +3279,7 @@ function wireDriverTools() {
   const calcInputs = ['calc-year', 'calc-platform', 'calc-minutes', 'calc-miles', 'calc-received'];
   function computePay() {
     const year = parseInt(document.getElementById('calc-year').value, 10);
+    const platform = document.getElementById('calc-platform').value;
     const minutes = parseFloat(document.getElementById('calc-minutes').value) || 0;
     const miles = parseFloat(document.getElementById('calc-miles').value) || 0;
     const received = parseFloat(document.getElementById('calc-received').value) || null;
@@ -3080,21 +3291,71 @@ function wireDriverTools() {
     if (received !== null && received > 0) {
       const delta = received - required;
       if (delta < -0.005) {
-        statusHTML = `<div style="margin-top:14px; padding:12px 14px; background: var(--bg-2); border: 1px solid var(--text-primary); border-left: 3px solid var(--text-primary); border-radius: var(--radius-sm); font-size:13px; color: var(--text-primary);">
-          <strong style="font-weight:650;">Below minimum by $${Math.abs(delta).toFixed(2)}.</strong> <span style="color: var(--text-secondary);">You may be owed the difference. Consider filing an OLS complaint.</span>
+        const subject = encodeURIComponent(`SMC 8.37 Minimum Payment Complaint — ${platform} ${year}`);
+        const body = encodeURIComponent(
+`To: Seattle Office of Labor Standards
+
+I am filing a complaint under the App-Based Worker Minimum Payment Ordinance (SMC 8.37). Based on the OLS rate schedule, I was paid less than the legally required minimum for an offer.
+
+OFFER DETAILS
+Platform: ${platform}
+Year of offer: ${year}
+Engaged minutes: ${minutes}
+Engaged miles: ${miles}
+
+REQUIRED MINIMUM PAYMENT
+Per-minute amount: ${minutes} × $${rates.perMin.toFixed(2)} = $${(minutes * rates.perMin).toFixed(2)}
+Per-mile amount:   ${miles} × $${rates.perMile.toFixed(2)} = $${(miles * rates.perMile).toFixed(2)}
+Formula total:     $${formula.toFixed(2)}
+Per-offer minimum: $${rates.perOffer.toFixed(2)}
+Required (greater of): $${required.toFixed(2)}
+
+ACTUAL PAYMENT RECEIVED
+$${received.toFixed(2)} (excluding tips)
+
+SHORTFALL
+$${Math.abs(delta).toFixed(2)}
+
+MY CONTACT INFORMATION
+Name:
+Email:
+Phone:
+Network platform username (if you wish to share):
+
+I am requesting that OLS investigate this underpayment under SMC 8.37 and the related Seattle Human Rights Rules. I have additional records (trip receipts, weekly pay statements) available on request.
+
+Thank you,
+
+[Sent via Bulle Cloud Safety Steward — bullecloud.com]
+[Calculations cross-checked against OLS pay calculator at https://laborinquiry.seattle.gov/appbasedcalc/]`
+        );
+        const mailto = `mailto:${OLS.email}?subject=${subject}&body=${body}`;
+        statusHTML = `<div style="margin-top:14px; padding:14px 16px; background: var(--bg-3); border: 1px solid var(--border-default); border-left: 3px solid var(--text-primary); border-radius: var(--radius-sm); font-size:13px; color: var(--text-primary);">
+          <div style="font-weight:650; color: var(--text-primary); margin-bottom:6px;">Below minimum by $${Math.abs(delta).toFixed(2)}</div>
+          <div style="color: var(--text-secondary); margin-bottom:12px; line-height:1.5;">You may be owed the difference. The button below opens your email app with a pre-filled OLS complaint that includes this calculation. Review and send from your own email.</div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <a href="${mailto}" class="btn-primary-full" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; padding:8px 14px; font-size:12px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              Open pre-filled OLS complaint
+            </a>
+            <a href="${OLS.complaintFormUrl}" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; padding:8px 14px; font-size:12px; color: var(--text-primary); border:1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--bg-2);">
+              Use OLS web form instead
+            </a>
+          </div>
         </div>`;
       } else {
-        statusHTML = `<div style="margin-top:14px; padding:12px 14px; background: var(--bg-2); border: 1px solid var(--border-default); border-radius: var(--radius-sm); font-size:13px; color: var(--text-primary);">
+        statusHTML = `<div style="margin-top:14px; padding:12px 14px; background: var(--accent-subtle); border: 1px solid var(--accent-border); border-left: 3px solid var(--accent); border-radius: var(--radius-sm); font-size:13px; color: var(--text-primary);">
           <strong style="font-weight:650;">Above minimum by $${delta.toFixed(2)}.</strong> <span style="color: var(--text-secondary);">Payment is compliant with SMC 8.37.</span>
         </div>`;
       }
     }
+    const perMileNote = rates.perMileNote ? ` <span style="color: var(--text-secondary); font-weight:600;">· ${rates.perMileNote}</span>` : '';
     resultEl.innerHTML = `
       <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:14px;">
         <div>
           <div style="font-size:10px; color: var(--text-muted); text-transform:uppercase; letter-spacing:.07em; font-weight:600;">Formula (time + mileage)</div>
           <div style="font-size:20px; font-weight:650; color: var(--text-primary); font-variant-numeric: tabular-nums; letter-spacing:-0.02em; margin-top:4px;">$${formula.toFixed(2)}</div>
-          <div style="font-size:10.5px; color: var(--text-muted); margin-top:2px;">${minutes.toFixed(0)}m &times; $${rates.perMin} + ${miles.toFixed(1)}mi &times; $${rates.perMile}</div>
+          <div style="font-size:10.5px; color: var(--text-muted); margin-top:2px;">${minutes.toFixed(0)}m &times; $${rates.perMin} + ${miles.toFixed(1)}mi &times; $${rates.perMile}${perMileNote}</div>
         </div>
         <div>
           <div style="font-size:10px; color: var(--text-muted); text-transform:uppercase; letter-spacing:.07em; font-weight:600;">Per-offer minimum</div>
@@ -3152,99 +3413,278 @@ function wireDriverTools() {
   });
   updateChecklist();
 
-  // === Incident submission form ===
+  // === Deactivation OLS mailto draft ===
+  const deactMailBtn = document.getElementById('deact-mail-btn');
+  if (deactMailBtn) {
+    deactMailBtn.addEventListener('click', () => {
+      const stepsCompleted = [...completed].sort((a, b) => a - b)
+        .map(id => {
+          const s = DEACTIVATION_STEPS.find(x => x.id === id);
+          return s ? `[X] Step ${s.id}: ${s.title}` : '';
+        }).filter(Boolean).join('\n');
+      const stepsRemaining = DEACTIVATION_STEPS
+        .filter(s => !completed.has(s.id))
+        .map(s => `[ ] Step ${s.id}: ${s.title}`).join('\n');
+
+      const subject = encodeURIComponent('SMC 8.40 Deactivation Rights Complaint — Procedural Compliance');
+      const body = encodeURIComponent(
+`To: Seattle Office of Labor Standards
+
+I am an app-based worker who has been deactivated by a network company. I am filing a complaint under the App-Based Worker Deactivation Rights Ordinance (SMC 8.40) regarding the network company's procedural compliance with the law.
+
+DEACTIVATION DETAILS (please fill in)
+Network company:
+Date of deactivation:
+Date you received written notice (if any):
+Did you receive 14 days advance notice? (Yes / No / Partial):
+Did the company provide a written reason for deactivation? (Yes / No):
+Did the company provide access to the records they used to substantiate the decision? (Yes / No):
+Did the company offer an internal challenge process? (Yes / No):
+Date you submitted an internal challenge:
+Date the company responded (or "no response"):
+
+WHAT HAPPENED
+Briefly describe the events leading up to the deactivation, the company's stated reason, and any information you believe the company got wrong:
+
+
+
+
+MY DEACTIVATION CHECKLIST PROGRESS
+Steps completed:
+${stepsCompleted || '(none yet)'}
+
+Steps remaining:
+${stepsRemaining || '(none — checklist complete)'}
+
+ABOUT ME (please fill in before sending)
+Name:
+Preferred contact email:
+Preferred contact phone:
+Best time to reach me:
+Network platform username (if you wish to share):
+
+I understand that between January 1, 2025 and May 31, 2027, OLS has limited enforcement authority focused on procedural requirements: notice, access to records, and required steps before and after deactivation. I am willing to provide all documentation, including the deactivation notice, my written challenge, the company's response, and supporting screenshots.
+
+Thank you,
+
+[Sent via Bulle Cloud Safety Steward — bullecloud.com]
+[OLS contact: ${OLS.email} · ${OLS.phone} · ${OLS.address}]`
+      );
+      window.location.href = `mailto:${OLS.email}?subject=${subject}&body=${body}`;
+    });
+  }
+
+  // === Incident submission form — generates pre-filled OLS complaint draft ===
   const submitBtn = document.getElementById('submit-incident-btn');
   if (submitBtn) {
-    // Pre-fill date with today
     const dateEl = document.getElementById('submit-date');
     if (dateEl && !dateEl.value) dateEl.valueAsDate = new Date();
 
     submitBtn.addEventListener('click', () => {
       const fields = {
-        date: document.getElementById('submit-date').value,
-        time: document.getElementById('submit-time').value,
-        platform: document.getElementById('submit-platform').value,
+        date:         document.getElementById('submit-date').value,
+        time:         document.getElementById('submit-time').value,
+        platform:     document.getElementById('submit-platform').value,
         neighborhood: document.getElementById('submit-neighborhood').value.trim(),
-        location: document.getElementById('submit-location').value.trim(),
-        severity: document.getElementById('submit-severity').value,
-        dashcam: document.getElementById('submit-dashcam').value,
-        desc: document.getElementById('submit-desc').value.trim(),
+        location:     document.getElementById('submit-location').value.trim(),
+        severity:     document.getElementById('submit-severity').value,
+        dashcam:      document.getElementById('submit-dashcam').value,
+        desc:         document.getElementById('submit-desc').value.trim(),
       };
       const result = document.getElementById('submit-result');
       if (!fields.date || !fields.neighborhood || !fields.location || !fields.desc) {
-        result.innerHTML = '<div style="padding:10px 14px; background: var(--bg-2); border: 1px solid var(--border-default); border-radius: var(--radius-sm); font-size:12.5px; color: var(--sev-injury);">Please complete date, neighborhood, location, and description.</div>';
+        result.innerHTML = '<div style="padding:10px 14px; background: var(--bg-3); border: 1px solid var(--border-default); border-radius: var(--radius-sm); font-size:12.5px; color: var(--text-primary);">Please complete date, neighborhood, location, and description.</div>';
         return;
       }
-      // Save locally (backend would POST to /api/incidents-submit)
-      try {
-        const pending = JSON.parse(localStorage.getItem('bulle-pending-reports') || '[]');
-        pending.unshift({ ...fields, submittedAt: new Date().toISOString() });
-        localStorage.setItem('bulle-pending-reports', JSON.stringify(pending.slice(0, 50)));
-      } catch (e) {}
-      const ticketId = 'BC-' + Date.now().toString(36).toUpperCase().slice(-6);
-      result.innerHTML = `<div style="padding:12px 14px; background: var(--bg-3); border: 1px solid var(--border-default); border-left: 3px solid var(--text-primary); border-radius: var(--radius-sm); font-size:13px; color: var(--text-primary); display:flex; gap:10px; align-items:flex-start;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-        <div>
-          <div style="font-weight:600; margin-bottom:3px;">Report submitted for review</div>
-          <div style="color: var(--text-secondary);">Ticket <strong class="notranslate" style="color: var(--text-primary);">${ticketId}</strong> · OLS review typically completes within 5 business days. You will not be contacted unless verification is needed.</div>
+
+      const dashcamLabel = {
+        'none': 'None',
+        'driver-only': 'Driver-facing dashcam only',
+        'confirmed': 'Full coverage (driver + cabin)',
+      }[fields.dashcam] || fields.dashcam;
+
+      const severityLabel = {
+        'assault': 'Assault',
+        'robbery': 'Robbery',
+        'injury':  'Injury',
+        'fatal':   'Fatal incident',
+      }[fields.severity] || fields.severity;
+
+      const subject = encodeURIComponent(`App-Based Worker Safety Incident Report — ${fields.neighborhood} · ${fields.date}`);
+      const body = encodeURIComponent(
+`To: Seattle Office of Labor Standards
+
+I am an app-based worker reporting a safety incident that occurred while I was performing services in Seattle. I am sharing this report so OLS is aware of conditions affecting app-based workers and can act on any applicable enforcement authority.
+
+INCIDENT DETAILS
+Date: ${fields.date}
+Time: ${fields.time || '(not specified)'}
+Platform I was working for: ${fields.platform}
+Neighborhood: ${fields.neighborhood}
+Nearest intersection or address: ${fields.location}
+Severity: ${severityLabel}
+Dashcam evidence: ${dashcamLabel}
+
+WHAT HAPPENED
+${fields.desc}
+
+ABOUT ME (please fill in before sending)
+Name:
+Preferred contact email:
+Preferred contact phone:
+Driver platform username (if you wish to share):
+Best time to reach me:
+
+OPTIONAL — RELATED CLAIMS
+[ ] I want to also report a related deactivation (SMC 8.40)
+[ ] I want to also report a related underpayment (SMC 8.37)
+[ ] I want to also report a related Paid Sick & Safe Time issue (SMC 8.39)
+[ ] I am requesting an in-person intake appointment
+
+I understand that OLS investigates labor standards violations under Seattle Municipal Code, and that this report may be used in connection with potential enforcement action. I am willing to provide additional records on request, including trip receipts, screenshots, and witness contacts.
+
+Thank you,
+
+[Sent via Bulle Cloud Safety Steward — bullecloud.com]
+[OLS contact: ${OLS.email} · ${OLS.phone} · ${OLS.address}]`
+      );
+      const mailto = `mailto:${OLS.email}?subject=${subject}&body=${body}`;
+
+      result.innerHTML = `<div style="padding:14px 16px; background: var(--accent-subtle); border: 1px solid var(--accent-border); border-left: 3px solid var(--accent); border-radius: var(--radius-sm); font-size:13px; color: var(--text-primary);">
+        <div style="font-weight:650; margin-bottom:6px; color: var(--accent);">Draft ready to send</div>
+        <div style="color: var(--text-secondary); margin-bottom:12px; line-height:1.5;">
+          The button below opens your email app with a pre-filled message to Seattle OLS at <span class="notranslate" style="color: var(--text-primary); font-weight:600;">${OLS.email}</span>. Add your name and contact info, review the details, then send from your own email so OLS can reach you for follow-up.
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+          <a href="${mailto}" class="btn-primary-full" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; padding:9px 16px; font-size:12.5px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Open in email
+          </a>
+          <a href="${OLS.complaintFormUrl}" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; padding:8px 14px; font-size:12px; color: var(--text-primary); border:1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--bg-2);">
+            File via OLS web form instead
+          </a>
+          <span style="font-size:10.5px; color: var(--text-muted);">${OLS.phone} · walk-in Tue–Thu 9 AM–3 PM</span>
         </div>
       </div>`;
-      // Reset form
-      document.getElementById('submit-location').value = '';
-      document.getElementById('submit-desc').value = '';
-      document.getElementById('submit-neighborhood').value = '';
     });
   }
 
-  // === Complaint lookup (preview mode) ===
-  const lookupBtn = document.getElementById('complaint-lookup-btn');
-  if (lookupBtn) {
-    lookupBtn.addEventListener('click', () => {
-      const id = document.getElementById('complaint-id').value.trim();
-      const result = document.getElementById('complaint-result');
-      if (!id) {
-        result.innerHTML = '<div style="font-size:11.5px; color: var(--text-muted);">Enter an OLS complaint number to look up status.</div>';
-        return;
+  // === Quick OLS Drafts: PSST + Retaliation ===
+  const quickPayBtn = document.getElementById('quick-pay-btn');
+  if (quickPayBtn) {
+    quickPayBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const calcCard = document.getElementById('calc-result');
+      if (calcCard) {
+        calcCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const minutes = document.getElementById('calc-minutes');
+        if (minutes) minutes.focus();
       }
-      // Preview mode - backend would fetch live status
-      result.innerHTML = `
-        <div style="padding:12px 14px; background: var(--bg-1); border: 1px solid var(--border-default); border-radius: var(--radius-sm);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <div style="font-size:12.5px; font-weight:600; color: var(--text-primary);" class="notranslate">${escapeHtml(id)}</div>
-            <span style="font-size:10px; padding:3px 10px; background: var(--bg-3); color: var(--text-primary); border: 1px solid var(--border-default); border-radius: 999px; font-weight:600; text-transform: uppercase; letter-spacing: 0.06em;">Preview Mode</span>
-          </div>
-          <div style="font-size:11.5px; color: var(--text-muted); line-height:1.55;">
-            Live lookup requires OLS case management API connector. Expected fields: filing date, assigned investigator, current stage (intake → investigation → determination), response deadline.
-          </div>
-        </div>`;
     });
   }
 
-  // === Alert subscription ===
-  const subBtn = document.getElementById('alert-subscribe-btn');
-  if (subBtn) {
-    try {
-      const saved = JSON.parse(localStorage.getItem('bulle-alert-prefs') || 'null');
-      if (saved) {
-        document.getElementById('alert-email').value = saved.email || '';
-        document.getElementById('alert-phone').value = saved.phone || '';
-        document.getElementById('alert-neighborhood').value = saved.neighborhood || '';
-      }
-    } catch (e) {}
-    subBtn.addEventListener('click', () => {
-      const prefs = {
-        email: document.getElementById('alert-email').value.trim(),
-        phone: document.getElementById('alert-phone').value.trim(),
-        neighborhood: document.getElementById('alert-neighborhood').value.trim(),
-      };
-      const result = document.getElementById('alert-result');
-      if (!prefs.email && !prefs.phone) {
-        result.innerHTML = '<span style="color: var(--sev-injury);">Enter an email or phone number to subscribe.</span>';
-        return;
-      }
-      try { localStorage.setItem('bulle-alert-prefs', JSON.stringify(prefs)); } catch (e) {}
-      const target = prefs.neighborhood || 'all Seattle neighborhoods';
-      result.innerHTML = `<span style="color: var(--accent);">Preferences saved. You will be notified for new verified incidents in <strong>${escapeHtml(target)}</strong> once the delivery backend is connected.</span>`;
+  const quickPsstBtn = document.getElementById('quick-psst-btn');
+  if (quickPsstBtn) {
+    quickPsstBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const subject = encodeURIComponent('SMC 8.39 Paid Sick & Safe Time Complaint');
+      const body = encodeURIComponent(
+`To: Seattle Office of Labor Standards
+
+I am an app-based worker filing a complaint under the App-Based Worker Paid Sick and Safe Time Ordinance (SMC 8.39).
+
+ISSUE TYPE (check all that apply)
+[ ] Network company denied my PSST request
+[ ] PSST was paid at the wrong rate (not based on my average daily compensation)
+[ ] Network company is not providing monthly notification of accrual, use, and balance
+[ ] Network company is not allowing the required 9-day carryover
+[ ] Network company is requiring more than reasonable verification
+[ ] Retaliation for using PSST
+[ ] Other:
+
+NETWORK COMPANY
+Company name:
+Approximately when did this start:
+
+DETAILS
+Briefly describe what happened, including dates of any PSST requests, the response you received, and how you tracked your accrual:
+
+
+
+
+MY WORK HISTORY (helps establish coverage)
+Approximately when did you start working for this network company:
+Roughly how often do you make work-related stops in Seattle:
+Have you worked at least one Seattle stop in the past 90 days: (Yes / No)
+
+ABOUT ME (please fill in before sending)
+Name:
+Preferred contact email:
+Preferred contact phone:
+Best time to reach me:
+Network platform username (if you wish to share):
+
+I am willing to provide records showing my work history, the company's PSST notifications I have received (or not received), and any related communications.
+
+Thank you,
+
+[Sent via Bulle Cloud Safety Steward — bullecloud.com]
+[OLS contact: ${OLS.email} · ${OLS.phone} · ${OLS.address}]`
+      );
+      window.location.href = `mailto:${OLS.email}?subject=${subject}&body=${body}`;
+    });
+  }
+
+  const quickRetalBtn = document.getElementById('quick-retal-btn');
+  if (quickRetalBtn) {
+    quickRetalBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const subject = encodeURIComponent('App-Based Worker Retaliation Complaint — SMC 8.37 / 8.39 / 8.40');
+      const body = encodeURIComponent(
+`To: Seattle Office of Labor Standards
+
+I am an app-based worker filing a retaliation complaint. Seattle's app-based worker ordinances (SMC 8.37, 8.39, and 8.40) all prohibit network companies from retaliating against workers for asserting their rights under those laws.
+
+PROTECTED ACTIVITY (what right did you assert?)
+[ ] Asked for or used Paid Sick & Safe Time (SMC 8.39)
+[ ] Filed an OLS complaint about pay or PSST
+[ ] Refused or cancelled an offer for safety reasons
+[ ] Limited my availability or rejected offers (protected under SMC 8.37 flexibility)
+[ ] Requested records or contested a deactivation (SMC 8.40)
+[ ] Other:
+
+NETWORK COMPANY
+Company name:
+Date of protected activity:
+Date of retaliation:
+
+WHAT THE COMPANY DID
+Describe the negative action — for example: deactivation, reduced offers, lower priority in dispatch, suspended account, blocked from areas, removed from a delivery zone:
+
+
+
+
+WHY YOU BELIEVE THE TWO ARE CONNECTED
+Briefly describe the timeline and any communications that link the protected activity to the negative action:
+
+
+
+
+ABOUT ME (please fill in before sending)
+Name:
+Preferred contact email:
+Preferred contact phone:
+Best time to reach me:
+Network platform username (if you wish to share):
+
+I am willing to provide screenshots, communications, trip history, and any other documentation that supports this complaint.
+
+Thank you,
+
+[Sent via Bulle Cloud Safety Steward — bullecloud.com]
+[OLS contact: ${OLS.email} · ${OLS.phone} · ${OLS.address}]`
+      );
+      window.location.href = `mailto:${OLS.email}?subject=${subject}&body=${body}`;
     });
   }
 }
@@ -3556,6 +3996,58 @@ function setupTranslateDropdown() {
   }
 }
 
+// === LIVE DATA FETCH ===
+// On page load and every 5 minutes, pull incidents.json from the same directory.
+// Falls back silently to the hardcoded `incidents` and `liveFeed` if the file
+// is missing or malformed. The PHP scraper (scrape.php) writes incidents.json
+// every 15 min via a HostGator cron job — see SETUP.md.
+const LIVE_DATA_URL   = 'incidents.json';
+const LIVE_REFRESH_MS = 5 * 60 * 1000;
+let lastLiveUpdate = null;
+
+async function fetchLiveData() {
+  try {
+    const resp = await fetch(LIVE_DATA_URL + '?t=' + Date.now(), { cache: 'no-store' });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    if (!Array.isArray(data.incidents) || data.incidents.length === 0) {
+      throw new Error('Empty incidents array');
+    }
+
+    incidents = data.incidents;
+    if (Array.isArray(data.live_feed) && data.live_feed.length > 0) {
+      liveFeed = data.live_feed;
+    }
+    lastLiveUpdate = data.updated_at ? new Date(data.updated_at) : new Date();
+
+    updateFreshnessIndicator(data.updated_human || null, true);
+    render();
+    return true;
+  } catch (err) {
+    updateFreshnessIndicator(null, false);
+    return false;
+  }
+}
+
+function updateFreshnessIndicator(humanTimestamp, isLive) {
+  const wrap = document.querySelector('.sidebar-data-freshness');
+  const el = wrap ? wrap.querySelector('span') : null;
+  if (!wrap || !el) return;
+  wrap.classList.remove('is-live', 'is-sample');
+  if (isLive && humanTimestamp) {
+    wrap.classList.add('is-live');
+    el.textContent = 'Live · ' + humanTimestamp;
+  } else if (isLive && lastLiveUpdate) {
+    wrap.classList.add('is-live');
+    el.textContent = 'Live · ' + lastLiveUpdate.toLocaleString('en-US', {
+      month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+    });
+  } else {
+    wrap.classList.add('is-sample');
+    el.textContent = 'Awaiting live SPD feed · check cron';
+  }
+}
+
 function init() {
   updateClock();
   setInterval(updateClock, 1000);
@@ -3571,11 +4063,10 @@ function init() {
     const origText = label ? label.textContent : 'Refresh';
     if (label) label.textContent = 'Refreshing…';
     btn.disabled = true;
-    setTimeout(() => {
-      render();
+    fetchLiveData().finally(() => {
       if (label) label.textContent = origText;
       btn.disabled = false;
-    }, 600);
+    });
   });
   if (!location.hash) {
     try {
@@ -3585,6 +4076,10 @@ function init() {
     }
   }
   render();
+
+  // Kick off live data fetch — runs on load and every 5 min
+  fetchLiveData();
+  setInterval(fetchLiveData, LIVE_REFRESH_MS);
 }
 
 if (document.readyState === 'loading') {
