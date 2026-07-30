@@ -7,112 +7,112 @@
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
 <meta name="description" content="Bulle Cloud Safety Steward — real-time incident intelligence and worker rights for Seattle app-based drivers." />
-<meta name="theme-color" content="#F2F2F2" />
-<meta name="color-scheme" content="light" />
+<meta name="theme-color" content="#000000" />
+<meta name="color-scheme" content="dark" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Safety Steward" />
 <title>Bulle Cloud · Safety Steward</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232dd4bf'/%3E%3Cstop offset='1' stop-color='%2314b8a6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cpath d='M16 26s7-3 7-9V8l-7-3-7 3v9c0 6 7 9 7 9z' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23FFFFFF'/%3E%3Cstop offset='1' stop-color='%23C0C0C0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cpath d='M16 26s7-3 7-9V8l-7-3-7 3v9c0 6 7 9 7 9z' fill='none' stroke='%23000000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="preconnect" href="https://rsms.me/">
 <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 <style>
   /* ============================================================
      BULLE CLOUD · SAFETY STEWARD — MONOCHROMATIC DESIGN SYSTEM
-     Enterprise SaaS · Light neutral · Typography-driven hierarchy
+     Enterprise SaaS · Black canvas · White/silver accents
      ============================================================ */
 
   :root {
     /* === BULLE CLOUD MONOCHROMATIC DESIGN SYSTEM ===
-       Light grayscale palette. No accent colors. No gradients.
+       Dark grayscale palette. White/silver accents. No gradients.
        Hierarchy expressed through typography weight, spacing, and grayscale weight.
        Severity differentiation uses grayscale weight + icon + label position. */
 
-    /* === SURFACES === Light grayscale hierarchy */
-    --bg-0: #F2F2F2;        /* Primary background — page canvas */
-    --bg-1: #F7F7F7;        /* Secondary surfaces — cards, sidebar */
-    --bg-2: #FFFFFF;        /* Tertiary surfaces — inputs, inner panels, header */
-    --bg-3: #EBEBEB;        /* Hover states, table header tint, subtle zones */
-    --surface:       #F7F7F7;
-    --surface-elev:  #FFFFFF;
-    --surface-hover: #EBEBEB;
+    /* === SURFACES === Dark grayscale hierarchy */
+    --bg-0: #000000;        /* Primary background — page canvas */
+    --bg-1: #121212;        /* Secondary surfaces — cards, sidebar */
+    --bg-2: #1C1C1C;        /* Tertiary surfaces — inputs, inner panels, header */
+    --bg-3: #262626;        /* Hover states, table header tint, subtle zones */
+    --surface:       #121212;
+    --surface-elev:  #1C1C1C;
+    --surface-hover: #262626;
 
     /* === BORDERS === Hairline neutral grays */
-    --border-subtle:  #E5E5E5;   /* Hairline separators inside cards */
-    --border-default: #D1D1D1;   /* Standard borders on inputs and cards */
-    --border-strong:  #B8B8B8;   /* Emphasized borders, focus, active */
+    --border-subtle:  #2E2E2E;   /* Hairline separators inside cards */
+    --border-default: #4D4D4D;   /* Standard borders on inputs and cards */
+    --border-strong:  #808080;   /* Emphasized borders, focus, active */
 
     /* === TEXT === Six-step grayscale */
-    --text-primary:   #000000;   /* Headings, key values, primary text */
-    --text-secondary: #4F4F4F;   /* Body copy, descriptions */
-    --text-tertiary:  #757575;   /* Labels, metadata */
-    --text-muted:     #9E9E9E;   /* Placeholder, captions, disabled */
-    --text-subtle:    #BDBDBD;   /* Decorative, very low emphasis */
+    --text-primary:   #FFFFFF;   /* Headings, key values, primary text */
+    --text-secondary: #D9D9D9;   /* Body copy, descriptions */
+    --text-tertiary:  #A6A6A6;   /* Labels, metadata */
+    --text-muted:     #8C8C8C;   /* Placeholder, captions, disabled */
+    --text-subtle:    #808080;   /* Decorative, very low emphasis */
 
-    /* === PRIMARY CTA === Pure black on white */
-    --cta-bg:        #000000;
-    --cta-text:      #FFFFFF;
-    --cta-bg-hover:  #1A1A1A;
-    --cta-bg-active: #2A2A2A;
+    /* === PRIMARY CTA === Pure white on black */
+    --cta-bg:        #FFFFFF;
+    --cta-text:      #000000;
+    --cta-bg-hover:  #D9D9D9;
+    --cta-bg-active: #C0C0C0;
 
     /* === ACCENT === Removed in monochromatic system.
        Variables remapped to grayscale so existing markup using them
        falls back to neutral. Anywhere "accent" appears in the UI,
-       it now reads as black emphasis instead of teal highlight. */
-    --accent:               #000000;
-    --accent-hover:         #1A1A1A;
-    --accent-subtle:        #EBEBEB;
-    --accent-subtle-hover:  #E0E0E0;
-    --accent-border:        #9E9E9E;
-    --accent-deep:          #000000;
-    --seattle-gold:         #4F4F4F;   /* Was gold; now mid-gray emphasis */
+       it now reads as white emphasis instead of teal highlight. */
+    --accent:               #FFFFFF;
+    --accent-hover:         #C0C0C0;
+    --accent-subtle:        #262626;
+    --accent-subtle-hover:  #333333;
+    --accent-border:        #808080;
+    --accent-deep:          #FFFFFF;
+    --seattle-gold:         #C0C0C0;   /* Was gold; now silver emphasis */
 
-    /* === SEVERITY === Grayscale weighted by severity (darkest = most severe).
+    /* === SEVERITY === Grayscale weighted by severity (brightest = most severe).
        Always paired with an icon and a text label so meaning never depends
        on color alone — accessible to colorblind users by design. */
-    --sev-fatal:   #1A1A1A;   /* Most severe = darkest */
-    --sev-robbery: #3D3D3D;
-    --sev-injury:  #5C5C5C;
-    --sev-assault: #757575;
+    --sev-fatal:   #FFFFFF;   /* Most severe = brightest */
+    --sev-robbery: #D9D9D9;
+    --sev-injury:  #A6A6A6;
+    --sev-assault: #808080;
 
-    /* === STATUS === Open uses dark, closed uses muted */
-    --status-open:   #1A1A1A;   /* Darkest = needs attention */
-    --status-closed: #9E9E9E;   /* Muted = resolved, low emphasis */
+    /* === STATUS === Open uses bright, closed uses muted */
+    --status-open:   #FFFFFF;   /* Brightest = needs attention */
+    --status-closed: #8C8C8C;   /* Muted = resolved, low emphasis */
 
     /* === FUNCTIONAL SYSTEM COLORS ===
        Reserved for non-decorative status feedback only:
        success confirmations, validation errors, warning callouts, info banners.
        Each comes with a foreground for text-on-tinted-bg and a tint for backgrounds.
        Never used for branding, navigation, charts, or general accenting. */
-    --success-fg:    #1B5E20;   /* Forest green — confirmations, "live" status, sent state */
-    --success-tint:  #E8F5E9;   /* Pale green background for success banners */
-    --success-bd:    #C5E1C8;
+    --success-fg:    #D9D9D9;   /* Light silver — confirmations, "live" status, sent state */
+    --success-tint:  #1F1F1F;   /* Dark tint background for success banners */
+    --success-bd:    #4D4D4D;
 
-    --warning-fg:    #8B5A00;   /* Amber — caution, "estimated" data, draft state */
-    --warning-tint:  #FFF4E0;
-    --warning-bd:    #F2D9A6;
+    --warning-fg:    #E5E5E5;   /* Near-white — caution, "estimated" data, draft state */
+    --warning-tint:  #262626;
+    --warning-bd:    #666666;
 
-    --error-fg:      #B71C1C;   /* Red — validation errors, critical failures, destructive */
-    --error-tint:    #FDECEC;
-    --error-bd:      #F2C4C4;
+    --error-fg:      #FFFFFF;   /* Pure white — validation errors, critical failures, destructive */
+    --error-tint:    #2E2E2E;
+    --error-bd:      #808080;
 
-    --info-fg:       #0D47A1;   /* Blue — informational, neutral notices, links in content */
-    --info-tint:     #E3F0FF;
-    --info-bd:       #C2D9F2;
+    --info-fg:       #C0C0C0;   /* Silver — informational, neutral notices, links in content */
+    --info-tint:     #1F1F1F;
+    --info-bd:       #4D4D4D;
 
     /* Legacy semantic state aliases — mapped to grayscale */
-    --state-critical: #1A1A1A;
-    --state-warning:  #4F4F4F;
-    --state-notice:   #757575;
-    --state-resolved: #9E9E9E;
+    --state-critical: #FFFFFF;
+    --state-warning:  #D9D9D9;
+    --state-notice:   #A6A6A6;
+    --state-resolved: #8C8C8C;
 
     /* === ELEVATION === Subtle shadows only.
        Enterprise aesthetic prefers borders over shadow. */
-    --shadow-xs: 0 1px 0 rgba(0, 0, 0, 0.04);
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+    --shadow-xs: 0 1px 0 rgba(0, 0, 0, 0.4);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.55);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
 
     /* === MOTION === Unchanged */
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -402,14 +402,14 @@
     width: 7px; height: 7px;
     border-radius: 50%;
     background: var(--text-secondary);
-    box-shadow: 0 0 0 0 rgba(79, 79, 79, 0.45);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.45);
     animation: pulse 1.8s infinite;
     display: inline-block;
   }
   @keyframes pulse {
-    0%   { box-shadow: 0 0 0 0 rgba(79, 79, 79, 0.45); }
-    70%  { box-shadow: 0 0 0 8px rgba(79, 79, 79, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(79, 79, 79, 0); }
+    0%   { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.45); }
+    70%  { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
   }
 
   /* ============= MAIN CONTENT ============= */
@@ -523,7 +523,7 @@
   /* ============= SEVERITY DOTS & CHIPS =============
      Each severity uses a distinct visual treatment beyond grayscale weight,
      so the four levels remain instantly distinguishable in pure monochrome.
-     Fatal: filled solid black ring · Robbery: filled dark gray with inner ring
+     Fatal: filled solid white ring · Robbery: filled light gray with inner ring
      Injury: ring outline only (medium) · Assault: small filled circle (light) */
   .sev-dot {
     width: 12px; height: 12px;
@@ -631,13 +631,13 @@
   .leaflet-control-attribution,
   .leaflet-control-attribution a {
     color: var(--text-tertiary) !important;
-    background: rgba(255, 255, 255, 0.85) !important;
+    background: rgba(0, 0, 0, 0.75) !important;
     font-size: 10px !important;
     padding: 2px 6px !important;
     border-radius: 3px 0 0 0 !important;
   }
 
-  /* --- Zoom controls: light themed --- */
+  /* --- Zoom controls: dark themed --- */
   .leaflet-bar {
     border: 1px solid var(--border-default) !important;
     box-shadow: var(--shadow-sm) !important;
@@ -673,7 +673,7 @@
     height: 14px;
     border-radius: 50%;
     border: 2px solid var(--bg-2);
-    box-shadow: 0 0 0 1.5px var(--text-primary), 0 2px 4px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 0 1.5px var(--text-primary), 0 2px 4px rgba(0, 0, 0, 0.6);
     z-index: 2;
     transition: transform 0.15s var(--ease-out);
   }
@@ -700,7 +700,7 @@
     color: var(--text-primary) !important;
     border: 1px solid var(--border-default) !important;
     border-radius: var(--radius-md) !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10), 0 2px 6px rgba(0, 0, 0, 0.06) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.4) !important;
     padding: 0 !important;
   }
   .leaflet-popup-content {
@@ -867,10 +867,10 @@
   .calc-input:hover { border-color: var(--border-strong); }
   .calc-input:focus {
     border-color: var(--text-primary);
-    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
   }
   select.calc-input {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239E9E9E' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23A6A6A6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 10px center;
     padding-right: 32px;
@@ -1436,7 +1436,7 @@
     <div class="sidebar-brand">
       <div class="sidebar-brand-logo">
         <div class="sidebar-brand-mark">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
           </svg>
         </div>
@@ -1804,7 +1804,7 @@ function initMap(containerId, list) {
   // Enable scroll zoom only after user interacts with the map (click)
   currentMap.once('click', () => currentMap.scrollWheelZoom.enable());
 
-  const primaryTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+  const primaryTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
     maxZoom: 19,
     subdomains: ['a', 'b', 'c', 'd'],
     attribution: '© OpenStreetMap contributors © CARTO'
@@ -1816,7 +1816,7 @@ function initMap(containerId, list) {
     fellBack = true;
     try {
       currentMap.removeLayer(primaryTiles);
-      L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
         maxZoom: 16,
         attribution: 'Tiles © Esri'
       }).addTo(currentMap);
@@ -2102,7 +2102,7 @@ function incidentTableHTML(list) {
               <td style="color: var(--text-secondary); max-width:260px;">${escapeHtml(inc.desc)}</td>
               <td>
                 ${dash
-                  ? `<span class="chip" title="${dash.title}" style="background: rgba(148,163,184,0.08); color: ${dash.color}; display:inline-flex; align-items:center; gap:5px; white-space:nowrap;">
+                  ? `<span class="chip" title="${dash.title}" style="background: rgba(255,255,255,0.08); color: ${dash.color}; display:inline-flex; align-items:center; gap:5px; white-space:nowrap;">
                       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
                       ${dash.label}
                     </span>`

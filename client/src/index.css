@@ -3,44 +3,45 @@
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════════
-   REFINED MONOCHROMATIC DESIGN SYSTEM
-   Enterprise-grade SaaS · black/white/gray only · zero accents
+   BULLE CONSULTING BRAND DESIGN SYSTEM
+   Black background · white + silver accents · zero hues
+   All foreground tokens meet WCAG AA on the base surfaces.
    ═══════════════════════════════════════════════════════════ */
 
 @layer base {
   :root {
-    /* Surface hierarchy — light monochromatic */
-    --bg-base:    0 0% 95%;       /* #F2F2F2 — primary background */
-    --bg-raised:  0 0% 97%;       /* #F7F7F7 — secondary surfaces/cards */
-    --bg-surface: 0 0% 97%;       /* #F7F7F7 — cards, modals */
-    --bg-overlay: 0 0% 100%;      /* #FFFFFF — dropdowns, tooltips */
+    /* Surface hierarchy — dark monochromatic */
+    --bg-base:    0 0% 0%;        /* #000000 — primary background */
+    --bg-raised:  0 0% 7%;        /* #121212 — secondary surfaces/cards */
+    --bg-surface: 0 0% 7%;        /* #121212 — cards, modals */
+    --bg-overlay: 0 0% 11%;       /* #1C1C1C — dropdowns, tooltips */
 
-    /* Text hierarchy — 4 levels */
-    --text-primary:    0 0% 0%;     /* #000000 */
-    --text-secondary:  0 0% 31%;    /* #4F4F4F */
-    --text-tertiary:   0 0% 62%;    /* #9E9E9E */
-    --text-quaternary: 0 0% 62%;    /* #9E9E9E */
+    /* Text hierarchy — 4 levels (contrast on #000: 21 / 14.9 / 8.6 / 5.9) */
+    --text-primary:    0 0% 100%;   /* #FFFFFF */
+    --text-secondary:  0 0% 85%;    /* #D9D9D9 */
+    --text-tertiary:   0 0% 65%;    /* #A6A6A6 */
+    --text-quaternary: 0 0% 55%;    /* #8C8C8C */
 
-    /* Complementary accent — enterprise blue */
-    --accent:     221 83% 53%;      /* #2563EB electric blue */
-    --accent-dim: 221 83% 43%;      /* #1D4ED8 darker hover */
-    --accent-bg:  214 100% 96%;     /* #EFF6FF subtle tinted bg */
-    --accent-soft:214 95% 90%;      /* #DBEAFE soft chip bg */
+    /* Brand accent — white with silver as the dimmed variant */
+    --accent:     0 0% 100%;        /* #FFFFFF */
+    --accent-dim: 0 0% 75%;         /* #C0C0C0 silver — hover/secondary */
+    --accent-bg:  0 0% 12%;         /* #1F1F1F subtle raised tint */
+    --accent-soft:0 0% 15%;         /* #262626 soft chip bg */
 
-    /* Status accents — use the primary accent blue; grayscale for resolved */
-    --status-open:     221 83% 53%; /* uses accent blue for active/open states */
-    --status-resolved: 0 0% 45%;    /* muted gray for resolved */
+    /* Status accents — white for active work, silver-gray for resolved */
+    --status-open:     0 0% 100%;   /* white for active/open states */
+    --status-resolved: 0 0% 65%;    /* silver for resolved */
 
     /* Borders and dividers */
-    --border:      0 0% 82%;        /* #D1D1D1 */
-    --border-lite: 0 0% 75%;        /* #BFBFBF */
+    --border:      0 0% 30%;        /* #4D4D4D */
+    --border-lite: 0 0% 40%;        /* #666666 — hover/emphasis */
 
-    /* Severity — enriched grayscale for stronger differentiation */
-    --sev-fatal:   0 0% 0%;         /* #000000 pure black — strongest */
-    --sev-injury:  0 0% 20%;        /* #333333 */
-    --sev-robbery: 0 0% 40%;        /* #666666 */
-    --sev-assault: 0 0% 55%;        /* #8C8C8C */
-    --sev-policy:  0 0% 75%;        /* #BFBFBF */
+    /* Severity — inverted grayscale: brightest = most severe */
+    --sev-fatal:   0 0% 100%;       /* #FFFFFF pure white — strongest */
+    --sev-injury:  0 0% 85%;        /* #D9D9D9 */
+    --sev-robbery: 0 0% 65%;        /* #A6A6A6 */
+    --sev-assault: 0 0% 50%;        /* #808080 */
+    --sev-policy:  0 0% 35%;        /* #595959 */
 
     /* Shadcn compat tokens */
     --background: var(--bg-base);
@@ -50,14 +51,13 @@
     --popover: var(--bg-overlay);
     --popover-foreground: var(--text-primary);
     --primary: var(--accent);
-    --primary-foreground: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
     --secondary: var(--bg-raised);
     --secondary-foreground: var(--text-secondary);
     --muted: var(--bg-raised);
     --muted-foreground: var(--text-tertiary);
     --destructive: var(--sev-fatal);
-    --destructive-foreground: 0 0% 100%;
-    --border: var(--border);
+    --destructive-foreground: 0 0% 0%;
     --input: var(--border);
     --ring: var(--accent);
     --radius: 8px;
@@ -71,6 +71,7 @@
 /* ── Base ── */
 html, body {
   height: 100%; margin: 0; padding: 0; overflow: hidden;
+  color-scheme: dark;
   background: hsl(var(--bg-base));
   color: hsl(var(--text-primary));
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter', 'Segoe UI', system-ui, sans-serif;
@@ -97,7 +98,7 @@ html, body {
 }
 .sidebar-overlay {
   position: fixed; inset: 0; z-index: 49;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0,0,0,0.65);
   opacity: 0; pointer-events: none;
   transition: opacity 0.25s ease;
 }
@@ -124,14 +125,17 @@ html, body {
 }
 .kpi-card:hover { border-color: hsl(var(--border-lite)); }
 .kpi-card.active-filter {
-  border-color: #2563EB;
-  background: #EFF6FF;
-  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.1);
+  border-color: #FFFFFF;
+  background: #1F1F1F;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
 }
 
 /* ── Map ── */
 .map-container { border-radius: 12px; overflow: hidden; position: relative; }
-.leaflet-container { height: 100%; width: 100%; background: #F2F2F2 !important; }
+.leaflet-container { height: 100%; width: 100%; background: #121212 !important; }
+/* Leaflet ships a hardcoded #0078A8 link blue that fails AA on the dark canvas */
+.leaflet-control-attribution { background: rgba(0,0,0,0.75) !important; color: #A6A6A6 !important; }
+.leaflet-control-attribution a { color: #D9D9D9 !important; }
 
 /* ── Monospace numbers ── */
 .tabular-nums {
@@ -140,27 +144,27 @@ html, body {
   letter-spacing: -0.02em;
 }
 
-/* ── Severity badges — enriched grayscale pills ── */
-.badge-fatal    { background: #000000; color: #FFFFFF; border: 1px solid #000000; }
-.badge-injury   { background: #333333; color: #FFFFFF; border: 1px solid #333333; }
-.badge-robbery  { background: #666666; color: #FFFFFF; border: 1px solid #666666; }
-.badge-assault  { background: #8C8C8C; color: #FFFFFF; border: 1px solid #8C8C8C; }
-.badge-policy, .badge-other { background: #E0E0E0; color: #000000; border: 1px solid #D1D1D1; }
+/* ── Severity badges — inverted grayscale pills (brightest = most severe) ── */
+.badge-fatal    { background: #FFFFFF; color: #000000; border: 1px solid #FFFFFF; }
+.badge-injury   { background: #D9D9D9; color: #000000; border: 1px solid #D9D9D9; }
+.badge-robbery  { background: #A6A6A6; color: #000000; border: 1px solid #A6A6A6; }
+.badge-assault  { background: #737373; color: #FFFFFF; border: 1px solid #737373; }
+.badge-policy, .badge-other { background: #262626; color: #D9D9D9; border: 1px solid #4D4D4D; }
 
-/* ── Status pills — accent blue for active work, green for resolved ── */
-.status-resolved            { background: #ECFDF5; color: #047857; border: 1px solid #A7F3D0; }
-.status-under-investigation { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
-.status-active              { background: #2563EB; color: #FFFFFF; border: 1px solid #2563EB; }
+/* ── Status pills — white for active work, silver for resolved ── */
+.status-resolved            { background: #1F1F1F; color: #D9D9D9; border: 1px solid #4D4D4D; }
+.status-under-investigation { background: #262626; color: #FFFFFF; border: 1px solid #666666; }
+.status-active              { background: #FFFFFF; color: #000000; border: 1px solid #FFFFFF; }
 
-/* ── Accent line — brand blue thin rule ── */
-.seattle-accent { height: 2px; background: linear-gradient(90deg, #2563EB 0%, transparent 85%); opacity: 0.8; }
+/* ── Accent line — brand white thin rule ── */
+.seattle-accent { height: 2px; background: linear-gradient(90deg, #FFFFFF 0%, transparent 85%); opacity: 0.8; }
 
-/* ── Pulse — live indicator (accent blue) ── */
+/* ── Pulse — live indicator (brand white) ── */
 @keyframes pulse-dot { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(0.85); } }
 .pulse-dot {
   width: 7px; height: 7px; border-radius: 50%;
-  background: #2563EB;
-  box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5);
   animation: pulse-dot 2s ease-in-out infinite;
   display: inline-block; flex-shrink: 0;
 }
@@ -201,34 +205,34 @@ button:hover .rotating-globe { animation-play-state: paused; }
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #D1D1D1; border-radius: 6px; }
-::-webkit-scrollbar-thumb:hover { background: #9E9E9E; }
+::-webkit-scrollbar-thumb { background: #4D4D4D; border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: #808080; }
 
 /* ── Tooltip ── */
 .chart-tooltip {
-  background: #FFFFFF;
-  border: 1px solid #D1D1D1;
+  background: #1C1C1C;
+  border: 1px solid #4D4D4D;
   padding: 10px 14px;
   border-radius: 8px;
   font-size: 11px;
-  color: #000000;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  color: #FFFFFF;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
 }
 
-/* ── Leaflet popup — light ── */
+/* ── Leaflet popup — dark ── */
 .leaflet-popup-content-wrapper {
-  background: #FFFFFF !important;
-  color: #000000 !important;
-  border: 1px solid #D1D1D1 !important;
+  background: #1C1C1C !important;
+  color: #FFFFFF !important;
+  border: 1px solid #4D4D4D !important;
   border-radius: 10px !important;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
 }
-.leaflet-popup-tip { background: #FFFFFF !important; }
-.leaflet-popup-close-button { color: #4F4F4F !important; font-size: 18px !important; }
+.leaflet-popup-tip { background: #1C1C1C !important; }
+.leaflet-popup-close-button { color: #A6A6A6 !important; font-size: 18px !important; }
 
 /* ── Selected incident row ── */
 .incident-row { transition: background 0.15s ease; }
-.incident-row.selected { background: #EFF6FF; border-left: 2px solid #2563EB; }
+.incident-row.selected { background: #1F1F1F; border-left: 2px solid #FFFFFF; }
 
 /* ── Section label ── */
 .section-label {
@@ -236,52 +240,52 @@ button:hover .rotating-globe { animation-play-state: paused; }
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #9E9E9E;
+  color: #A6A6A6;
 }
 
-/* ── Focus ring — accent blue for accessibility ── */
-:focus-visible { outline: 2px solid #2563EB; outline-offset: 2px; border-radius: 4px; }
+/* ── Focus ring — brand white for accessibility ── */
+:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 2px; border-radius: 4px; }
 
-/* ── Primary button — accent blue for key CTAs ── */
+/* ── Primary button — brand white for key CTAs ── */
 .btn-primary {
-  background: #2563EB;
-  color: #FFFFFF;
+  background: #FFFFFF;
+  color: #000000;
   font-weight: 500;
   font-size: 12px;
   padding: 8px 16px;
   border-radius: 8px;
-  border: 1px solid #2563EB;
+  border: 1px solid #FFFFFF;
   cursor: pointer;
   transition: background 0.15s ease, transform 0.1s ease;
 }
-.btn-primary:hover { background: #1D4ED8; border-color: #1D4ED8; }
+.btn-primary:hover { background: #C0C0C0; border-color: #C0C0C0; }
 .btn-primary:active { transform: scale(0.98); }
 
-/* Alt: dark button for secondary emphasis */
+/* Alt: silver-outlined surface button for secondary emphasis */
 .btn-dark {
-  background: #000000;
+  background: #1F1F1F;
   color: #FFFFFF;
   font-weight: 500;
   font-size: 12px;
   padding: 8px 16px;
   border-radius: 8px;
-  border: 1px solid #000000;
+  border: 1px solid #666666;
   cursor: pointer;
   transition: opacity 0.15s ease, transform 0.1s ease;
 }
 .btn-dark:hover { opacity: 0.85; }
 
 .btn-secondary {
-  background: #FFFFFF;
-  color: #000000;
-  border: 1px solid #D1D1D1;
+  background: transparent;
+  color: #D9D9D9;
+  border: 1px solid #4D4D4D;
   font-size: 11px;
   padding: 6px 12px;
   border-radius: 6px;
   cursor: pointer;
   transition: border-color 0.15s ease, color 0.15s ease;
 }
-.btn-secondary:hover { border-color: #000000; color: #000000; }
+.btn-secondary:hover { border-color: #FFFFFF; color: #FFFFFF; }
 
 /* ═══ Responsive Layout System ═══ */
 
@@ -301,7 +305,7 @@ button:hover .rotating-globe { animation-play-state: paused; }
   }
   .sidebar.open {
     transform: translateX(0);
-    box-shadow: 8px 0 32px rgba(0,0,0,0.15);
+    box-shadow: 8px 0 32px rgba(0,0,0,0.7);
   }
   .main-content {
     grid-column: 1;
