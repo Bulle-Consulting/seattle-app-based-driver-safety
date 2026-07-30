@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { computeStats } from "@shared/stats";
 
 export function registerRoutes(httpServer: Server, app: Express): Server {
   storage.seedIfEmpty();
@@ -18,80 +19,7 @@ export function registerRoutes(httpServer: Server, app: Express): Server {
   });
 
   app.get("/api/stats", (_req, res) => {
-    const all = storage.getAllIncidents();
-    const total = all.length;
-
-    const crimeOnly = all.filter(i => i.category === "crime");
-    const fatal   = crimeOnly.filter(i => i.severity === "fatal").length;
-    const injury  = crimeOnly.filter(i => i.severity === "injury").length;
-    const robbery = crimeOnly.filter(i => i.severity === "robbery").length;
-    const assault = crimeOnly.filter(i => i.severity === "assault").length;
-    const policyCount = all.filter(i => i.category === "policy_regulatory").length;
-    const legalCount = all.filter(i => i.category === "legal_sentencing").length;
-
-    const resolved = all.filter(i => i.status === "resolved").length;
-    const underInvestigation = all.filter(i => i.status === "under investigation").length;
-
-    // Video evidence count
-    const withVideo = all.filter(i => i.hasVideo === 1).length;
-
-    // Cases with named suspects
-    const withSuspect = all.filter(i => i.suspectName).length;
-
-    const byPlatform: Record<string, number> = {};
-    for (const i of crimeOnly) byPlatform[i.platform] = (byPlatform[i.platform] || 0) + 1;
-
-    const byNeighborhood: Record<string, number> = {};
-    for (const i of crimeOnly) byNeighborhood[i.neighborhood] = (byNeighborhood[i.neighborhood] || 0) + 1;
-
-    const byMonth: Record<string, number> = {};
-    for (const i of crimeOnly) {
-      const month = i.date.substring(0, 7);
-      byMonth[month] = (byMonth[month] || 0) + 1;
-    }
-
-    // Time of day distribution (24 hours)
-    const byHour: Record<number, number> = {};
-    for (let h = 0; h < 24; h++) byHour[h] = 0;
-    for (const i of crimeOnly) {
-      if (i.timeOfDay) {
-        const hour = parseInt(i.timeOfDay.split(":")[0]);
-        if (!isNaN(hour)) byHour[hour]++;
-      }
-    }
-
-    // Repeat locations (neighborhoods with 2+ incidents)
-    const repeatLocations = Object.entries(byNeighborhood)
-      .filter(([, v]) => v >= 2)
-      .sort(([, a], [, b]) => b - a);
-
-    // Quarterly trend for forecasting
-    const byQuarter: Record<string, number> = {};
-    for (const i of crimeOnly) {
-      const y = i.date.substring(0, 4);
-      const m = parseInt(i.date.substring(5, 7));
-      const q = Math.ceil(m / 3);
-      const key = `${y} Q${q}`;
-      byQuarter[key] = (byQuarter[key] || 0) + 1;
-    }
-
-    // Case status breakdown
-    const caseStatuses: Record<string, number> = {};
-    for (const i of all) {
-      if (i.caseStatus) {
-        caseStatuses[i.caseStatus] = (caseStatuses[i.caseStatus] || 0) + 1;
-      }
-    }
-
-    res.json({
-      total, fatal, injury, robbery, assault, policyCount, legalCount,
-      crimeTotal: crimeOnly.length,
-      resolved, underInvestigation,
-      withVideo, withSuspect,
-      byPlatform, byNeighborhood, byMonth, byHour,
-      repeatLocations, byQuarter, caseStatuses,
-      lastVerified: "2026-04-17",
-    });
+    res.json(computeStats(storage.getAllIncidents()));
   });
 
   // Submissions
@@ -114,6 +42,10 @@ export function registerRoutes(httpServer: Server, app: Express): Server {
   });
 
   // Alert subscriptions
+  app.get("/api/alerts", (_req, res) => {
+    res.json(storage.getAllAlerts());
+  });
+
   app.post("/api/alerts", (req, res) => {
     try {
       const data = {
