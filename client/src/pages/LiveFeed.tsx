@@ -5,9 +5,9 @@ import { SeverityBadge, StatusBadge } from "@/components/SeverityBadge";
 import { useState, useEffect, useRef } from "react";
 import { TrendingUp, AlertTriangle, ExternalLink, Rss } from "lucide-react";
 import type { Incident } from "@shared/schema";
+import { SEV_COLORS as SEV, stripHtml } from "@/lib/severity";
 
 const ACCENT = "#FFFFFF";
-const SEV: Record<string, string> = { fatal: "#FFFFFF", injury: "#D9D9D9", robbery: "#8C8C8C", assault: "#A6A6A6", policy: "#A6A6A6", other: "#A6A6A6" };
 const SEV_BG: Record<string, string> = { fatal: "#262626", injury: "#262626", robbery: "#262626", assault: "#262626", policy: "#262626", other: "#262626" };
 
 function useLiveFeed(incidents: Incident[]) {
@@ -140,7 +140,7 @@ export default function LiveFeed() {
                     <a key={i} href={item.link} target="_blank" rel="noopener noreferrer"
                       className="block px-4 py-2.5 hover:bg-white/[0.06] transition-colors">
                       <div className="text-[10px] font-medium text-[#FFFFFF]">{item.title}</div>
-                      <div className="text-[9px] text-[#D9D9D9] mt-0.5 line-clamp-2">{item.description?.replace(/<[^>]*>/g, '').substring(0, 150)}</div>
+                      <div className="text-[9px] text-[#D9D9D9] mt-0.5 line-clamp-2">{stripHtml(item.description).substring(0, 150)}</div>
                       <div className="text-[8px] text-[#A6A6A6] mt-0.5 tabular-nums">
                         {item.pubDate ? new Date(item.pubDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : ""}
                       </div>

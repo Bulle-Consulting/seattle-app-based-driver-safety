@@ -148,7 +148,7 @@ html, body {
 .badge-fatal    { background: #FFFFFF; color: #000000; border: 1px solid #FFFFFF; }
 .badge-injury   { background: #D9D9D9; color: #000000; border: 1px solid #D9D9D9; }
 .badge-robbery  { background: #A6A6A6; color: #000000; border: 1px solid #A6A6A6; }
-.badge-assault  { background: #737373; color: #FFFFFF; border: 1px solid #737373; }
+.badge-assault  { background: #808080; color: #000000; border: 1px solid #808080; }
 .badge-policy, .badge-other { background: #262626; color: #D9D9D9; border: 1px solid #4D4D4D; }
 
 /* ── Status pills — white for active work, silver for resolved ── */

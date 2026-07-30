@@ -2,10 +2,8 @@ import { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import type { Incident } from "@shared/schema";
+import { SEV_COLORS } from "@/lib/severity";
 
-const SEV_COLORS: Record<string, string> = {
-  fatal: "#FFFFFF", injury: "#D9D9D9", robbery: "#A6A6A6", assault: "#808080", policy: "#595959", other: "#595959",
-};
 const SEV_R: Record<string, number> = { fatal: 10, injury: 8, robbery: 7, assault: 7, other: 5, policy: 5 };
 
 interface Props {
@@ -56,7 +54,9 @@ export default function SeattleMap({ incidents, selectedId, onSelectIncident, sh
         const r = SEV_R[inc.severity] ?? 5;
         const sel = inc.id === selectedId;
         const m = L.circleMarker([inc.lat, inc.lng], {
-          radius: sel ? r + 3 : r, fillColor: c, color: sel ? "#FFFFFF" : "#000000",
+          // Selected outline must contrast with the fill: white fills (fatal)
+          // get a silver ring, darker fills get a white ring.
+          radius: sel ? r + 3 : r, fillColor: c, color: sel ? (c === "#FFFFFF" ? "#808080" : "#FFFFFF") : "#000000",
           weight: sel ? 3 : 1.5,
           opacity: 1, fillOpacity: sel ? 1 : 0.85,
         });

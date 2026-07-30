@@ -6,9 +6,9 @@ import { SeverityBadge, StatusBadge } from "@/components/SeverityBadge";
 import { useState } from "react";
 import { X, ExternalLink } from "lucide-react";
 import type { Incident } from "@shared/schema";
+import { SEV_COLORS as SEV } from "@/lib/severity";
 
 const ACCENT = "#FFFFFF";
-const SEV: Record<string, string> = { fatal: "#FFFFFF", injury: "#D9D9D9", robbery: "#8C8C8C", assault: "#A6A6A6" };
 const PLATFORMS = ["All", "Uber", "Lyft", "DoorDash", "Amazon Flex"];
 const SEVERITIES = ["All", "fatal", "injury", "robbery", "assault"];
 

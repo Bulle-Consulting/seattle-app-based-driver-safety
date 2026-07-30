@@ -11,9 +11,9 @@ import {
 import { X, ChevronRight, ExternalLink, Filter, Printer } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import type { Incident } from "@shared/schema";
+import { SEV_COLORS as SEV } from "@/lib/severity";
 
 const ACCENT = "#FFFFFF";
-const SEV: Record<string, string> = { fatal: "#FFFFFF", injury: "#333333", robbery: "#666666", assault: "#8C8C8C", policy: "#595959" };
 const PLT: Record<string, string> = { Uber: "#FFFFFF", Lyft: "#D9D9D9", DoorDash: "#8C8C8C", "Amazon Flex": "#A6A6A6" };
 
 function Num({ value, loading }: { value: number; loading: boolean }) {
