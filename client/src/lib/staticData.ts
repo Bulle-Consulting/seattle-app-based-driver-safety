@@ -108,6 +108,14 @@ function jsonResponse(body: unknown, status = 200): Response {
 export async function staticGet(path: string, reason: string): Promise<Response> {
   const route = path.split("?")[0].replace(/\/+$/, "");
 
+  // Even for routes answered without touching the dataset, record that the
+  // backend is unreachable so DataSourceBanner shows on pages that only hit
+  // these endpoints (e.g. Alerts). Never overwrite a richer "static" or
+  // "unavailable" state that already carries dataset freshness info.
+  if (state.mode === "api") {
+    setState({ mode: "static", reason });
+  }
+
   // These are empty-by-definition without a database, and rendering them as
   // empty lists is honest — there are no stored submissions or subscriptions.
   if (route === "/api/submissions") return jsonResponse([]);
@@ -137,12 +145,14 @@ export async function staticGet(path: string, reason: string): Promise<Response>
     throw err;
   }
 
-  if (state.mode !== "static") {
+  // Enrich the state with dataset freshness the first time the dataset is
+  // actually loaded (the early marker above has no generatedAt yet).
+  if (state.mode !== "static" || !state.generatedAt) {
     setState({
       mode: "static",
       generatedAt: dataset.generated_at,
       verifiedLabel: dataset.updated_human,
-      reason,
+      reason: state.mode === "static" ? state.reason ?? reason : reason,
     });
   }
 
