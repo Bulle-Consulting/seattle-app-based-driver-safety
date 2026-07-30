@@ -72,8 +72,10 @@ Every incident in the database is classified and verified using the following pr
 - **Frontend**: React 18 + TypeScript + Vite + Tailwind CSS + shadcn/ui + Recharts + Leaflet.js
 - **Backend**: Express.js + SQLite (better-sqlite3) + Drizzle ORM
 - **Mapping**: Leaflet with CartoDB Positron tiles + leaflet.heat for heatmap overlay
-- **Live Data**: SPD Blotter RSS feed proxy (`/api/spd-blotter`)
-- **Deploy**: Static build to S3
+- **Live Data**: SPD Blotter RSS feed proxy (`/api/spd-blotter`) — backend-only, see [DEPLOYMENT.md](DEPLOYMENT.md)
+- **Deploy**: GitHub Pages serves the repo root of `main` (the single-file `index.html`);
+  `bullecloud.com` is served from Apache/HostGator. No backend is currently hosted — see
+  [DEPLOYMENT.md](DEPLOYMENT.md) for what that costs you and how to provision it.
 
 ---
 
@@ -138,14 +140,20 @@ NODE_ENV=production node dist/index.cjs
 
 ---
 
-## Data as of April 14, 2026
+## Data as of April 17, 2026
 
-- **30 total entries** (27 crime incidents + 2 policy/regulatory + 1 legal/sentencing)
+The single source of truth is [`shared/seed-data.ts`](shared/seed-data.ts). The Express API
+seeds SQLite from it, `npm run generate:data` serialises it into `incidents.json` for the
+static site, and the React client falls back to that JSON when no backend is reachable — so
+the figures below, `/api/stats`, and the deployed dashboard cannot disagree. Regenerate the
+counts with `npm run generate:data`, which prints them.
+
+- **31 total entries** (28 crime incidents + 2 policy/regulatory + 1 legal/sentencing)
 - **1 fatal** (Edmonds homicide, Jan 2024)
 - **4 injury** (stabbings, shootings, vehicular assault)
-- **12 robbery** (armed robberies, carjackings, package theft)
+- **13 robbery** (armed robberies, carjackings, package theft)
 - **10 assault** (physical attacks, sexual assaults, attempted shootings)
-- **17 open cases** under investigation
+- **18 open cases** under investigation
 - **13 resolved** (arrests, convictions, sentencing)
 
 ---

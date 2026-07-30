@@ -244,6 +244,42 @@
     border-color: var(--warning-bd);
     color: var(--warning-fg);
   }
+
+  /* Shown when incidents.json cannot be loaded. Deliberately unmissable: the
+     old behaviour fell back to bundled sample data with only a small sidebar
+     pill changing, so a broken data file looked like a healthy dashboard. */
+  .data-error-banner {
+    display: none;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0 28px 18px;
+    padding: 12px 14px;
+    background: var(--warning-tint);
+    border: 1px solid var(--warning-bd);
+    border-left: 3px solid var(--warning-fg);
+    border-radius: 6px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--warning-fg);
+  }
+  .data-error-banner.is-visible { display: flex; }
+  .data-error-banner svg { flex: none; margin-top: 1px; }
+  .data-error-banner-title {
+    font-weight: 650;
+    letter-spacing: -0.005em;
+  }
+  .data-error-banner-detail {
+    margin-top: 3px;
+    color: var(--text-secondary);
+  }
+  .data-error-banner-detail code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11.5px;
+    padding: 1px 4px;
+    background: var(--bg-3);
+    border: 1px solid var(--border-subtle);
+    border-radius: 3px;
+  }
   @keyframes pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.4; }
@@ -1447,7 +1483,7 @@
       <div class="sidebar-product-subtitle">Safety Steward Dashboard</div>
 
       <div class="sidebar-data-freshness">
-        <span>Data current as of Apr 14, 2026</span>
+        <span>Loading incident dataset…</span>
       </div>
     </div>
 
@@ -1530,6 +1566,13 @@
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
           <span>Print</span>
         </button>
+      </div>
+    </div>
+    <div id="data-error-banner" class="data-error-banner" role="alert" aria-live="polite">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <div>
+        <div class="data-error-banner-title">Incident data could not be loaded</div>
+        <div id="data-error-banner-detail" class="data-error-banner-detail"></div>
       </div>
     </div>
     <main id="page" class="scrollbar-thin"></main>
@@ -1941,8 +1984,13 @@ function initMap(containerId, list) {
 
 
 
+// Legacy hashes kept working for old bookmarks/links. Without this the header
+// title fell back to NAV[0] ("Overview") while the body rendered OLS Data.
+const NAV_ALIASES = { '#/worker-rights': '#/ols-data' };
+
 function renderNav() {
-  const hash = location.hash || '#/';
+  const rawHash = location.hash || '#/';
+  const hash = NAV_ALIASES[rawHash] || rawHash;
   document.getElementById('nav').innerHTML = NAV.map((n, i) => {
     const active = hash === n.href || (n.href === '#/' && (hash === '' || hash === '#'));
     return `
@@ -2765,7 +2813,8 @@ function pageAnalytics() {
   // Time-of-day histogram (24 hourly bins)
   const hourBins = Array(24).fill(0);
   incidents.forEach(i => {
-    const h = parseInt(i.time.split(':')[0], 10);
+    // Many curated records have no reported time, so `time` can be ''.
+    const h = parseInt(String(i.time || '').split(':')[0], 10);
     if (!isNaN(h)) hourBins[h]++;
   });
   const maxHour = Math.max(...hourBins, 1);
@@ -2881,8 +2930,14 @@ function pageAnalytics() {
             <strong style="color: var(--text-primary);">Late-night risk window (22:00 to 04:00):</strong>
             ${(() => {
               const nightCount = hourBins.slice(22).reduce((a, b) => a + b, 0) + hourBins.slice(0, 5).reduce((a, b) => a + b, 0);
-              const pct = Math.round((nightCount / incidents.length) * 100);
-              return `${nightCount} of ${incidents.length} incidents (${pct}%) occurred during late-night hours`;
+              // Denominator is records with a *reported* time, not all records —
+              // most incidents have no published time, and dividing by the full
+              // set understated the share by an order of magnitude.
+              const timed = hourBins.reduce((a, b) => a + b, 0);
+              if (!timed) return 'no incidents in the record have a reported time of day';
+              const pct = Math.round((nightCount / timed) * 100);
+              return `${nightCount} of ${timed} incidents with a reported time (${pct}%) ` +
+                `occurred during late-night hours`;
             })()}
           </div>
         </div>
@@ -3996,11 +4051,15 @@ function setupTranslateDropdown() {
   }
 }
 
-// === LIVE DATA FETCH ===
+// === INCIDENT DATA FETCH ===
 // On page load and every 5 minutes, pull incidents.json from the same directory.
-// Falls back silently to the hardcoded `incidents` and `liveFeed` if the file
-// is missing or malformed. The PHP scraper (scrape.php) writes incidents.json
-// every 15 min via a HostGator cron job — see SETUP.md.
+// That file is generated at build time from shared/seed-data.ts by
+// `npm run generate:data` (also run by `npm run build`) and is committed to the
+// repo, so the deployed site always has it. See DEPLOYMENT.md.
+//
+// If the fetch fails we surface it loudly — banner + console.error — rather than
+// quietly rendering the bundled sample array, which previously made a 404 look
+// identical to a healthy dashboard.
 const LIVE_DATA_URL   = 'incidents.json';
 const LIVE_REFRESH_MS = 5 * 60 * 1000;
 let lastLiveUpdate = null;
@@ -4008,10 +4067,10 @@ let lastLiveUpdate = null;
 async function fetchLiveData() {
   try {
     const resp = await fetch(LIVE_DATA_URL + '?t=' + Date.now(), { cache: 'no-store' });
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status + ' fetching ' + LIVE_DATA_URL);
     const data = await resp.json();
     if (!Array.isArray(data.incidents) || data.incidents.length === 0) {
-      throw new Error('Empty incidents array');
+      throw new Error('incidents.json contained no incidents');
     }
 
     incidents = data.incidents;
@@ -4020,31 +4079,60 @@ async function fetchLiveData() {
     }
     lastLiveUpdate = data.updated_at ? new Date(data.updated_at) : new Date();
 
-    updateFreshnessIndicator(data.updated_human || null, true);
+    hideDataError();
+    updateFreshnessIndicator(data.updated_human || null, data.dataset_kind || 'live');
     render();
     return true;
   } catch (err) {
-    updateFreshnessIndicator(null, false);
+    console.error('[SafetySteward] incidents.json could not be loaded; the ' +
+      'dashboard is showing bundled sample data and the numbers below are NOT ' +
+      'authoritative.', err);
+    showDataError(err);
+    updateFreshnessIndicator(null, null);
     return false;
   }
 }
 
-function updateFreshnessIndicator(humanTimestamp, isLive) {
+function showDataError(err) {
+  const banner = document.getElementById('data-error-banner');
+  const detail = document.getElementById('data-error-banner-detail');
+  if (!banner || !detail) return;
+  detail.innerHTML = 'The dashboard is showing <strong>bundled sample data</strong>, ' +
+    'so the counts and charts on this page are not authoritative. ' +
+    '<code>incidents.json</code> failed to load (' + escapeHtml(String(err && err.message || err)) + '). ' +
+    'Regenerate it with <code>npm run generate:data</code> and redeploy — see DEPLOYMENT.md.';
+  banner.classList.add('is-visible');
+}
+
+function hideDataError() {
+  const banner = document.getElementById('data-error-banner');
+  if (banner) banner.classList.remove('is-visible');
+}
+
+// `datasetKind` is null when no data file loaded, 'curated-static' for the
+// build-time snapshot, anything else for a genuinely live feed. The snapshot
+// must not claim "Live" — that was the misleading part of the old indicator.
+function updateFreshnessIndicator(humanTimestamp, datasetKind) {
   const wrap = document.querySelector('.sidebar-data-freshness');
   const el = wrap ? wrap.querySelector('span') : null;
   if (!wrap || !el) return;
   wrap.classList.remove('is-live', 'is-sample');
-  if (isLive && humanTimestamp) {
-    wrap.classList.add('is-live');
-    el.textContent = 'Live · ' + humanTimestamp;
-  } else if (isLive && lastLiveUpdate) {
-    wrap.classList.add('is-live');
-    el.textContent = 'Live · ' + lastLiveUpdate.toLocaleString('en-US', {
-      month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
-    });
-  } else {
+
+  if (!datasetKind) {
     wrap.classList.add('is-sample');
-    el.textContent = 'Awaiting live SPD feed · check cron';
+    el.textContent = 'Sample data · incidents.json unavailable';
+    return;
+  }
+
+  const stamp = humanTimestamp || (lastLiveUpdate && lastLiveUpdate.toLocaleString('en-US', {
+    month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+  }));
+
+  if (datasetKind === 'curated-static') {
+    el.textContent = 'Curated dataset · ' + (stamp || 'build-time snapshot');
+  } else {
+    wrap.classList.add('is-live');
+    el.textContent = 'Live · ' + (stamp || 'just now');
   }
 }
 

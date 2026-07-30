@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
+import DataSourceBanner from "./DataSourceBanner";
 
 interface LayoutProps {
   title: string;
@@ -20,6 +21,7 @@ export default function Layout({ title, subtitle, children }: LayoutProps) {
 
       <div className="main-content">
         <Header title={title} subtitle={subtitle} onMenuToggle={() => setSidebarOpen(prev => !prev)} />
+        <DataSourceBanner />
         {children}
       </div>
     </div>

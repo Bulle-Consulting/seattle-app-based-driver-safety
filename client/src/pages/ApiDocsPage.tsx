@@ -192,6 +192,22 @@ export default function ApiDocsPage() {
             <div className="flex items-center gap-3 text-[10px] text-[#A6A6A6]">
               <span>Base URL: <code className="font-mono text-[#FFFFFF] bg-[#1A1A1A] px-1.5 py-0.5 rounded">https://safetysteward.bullecloud.com</code></span>
             </div>
+            <div
+              className="mt-2 rounded border px-2.5 py-2 text-[10px] leading-relaxed"
+              style={{
+                background: "hsl(var(--bg-raised))",
+                borderColor: "hsl(var(--border-lite))",
+                color: "hsl(var(--text-secondary))",
+              }}
+            >
+              <span className="font-semibold">Not yet live.</span> The base URL above does not
+              currently resolve and no backend is hosted, so these endpoints are unavailable
+              over the public internet. They work when the Express server is run locally
+              (<code className="font-mono">npm run dev</code>). Read-only incident and stats data
+              is published as a static <code className="font-mono">incidents.json</code> at the
+              site root. See <code className="font-mono">DEPLOYMENT.md</code> for what has to be
+              provisioned.
+            </div>
             <div className="mt-3 p-3 rounded border border-[#4D4D4D] bg-[#1A1A1A]">
               <div className="text-[9px] text-[#A6A6A6] leading-relaxed">
                 <span className="font-medium" style={{ color: ACCENT }}>Research Citation:</span>{" "}
