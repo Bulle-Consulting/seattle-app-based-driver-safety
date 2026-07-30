@@ -1,7 +1,7 @@
 import Layout from "@/components/Layout";
 import { Code2 } from "lucide-react";
 
-const TEAL = "#2563EB";
+const ACCENT = "#FFFFFF";
 
 interface Endpoint {
   method: "GET" | "POST";
@@ -12,8 +12,8 @@ interface Endpoint {
 }
 
 const METHOD_STYLES = {
-  GET:  { bg: "#ECFDF5", color: "#047857", border: "#A7F3D0" },
-  POST: { bg: "#EFF6FF", color: "#1D4ED8", border: "#BFDBFE" },
+  GET:  { bg: "#1F1F1F", color: "#D9D9D9", border: "#666666" },
+  POST: { bg: "#1F1F1F", color: "#C0C0C0", border: "#666666" },
 };
 
 const ENDPOINTS: Endpoint[] = [
@@ -138,26 +138,26 @@ function EndpointCard({ ep }: { ep: Endpoint }) {
   return (
     <div
       data-testid={`api-endpoint-${ep.method.toLowerCase()}-${ep.path.replace(/\//g, "-").replace(/:/g, "")}`}
-      className="bg-[#F7F7F7] border border-[#D1D1D1] rounded-md overflow-hidden"
+      className="bg-[#121212] border border-[#4D4D4D] rounded-md overflow-hidden"
     >
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-[#D1D1D1] bg-[#F7F7F7]">
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-[#4D4D4D] bg-[#121212]">
         <span
           className="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider font-mono shrink-0"
           style={{ background: mStyle.bg, color: mStyle.color, border: `1px solid ${mStyle.border}` }}
         >
           {ep.method}
         </span>
-        <code className="text-[12px] font-mono text-[#000000] font-medium">{ep.path}</code>
+        <code className="text-[12px] font-mono text-[#FFFFFF] font-medium">{ep.path}</code>
       </div>
 
       <div className="p-4 space-y-3">
-        <p className="text-[11px] text-[#4F4F4F] leading-relaxed">{ep.description}</p>
+        <p className="text-[11px] text-[#D9D9D9] leading-relaxed">{ep.description}</p>
 
         {ep.body && (
           <div>
             <div className="section-label mb-1.5">Request Body</div>
-            <pre className="text-[10px] sm:text-[11px] font-mono bg-[#F2F2F2] border border-[#D1D1D1] rounded p-3 overflow-x-auto text-[#4F4F4F] leading-relaxed">
+            <pre className="text-[10px] sm:text-[11px] font-mono bg-[#1A1A1A] border border-[#4D4D4D] rounded p-3 overflow-x-auto text-[#D9D9D9] leading-relaxed">
               <code>{ep.body}</code>
             </pre>
           </div>
@@ -165,8 +165,8 @@ function EndpointCard({ ep }: { ep: Endpoint }) {
 
         <div>
           <div className="section-label mb-1.5">Example Response</div>
-          <pre className="text-[10px] sm:text-[11px] font-mono bg-[#F2F2F2] border border-[#D1D1D1] rounded p-3 overflow-x-auto leading-relaxed"
-            style={{ color: TEAL }}>
+          <pre className="text-[10px] sm:text-[11px] font-mono bg-[#1A1A1A] border border-[#4D4D4D] rounded p-3 overflow-x-auto leading-relaxed"
+            style={{ color: ACCENT }}>
             <code>{ep.example}</code>
           </pre>
         </div>
@@ -181,16 +181,16 @@ export default function ApiDocsPage() {
         <main className="flex-1 p-3 md:p-5 space-y-5">
 
           {/* Intro */}
-          <div className="bg-[#F7F7F7] border border-[#D1D1D1] rounded-md p-4">
+          <div className="bg-[#121212] border border-[#4D4D4D] rounded-md p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Code2 size={14} style={{ color: TEAL }} />
-              <div className="text-[11px] font-semibold text-[#000000]">Overview</div>
+              <Code2 size={14} style={{ color: ACCENT }} />
+              <div className="text-[11px] font-semibold text-[#FFFFFF]">Overview</div>
             </div>
-            <p className="text-[11px] text-[#4F4F4F] leading-relaxed mb-2">
+            <p className="text-[11px] text-[#D9D9D9] leading-relaxed mb-2">
               This API provides public access to Seattle rideshare safety incident data. All endpoints return JSON. No authentication is required for read operations.
             </p>
-            <div className="flex items-center gap-3 text-[10px] text-[#9E9E9E]">
-              <span>Base URL: <code className="font-mono text-[#000000] bg-[#F2F2F2] px-1.5 py-0.5 rounded">https://safetysteward.bullecloud.com</code></span>
+            <div className="flex items-center gap-3 text-[10px] text-[#A6A6A6]">
+              <span>Base URL: <code className="font-mono text-[#FFFFFF] bg-[#1A1A1A] px-1.5 py-0.5 rounded">https://safetysteward.bullecloud.com</code></span>
             </div>
             <div
               className="mt-2 rounded border px-2.5 py-2 text-[10px] leading-relaxed"
@@ -208,11 +208,11 @@ export default function ApiDocsPage() {
               site root. See <code className="font-mono">DEPLOYMENT.md</code> for what has to be
               provisioned.
             </div>
-            <div className="mt-3 p-3 rounded border border-[#D1D1D1] bg-[#F2F2F2]">
-              <div className="text-[9px] text-[#9E9E9E] leading-relaxed">
-                <span className="font-medium" style={{ color: TEAL }}>Research Citation:</span>{" "}
+            <div className="mt-3 p-3 rounded border border-[#4D4D4D] bg-[#1A1A1A]">
+              <div className="text-[9px] text-[#A6A6A6] leading-relaxed">
+                <span className="font-medium" style={{ color: ACCENT }}>Research Citation:</span>{" "}
                 This API is free for research and advocacy use. Please cite{" "}
-                <em className="text-[#000000]">"App-Based Driver Safety Steward by Bulle Cloud"</em>{" "}
+                <em className="text-[#FFFFFF]">"App-Based Driver Safety Steward by Bulle Cloud"</em>{" "}
                 in publications.
               </div>
             </div>
@@ -220,7 +220,7 @@ export default function ApiDocsPage() {
 
           {/* Method legend */}
           <div className="flex items-center gap-4 text-[10px]">
-            <span className="text-[#9E9E9E] font-medium">Method:</span>
+            <span className="text-[#A6A6A6] font-medium">Method:</span>
             {(["GET", "POST"] as const).map(m => {
               const s = METHOD_STYLES[m];
               return (
@@ -229,7 +229,7 @@ export default function ApiDocsPage() {
                     style={{ background: s.bg, color: s.color, border: `1px solid ${s.border}` }}>
                     {m}
                   </span>
-                  <span className="text-[#9E9E9E]">{m === "GET" ? "Read" : "Write"}</span>
+                  <span className="text-[#A6A6A6]">{m === "GET" ? "Read" : "Write"}</span>
                 </span>
               );
             })}
@@ -240,7 +240,7 @@ export default function ApiDocsPage() {
             {ENDPOINTS.map((ep, i) => <EndpointCard key={i} ep={ep} />)}
           </div>
 
-          <div className="text-[9px] text-[#9E9E9E] pb-2">
+          <div className="text-[9px] text-[#A6A6A6] pb-2">
             bullecloud.com · API subject to change. Subscribe to updates at laborstandards@seattle.gov.
           </div>
         </main>
