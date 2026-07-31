@@ -2,7 +2,8 @@ import { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import type { Incident } from "@shared/schema";
-import { SEV_COLORS } from "@/lib/severity";
+import { SEV_COLORS, RISK_TIERS, riskTier, riskLabel } from "@/lib/severity";
+import { BRAND } from "@/lib/brand";
 
 const SEV_R: Record<string, number> = { fatal: 10, injury: 8, robbery: 7, assault: 7, other: 5, policy: 5 };
 
@@ -23,7 +24,7 @@ export default function SeattleMap({ incidents, selectedId, onSelectIncident, sh
   useEffect(() => {
     if (!cRef.current || mapRef.current) return;
     const map = L.map(cRef.current, { center: [47.608, -122.335], zoom: 11, zoomControl: true, attributionControl: true });
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
       attribution: '&copy; <a href="https://carto.com">CARTO</a>', subdomains: "abcd", maxZoom: 19,
     }).addTo(map);
     mapRef.current = map;
@@ -45,31 +46,32 @@ export default function SeattleMap({ incidents, selectedId, onSelectIncident, sh
       const pts = incidents.map(i => [i.lat, i.lng, i.severity === "fatal" ? 1 : 0.55]);
       const h = (L as any).heatLayer(pts, {
         radius: 30, blur: 20, maxZoom: 13, max: 1,
-        gradient: { 0.2: "#333333", 0.4: "#666666", 0.6: "#A6A6A6", 0.8: "#D9D9D9", 1.0: "#FFFFFF" },
+        gradient: { 0.2: BRAND.tint, 0.4: "#A6E3ED", 0.6: "#63CFDF", 0.8: BRAND.teal, 1.0: BRAND.tealDim },
       });
       h.addTo(map); hRef.current = h;
     } else {
       incidents.forEach(inc => {
-        const c = SEV_COLORS[inc.severity] ?? "#A6A6A6";
+        const c = SEV_COLORS[inc.severity] ?? RISK_TIERS.low.fill;
+        const tier = RISK_TIERS[riskTier(inc.severity)];
         const r = SEV_R[inc.severity] ?? 5;
         const sel = inc.id === selectedId;
         const m = L.circleMarker([inc.lat, inc.lng], {
-          // Selected outline must contrast with the fill: white fills (fatal)
-          // get a silver ring, darker fills get a white ring.
-          radius: sel ? r + 3 : r, fillColor: c, color: sel ? (c === "#FFFFFF" ? "#808080" : "#FFFFFF") : "#000000",
+          // Navy ring on every pin so the low-risk teal fill (2.33:1 on white)
+          // still reads against the light basemap; selection widens it.
+          radius: sel ? r + 3 : r, fillColor: c, color: BRAND.navy,
           weight: sel ? 3 : 1.5,
           opacity: 1, fillOpacity: sel ? 1 : 0.85,
         });
         const d = new Date(inc.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
         m.bindPopup(`
           <div style="min-width:200px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;line-height:1.5">
-            <div style="font-size:10px;font-weight:500;color:${c};margin-bottom:3px">${inc.type}</div>
-            <div style="font-size:13px;font-weight:600;color:#FFFFFF;margin-bottom:4px">${inc.neighborhood}</div>
-            <div style="font-size:10.5px;color:#D9D9D9;margin-bottom:8px">${inc.description.length > 100 ? inc.description.substring(0,100)+"…" : inc.description}</div>
+            <div style="font-size:10px;font-weight:500;color:${BRAND.tealInk};margin-bottom:3px">${inc.type}</div>
+            <div style="font-size:13px;font-weight:600;color:${BRAND.navy};margin-bottom:4px">${inc.neighborhood}</div>
+            <div style="font-size:10.5px;color:${BRAND.charcoal};margin-bottom:8px">${inc.description.length > 100 ? inc.description.substring(0,100)+"…" : inc.description}</div>
             <div style="display:flex;gap:5px;font-size:9px">
-              <span style="background:${c}20;color:${c};padding:2px 7px;border-radius:4px">${inc.severity}</span>
-              <span style="background:#262626;color:#D9D9D9;padding:2px 7px;border-radius:4px">${inc.platform}</span>
-              <span style="background:#262626;color:#D9D9D9;padding:2px 7px;border-radius:4px">${d}</span>
+              <span title="${riskLabel(inc.severity)}" style="background:${tier.bg};color:${tier.ink};border:1px solid ${tier.fill};padding:2px 7px;border-radius:4px">${inc.severity}</span>
+              <span style="background:${BRAND.tint};color:${BRAND.charcoal};padding:2px 7px;border-radius:4px">${inc.platform}</span>
+              <span style="background:${BRAND.tint};color:${BRAND.charcoal};padding:2px 7px;border-radius:4px">${d}</span>
             </div>
           </div>
         `, { maxWidth: 280 });

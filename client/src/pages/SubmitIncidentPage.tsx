@@ -2,8 +2,10 @@ import { useState } from "react";
 import { apiRequest } from "@/lib/queryClient";
 import Layout from "@/components/Layout";
 import { CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
+import { BRAND } from "@/lib/brand";
 
-const ACCENT = "#FFFFFF";
+const ACCENT = BRAND.tealInk;
+const ACCENT_FILL = BRAND.teal;
 
 const INCIDENT_TYPES = [
   "Robbery", "Assault", "Carjacking", "Shooting", "Stabbing",
@@ -35,7 +37,7 @@ const EMPTY: FormData = {
 };
 
 const INPUT_CLASS =
-  "w-full bg-[#121212] border border-[#4D4D4D] rounded-md text-[12px] text-[#FFFFFF] px-3 py-2 focus:outline-none focus:border-[#C0C0C0] placeholder-[#8C8C8C] transition-colors";
+  "w-full bg-[#FFFFFF] border border-[#C7EEF4] rounded-md text-[12px] text-[#061A3A] px-3 py-2 focus:outline-none focus:border-[#C7EEF4] placeholder-[#5D6A7F] transition-colors";
 
 export default function SubmitIncidentPage() {
   const [form, setForm] = useState<FormData>(EMPTY);
@@ -81,12 +83,12 @@ export default function SubmitIncidentPage() {
               <div
                 data-testid="submit-success"
                 className="flex items-start gap-3 p-4 rounded-md border"
-                style={{ background: "#1F1F1F", borderColor: "#4D4D4D" }}
+                style={{ background: "#EFF7F8", borderColor: "#C7EEF4" }}
               >
                 <CheckCircle2 size={18} style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
                 <div>
-                  <div className="text-[12px] font-semibold text-[#FFFFFF] mb-0.5">Report submitted</div>
-                  <div className="text-[11px] text-[#D9D9D9] leading-relaxed">
+                  <div className="text-[12px] font-semibold text-[#061A3A] mb-0.5">Report submitted</div>
+                  <div className="text-[11px] text-[#222222] leading-relaxed">
                     Thank you. Your report has been submitted for verification. Verified incidents will appear on the dashboard.
                   </div>
                   <button
@@ -104,14 +106,14 @@ export default function SubmitIncidentPage() {
             {!success && (
               <form
                 onSubmit={handleSubmit}
-                className="bg-[#121212] border border-[#4D4D4D] rounded-md p-5 space-y-4"
+                className="bg-[#FFFFFF] border border-[#C7EEF4] rounded-md p-5 space-y-4"
               >
-                <div className="text-[11px] font-semibold text-[#FFFFFF] mb-1">Incident Details</div>
+                <div className="text-[11px] font-semibold text-[#061A3A] mb-1">Incident Details</div>
 
                 {/* Date + Type */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="section-label block mb-1">Date of Incident <span style={{ color: "#FFFFFF" }}>*</span></label>
+                    <label className="section-label block mb-1">Date of Incident <span style={{ color: "#061A3A" }}>*</span></label>
                     <input
                       data-testid="submit-date"
                       type="date"
@@ -123,7 +125,7 @@ export default function SubmitIncidentPage() {
                     />
                   </div>
                   <div>
-                    <label className="section-label block mb-1">Type of Incident <span style={{ color: "#FFFFFF" }}>*</span></label>
+                    <label className="section-label block mb-1">Type of Incident <span style={{ color: "#061A3A" }}>*</span></label>
                     <select
                       data-testid="submit-type"
                       required
@@ -139,7 +141,7 @@ export default function SubmitIncidentPage() {
                 {/* Neighborhood + Address */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="section-label block mb-1">Neighborhood <span style={{ color: "#FFFFFF" }}>*</span></label>
+                    <label className="section-label block mb-1">Neighborhood <span style={{ color: "#061A3A" }}>*</span></label>
                     <input
                       data-testid="submit-neighborhood"
                       type="text"
@@ -165,7 +167,7 @@ export default function SubmitIncidentPage() {
 
                 {/* Platform */}
                 <div>
-                  <label className="section-label block mb-1">Platform <span style={{ color: "#FFFFFF" }}>*</span></label>
+                  <label className="section-label block mb-1">Platform <span style={{ color: "#061A3A" }}>*</span></label>
                   <select
                     data-testid="submit-platform"
                     required
@@ -179,7 +181,7 @@ export default function SubmitIncidentPage() {
 
                 {/* Description */}
                 <div>
-                  <label className="section-label block mb-1">Description <span style={{ color: "#FFFFFF" }}>*</span></label>
+                  <label className="section-label block mb-1">Description <span style={{ color: "#061A3A" }}>*</span></label>
                   <textarea
                     data-testid="submit-description"
                     required
@@ -192,8 +194,8 @@ export default function SubmitIncidentPage() {
                 </div>
 
                 {/* Contact (optional) */}
-                <div className="border-t border-[#4D4D4D] pt-4">
-                  <div className="text-[10px] text-[#A6A6A6] mb-3">Contact Information (optional — kept private)</div>
+                <div className="border-t border-[#C7EEF4] pt-4">
+                  <div className="text-[10px] text-[#44536B] mb-3">Contact Information (optional — kept private)</div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="section-label block mb-1">Your Email</label>
@@ -222,8 +224,8 @@ export default function SubmitIncidentPage() {
 
                 {/* Error */}
                 {error && (
-                  <div className="text-[11px] text-[#FFFFFF] px-3 py-2 rounded border"
-                    style={{ background: "#1F1F1F", borderColor: "#4D4D4D" }}>
+                  <div className="text-[11px] text-[#061A3A] px-3 py-2 rounded border"
+                    style={{ background: "#EFF7F8", borderColor: "#C7EEF4" }}>
                     {error}
                   </div>
                 )}
@@ -233,8 +235,8 @@ export default function SubmitIncidentPage() {
                   data-testid="submit-btn"
                   type="submit"
                   disabled={loading}
-                  className="w-full py-2.5 rounded-md text-[12px] font-semibold text-[#000000] transition-opacity hover:opacity-90 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60"
-                  style={{ background: ACCENT }}
+                  className="w-full py-2.5 rounded-md text-[12px] font-semibold text-[#061A3A] transition-opacity hover:opacity-90 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60"
+                  style={{ background: ACCENT_FILL }}
                 >
                   {loading && <Loader2 size={13} className="animate-spin" />}
                   {loading ? "Submitting..." : "Submit Report"}
@@ -243,10 +245,10 @@ export default function SubmitIncidentPage() {
             )}
 
             {/* Verification Process */}
-            <div className="bg-[#121212] border border-[#4D4D4D] rounded-md p-5">
+            <div className="bg-[#FFFFFF] border border-[#C7EEF4] rounded-md p-5">
               <div className="flex items-center gap-2 mb-3">
                 <ShieldCheck size={14} style={{ color: ACCENT }} />
-                <div className="text-[11px] font-semibold text-[#FFFFFF]">Verification Process</div>
+                <div className="text-[11px] font-semibold text-[#061A3A]">Verification Process</div>
               </div>
               <div className="space-y-2.5">
                 {[
@@ -255,9 +257,9 @@ export default function SubmitIncidentPage() {
                   "Only verified incidents are added to the public database.",
                   "Your contact information is kept strictly private and never published.",
                 ].map((step, i) => (
-                  <div key={i} className="flex items-start gap-2.5 text-[11px] text-[#D9D9D9]">
+                  <div key={i} className="flex items-start gap-2.5 text-[11px] text-[#222222]">
                     <span className="w-4 h-4 rounded-full shrink-0 flex items-center justify-center text-[9px] font-medium mt-0.5"
-                      style={{ background: "#262626", color: ACCENT }}>
+                      style={{ background: "#EFF7F8", color: ACCENT }}>
                       {i + 1}
                     </span>
                     {step}
@@ -268,7 +270,7 @@ export default function SubmitIncidentPage() {
 
           </div>
 
-          <div className="text-[9px] text-[#A6A6A6] mt-5 pb-2">
+          <div className="text-[9px] text-[#44536B] mt-5 pb-2">
             bullecloud.com · Incident data is verified before publication. We do not publish unverified reports.
           </div>
         </main>

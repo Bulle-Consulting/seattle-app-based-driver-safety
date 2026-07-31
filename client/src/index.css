@@ -4,44 +4,77 @@
 
 /* ═══════════════════════════════════════════════════════════
    BULLE CONSULTING BRAND DESIGN SYSTEM
-   Black background · white + silver accents · zero hues
-   All foreground tokens meet WCAG AA on the base surfaces.
+   White canvas · deep-navy chrome · brand-teal accents
+
+   Palette: #20BAD1 teal · #061A3A navy · #222222 charcoal
+            #EFF7F8 light teal tint · #FFFFFF white
+
+   Contrast note: #20BAD1 on #FFFFFF is only 2.33:1, so brand teal can
+   never carry text, or be text, on a light surface. Two teal tokens
+   therefore exist — `--accent-solid` is the exact brand teal, used for
+   fills and non-text marks only, and `--accent` is a same-hue darker
+   shade (#157B8A, 4.96:1 on white) used wherever teal must be legible.
+   Inside navy chrome, teal scores 7.40:1, so `.sidebar`/`.app-header`
+   re-point `--accent` at the full brand teal.
    ═══════════════════════════════════════════════════════════ */
 
 @layer base {
   :root {
-    /* Surface hierarchy — dark monochromatic */
-    --bg-base:    0 0% 0%;        /* #000000 — primary background */
-    --bg-raised:  0 0% 7%;        /* #121212 — secondary surfaces/cards */
-    --bg-surface: 0 0% 7%;        /* #121212 — cards, modals */
-    --bg-overlay: 0 0% 11%;       /* #1C1C1C — dropdowns, tooltips */
+    /* Surface hierarchy — white canvas with light-teal tinted sections */
+    --bg-base:    0 0% 100%;        /* #FFFFFF — main page background */
+    --bg-raised:  187 39% 95.5%;    /* #EFF7F8 — tinted sections, alt rows */
+    --bg-surface: 0 0% 100%;        /* #FFFFFF — cards, modals */
+    --bg-overlay: 0 0% 100%;        /* #FFFFFF — dropdowns, tooltips */
+    --bg-hover:   186 55% 89.6%;    /* #D6F0F3 — list/row hover */
+    --nav-bg:     217 81% 12.5%;    /* #061A3A — nav bar / sidebar */
 
-    /* Text hierarchy — 4 levels (contrast on #000: 21 / 14.9 / 8.6 / 5.9) */
-    --text-primary:    0 0% 100%;   /* #FFFFFF */
-    --text-secondary:  0 0% 85%;    /* #D9D9D9 */
-    --text-tertiary:   0 0% 65%;    /* #A6A6A6 */
-    --text-quaternary: 0 0% 55%;    /* #8C8C8C */
+    /* Text hierarchy (contrast on #FFFFFF: 17.3 / 15.9 / 7.8 / 5.5) */
+    --text-primary:    217 81% 12.5%;  /* #061A3A — headings H1–H3, data labels */
+    --text-secondary:  0 0% 13.3%;     /* #222222 — body, table content */
+    --text-tertiary:   217 22% 34.3%;  /* #44536B — secondary labels */
+    --text-quaternary: 217 15% 43.1%;  /* #5D6A7F — captions, meta */
 
-    /* Brand accent — white with silver as the dimmed variant */
-    --accent:     0 0% 100%;        /* #FFFFFF */
-    --accent-dim: 0 0% 75%;         /* #C0C0C0 silver — hover/secondary */
-    --accent-bg:  0 0% 12%;         /* #1F1F1F subtle raised tint */
-    --accent-soft:0 0% 15%;         /* #262626 soft chip bg */
+    /* Brand accent — legible teal ink + exact brand teal for fills */
+    --accent:       188 74% 31.2%;  /* #157B8A — teal text/icons, 4.96:1 on white */
+    --accent-solid: 188 73% 47.3%;  /* #20BAD1 — brand teal, fills only */
+    --accent-dim:   188 74% 24.3%;  /* #10606C — hover on teal ink */
+    --accent-bg:    187 39% 95.5%;  /* #EFF7F8 — subtle teal wash */
+    --accent-soft:  186 55% 89.6%;  /* #D6F0F3 — soft chip bg */
 
-    /* Status accents — white for active work, silver-gray for resolved */
-    --status-open:     0 0% 100%;   /* white for active/open states */
-    --status-resolved: 0 0% 65%;    /* silver for resolved */
+    /* Status accents */
+    --status-open:     217 81% 12.5%;  /* #061A3A */
+    --status-resolved: 217 15% 43.1%;  /* #5D6A7F */
 
-    /* Borders and dividers */
-    --border:      0 0% 30%;        /* #4D4D4D */
-    --border-lite: 0 0% 40%;        /* #666666 — hover/emphasis */
+    /* Borders and dividers — brand teal at reduced opacity over white */
+    --border:      188 67% 86.9%;   /* #C7EEF4 — teal @25% */
+    --border-lite: 188 73% 47.3%;   /* #20BAD1 — hover/emphasis */
 
-    /* Severity — inverted grayscale: brightest = most severe */
-    --sev-fatal:   0 0% 100%;       /* #FFFFFF pure white — strongest */
-    --sev-injury:  0 0% 85%;        /* #D9D9D9 */
-    --sev-robbery: 0 0% 65%;        /* #A6A6A6 */
-    --sev-assault: 0 0% 50%;        /* #808080 */
-    --sev-policy:  0 0% 35%;        /* #595959 */
+    /* ── Risk scale — three tiers, the ONLY place amber/magenta appear ──
+       -fill = solid mark, -ink = AA-safe text on the 10% tint,
+       -bg   = 10% tint of the tier colour flattened over white. */
+    --risk-low-fill:   188 73% 47.3%;  /* #20BAD1 */
+    --risk-low-ink:    188 74% 31.2%;  /* #157B8A — 4.55:1 on its tint */
+    --risk-low-bg:     187 63% 94.7%;  /* #E9F8FA */
+    --risk-mod-fill:   34 88% 57.8%;   /* #F2A035 */
+    --risk-mod-ink:    34 88% 34.5%;   /* #A5620B — 4.50:1 on its tint */
+    --risk-mod-bg:     35 90% 95.9%;   /* #FEF6EB */
+    --risk-high-fill:  336 78% 42.7%;  /* #C2185B */
+    --risk-high-ink:   336 78% 42.7%;  /* #C2185B — 4.98:1 on its tint */
+    --risk-high-bg:    335 59% 94.3%;  /* #F9E8EF */
+
+    /* Incident type → risk tier */
+    --sev-fatal:   var(--risk-high-fill);
+    --sev-injury:  var(--risk-high-fill);
+    --sev-assault: var(--risk-high-fill);
+    --sev-robbery: var(--risk-mod-fill);
+    --sev-policy:  var(--risk-low-fill);
+
+    /* Chart sequence — teal, navy, then teal mixed toward white 60% / 30% */
+    --chart-1: 188 73% 47.3%;   /* #20BAD1 */
+    --chart-2: 217 81% 12.5%;   /* #061A3A */
+    --chart-3: 188 66% 79.0%;   /* #A6E3ED */
+    --chart-4: 188 66% 63.1%;   /* #63CFDF */
+    --chart-grid: 186 55% 89.6%; /* #D6F0F3 */
 
     /* Shadcn compat tokens */
     --background: var(--bg-base);
@@ -50,19 +83,58 @@
     --card-foreground: var(--text-primary);
     --popover: var(--bg-overlay);
     --popover-foreground: var(--text-primary);
-    --primary: var(--accent);
-    --primary-foreground: 0 0% 0%;
+    --primary: var(--accent-solid);
+    --primary-foreground: 217 81% 12.5%;  /* navy on teal — 7.40:1 */
     --secondary: var(--bg-raised);
     --secondary-foreground: var(--text-secondary);
     --muted: var(--bg-raised);
     --muted-foreground: var(--text-tertiary);
-    --destructive: var(--sev-fatal);
-    --destructive-foreground: 0 0% 0%;
+    --destructive: var(--risk-high-fill);
+    --destructive-foreground: 0 0% 100%;  /* white on magenta — 5.87:1 */
     --input: var(--border);
     --ring: var(--accent);
     --radius: 8px;
     --sidebar-width: 232px;
   }
+}
+
+/* ── Navy chrome scope ──────────────────────────────────────
+   Re-points the same tokens inside the sidebar and header so every
+   descendant inverts to white-on-navy without any structural change.
+   White on #061A3A is 17.26:1; brand teal on navy is 7.40:1. */
+.sidebar,
+.app-header {
+  --bg-base:    217 81% 12.5%;   /* #061A3A */
+  --bg-raised:  217 81% 12.5%;
+  --bg-surface: 218 48% 19.6%;   /* #1A2C4A — white @8% over navy */
+  --bg-overlay: 218 39% 23.1%;   /* #243552 — white @12% over navy */
+  --bg-hover:   218 39% 23.1%;
+
+  --text-primary:    0 0% 100%;      /* #FFFFFF — 17.26:1 */
+  --text-secondary:  187 39% 95.5%;  /* #EFF7F8 — 15.89:1 */
+  --text-tertiary:   203 17% 78.8%;  /* #C0CBD2 — 10.45:1 */
+  --text-quaternary: 210 14% 63.9%;  /* #96A3B0 —  6.71:1 */
+
+  --accent:       188 73% 47.3%;  /* #20BAD1 — 7.40:1 on navy */
+  --accent-solid: 188 73% 47.3%;
+  --accent-dim:   188 66% 63.1%;  /* #63CFDF */
+  --accent-bg:    218 48% 19.6%;
+  --accent-soft:  218 39% 23.1%;
+
+  --border:      218 48% 19.6%;   /* #1A2C4A */
+  --border-lite: 188 73% 47.3%;   /* #20BAD1 */
+
+  --status-open:     0 0% 100%;
+  --status-resolved: 210 14% 63.9%;
+
+  --background: var(--bg-base);
+  --foreground: var(--text-primary);
+  --card: var(--bg-surface);
+  --popover: var(--bg-overlay);
+  --muted: var(--bg-surface);
+  --muted-foreground: var(--text-tertiary);
+  --input: var(--border);
+  --ring: var(--accent-solid);
 }
 
 /* ── Reset ── */
@@ -71,7 +143,7 @@
 /* ── Base ── */
 html, body {
   height: 100%; margin: 0; padding: 0; overflow: hidden;
-  color-scheme: dark;
+  color-scheme: light;
   background: hsl(var(--bg-base));
   color: hsl(var(--text-primary));
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter', 'Segoe UI', system-ui, sans-serif;
@@ -87,7 +159,7 @@ html, body {
 .dashboard-layout { display: grid; grid-template-columns: var(--sidebar-width) 1fr; height: 100dvh; }
 .sidebar {
   overflow-y: auto; overscroll-behavior: contain;
-  background: hsl(var(--bg-raised));
+  background: hsl(var(--nav-bg));
   border-right: 1px solid hsl(var(--border));
   grid-row: 1; grid-column: 1;
 }
@@ -98,7 +170,7 @@ html, body {
 }
 .sidebar-overlay {
   position: fixed; inset: 0; z-index: 49;
-  background: rgba(0,0,0,0.65);
+  background: hsl(var(--nav-bg) / 0.55);
   opacity: 0; pointer-events: none;
   transition: opacity 0.25s ease;
 }
@@ -125,17 +197,17 @@ html, body {
 }
 .kpi-card:hover { border-color: hsl(var(--border-lite)); }
 .kpi-card.active-filter {
-  border-color: #FFFFFF;
-  background: #1F1F1F;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
+  border-color: hsl(var(--accent-solid));
+  background: hsl(var(--accent-bg));
+  box-shadow: 0 0 0 1px hsl(var(--accent-solid) / 0.35);
 }
 
 /* ── Map ── */
 .map-container { border-radius: 12px; overflow: hidden; position: relative; }
-.leaflet-container { height: 100%; width: 100%; background: #121212 !important; }
-/* Leaflet ships a hardcoded #0078A8 link blue that fails AA on the dark canvas */
-.leaflet-control-attribution { background: rgba(0,0,0,0.75) !important; color: #A6A6A6 !important; }
-.leaflet-control-attribution a { color: #D9D9D9 !important; }
+.leaflet-container { height: 100%; width: 100%; background: hsl(var(--bg-raised)) !important; }
+/* Leaflet ships a hardcoded #0078A8 link blue that is off-palette */
+.leaflet-control-attribution { background: hsl(0 0% 100% / 0.85) !important; color: hsl(var(--text-tertiary)) !important; }
+.leaflet-control-attribution a { color: hsl(var(--accent)) !important; }
 
 /* ── Monospace numbers ── */
 .tabular-nums {
@@ -144,27 +216,33 @@ html, body {
   letter-spacing: -0.02em;
 }
 
-/* ── Severity badges — inverted grayscale pills (brightest = most severe) ── */
-.badge-fatal    { background: #FFFFFF; color: #000000; border: 1px solid #FFFFFF; }
-.badge-injury   { background: #D9D9D9; color: #000000; border: 1px solid #D9D9D9; }
-.badge-robbery  { background: #A6A6A6; color: #000000; border: 1px solid #A6A6A6; }
-.badge-assault  { background: #808080; color: #000000; border: 1px solid #808080; }
-.badge-policy, .badge-other { background: #262626; color: #D9D9D9; border: 1px solid #4D4D4D; }
+/* ── Risk badges — three tiers, on light surfaces ──
+   Per brand spec each badge uses the tier colour as the border and a 10%
+   tint of it as the fill. The text uses a same-hue darkened ink so it
+   clears WCAG AA on that tint (the raw tier colour would be ~2:1).
+   Every badge also renders its tier as a text label + icon, so meaning
+   never depends on colour alone. */
+.badge-fatal,
+.badge-injury,
+.badge-assault  { background: hsl(var(--risk-high-bg)); color: hsl(var(--risk-high-ink)); border: 1px solid hsl(var(--risk-high-fill)); }
+.badge-robbery  { background: hsl(var(--risk-mod-bg));  color: hsl(var(--risk-mod-ink));  border: 1px solid hsl(var(--risk-mod-fill)); }
+.badge-policy,
+.badge-other    { background: hsl(var(--risk-low-bg));  color: hsl(var(--risk-low-ink));  border: 1px solid hsl(var(--risk-low-fill)); }
 
-/* ── Status pills — white for active work, silver for resolved ── */
-.status-resolved            { background: #1F1F1F; color: #D9D9D9; border: 1px solid #4D4D4D; }
-.status-under-investigation { background: #262626; color: #FFFFFF; border: 1px solid #666666; }
-.status-active              { background: #FFFFFF; color: #000000; border: 1px solid #FFFFFF; }
+/* ── Status pills — navy/teal only; status is not a risk signal ── */
+.status-resolved            { background: hsl(var(--bg-raised)); color: hsl(var(--text-tertiary)); border: 1px solid hsl(var(--border)); }
+.status-under-investigation { background: hsl(var(--accent-bg));  color: hsl(var(--accent));        border: 1px solid hsl(var(--accent-solid)); }
+.status-active              { background: hsl(var(--accent-solid)); color: hsl(var(--text-primary)); border: 1px solid hsl(var(--accent-solid)); }
 
 /* ── Accent line — brand white thin rule ── */
-.seattle-accent { height: 2px; background: linear-gradient(90deg, #FFFFFF 0%, transparent 85%); opacity: 0.8; }
+.seattle-accent { height: 2px; background: linear-gradient(90deg, hsl(var(--accent-solid)) 0%, transparent 85%); opacity: 0.9; }
 
 /* ── Pulse — live indicator (brand white) ── */
 @keyframes pulse-dot { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(0.85); } }
 .pulse-dot {
   width: 7px; height: 7px; border-radius: 50%;
-  background: #FFFFFF;
-  box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5);
+  background: hsl(var(--accent-solid));
+  box-shadow: 0 0 0 0 hsl(var(--accent-solid) / 0.5);
   animation: pulse-dot 2s ease-in-out infinite;
   display: inline-block; flex-shrink: 0;
 }
@@ -205,34 +283,34 @@ button:hover .rotating-globe { animation-play-state: paused; }
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #4D4D4D; border-radius: 6px; }
-::-webkit-scrollbar-thumb:hover { background: #808080; }
+::-webkit-scrollbar-thumb { background: hsl(var(--accent-solid) / 0.45); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(var(--accent-solid)); }
 
 /* ── Tooltip ── */
 .chart-tooltip {
-  background: #1C1C1C;
-  border: 1px solid #4D4D4D;
+  background: hsl(var(--bg-surface));
+  border: 1px solid hsl(var(--border));
   padding: 10px 14px;
   border-radius: 8px;
   font-size: 11px;
-  color: #FFFFFF;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+  color: hsl(var(--text-secondary));
+  box-shadow: 0 8px 24px hsl(var(--nav-bg) / 0.12);
 }
 
-/* ── Leaflet popup — dark ── */
+/* ── Leaflet popup — light card ── */
 .leaflet-popup-content-wrapper {
-  background: #1C1C1C !important;
-  color: #FFFFFF !important;
-  border: 1px solid #4D4D4D !important;
+  background: hsl(var(--bg-surface)) !important;
+  color: hsl(var(--text-secondary)) !important;
+  border: 1px solid hsl(var(--border)) !important;
   border-radius: 10px !important;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
+  box-shadow: 0 8px 24px hsl(var(--nav-bg) / 0.14) !important;
 }
-.leaflet-popup-tip { background: #1C1C1C !important; }
-.leaflet-popup-close-button { color: #A6A6A6 !important; font-size: 18px !important; }
+.leaflet-popup-tip { background: hsl(var(--bg-surface)) !important; }
+.leaflet-popup-close-button { color: hsl(var(--text-tertiary)) !important; font-size: 18px !important; }
 
 /* ── Selected incident row ── */
 .incident-row { transition: background 0.15s ease; }
-.incident-row.selected { background: #1F1F1F; border-left: 2px solid #FFFFFF; }
+.incident-row.selected { background: hsl(var(--accent-bg)); border-left: 2px solid hsl(var(--accent-solid)); }
 
 /* ── Section label ── */
 .section-label {
@@ -240,36 +318,44 @@ button:hover .rotating-globe { animation-play-state: paused; }
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #A6A6A6;
+  color: hsl(var(--text-tertiary));
 }
 
-/* ── Focus ring — brand white for accessibility ── */
-:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 2px; border-radius: 4px; }
+/* ── Focus ring ──
+   The raw brand teal is only 2.33:1 on white — below the 3:1 non-text
+   threshold — so the ring core uses the darker teal ink and a reduced
+   opacity brand-teal halo supplies the wider glow the spec asks for. */
+:focus-visible {
+  outline: 2px solid hsl(var(--accent));
+  outline-offset: 2px;
+  border-radius: 4px;
+  box-shadow: 0 0 0 4px hsl(var(--accent-solid) / 0.28);
+}
 
 /* ── Primary button — brand white for key CTAs ── */
 .btn-primary {
-  background: #FFFFFF;
-  color: #000000;
+  background: hsl(var(--accent-solid));
+  color: hsl(217 81% 12.5%);
   font-weight: 500;
   font-size: 12px;
   padding: 8px 16px;
   border-radius: 8px;
-  border: 1px solid #FFFFFF;
+  border: 1px solid hsl(var(--accent-solid));
   cursor: pointer;
   transition: background 0.15s ease, transform 0.1s ease;
 }
-.btn-primary:hover { background: #C0C0C0; border-color: #C0C0C0; }
+.btn-primary:hover { background: hsl(188 73% 41%); border-color: hsl(188 73% 41%); }
 .btn-primary:active { transform: scale(0.98); }
 
 /* Alt: silver-outlined surface button for secondary emphasis */
 .btn-dark {
-  background: #1F1F1F;
-  color: #FFFFFF;
+  background: hsl(var(--nav-bg));
+  color: hsl(0 0% 100%);
   font-weight: 500;
   font-size: 12px;
   padding: 8px 16px;
   border-radius: 8px;
-  border: 1px solid #666666;
+  border: 1px solid hsl(var(--nav-bg));
   cursor: pointer;
   transition: opacity 0.15s ease, transform 0.1s ease;
 }
@@ -277,15 +363,15 @@ button:hover .rotating-globe { animation-play-state: paused; }
 
 .btn-secondary {
   background: transparent;
-  color: #D9D9D9;
-  border: 1px solid #4D4D4D;
+  color: hsl(var(--accent));
+  border: 1px solid hsl(var(--border));
   font-size: 11px;
   padding: 6px 12px;
   border-radius: 6px;
   cursor: pointer;
   transition: border-color 0.15s ease, color 0.15s ease;
 }
-.btn-secondary:hover { border-color: #FFFFFF; color: #FFFFFF; }
+.btn-secondary:hover { border-color: hsl(var(--accent-solid)); color: hsl(var(--accent-dim)); }
 
 /* ═══ Responsive Layout System ═══ */
 
@@ -305,7 +391,7 @@ button:hover .rotating-globe { animation-play-state: paused; }
   }
   .sidebar.open {
     transform: translateX(0);
-    box-shadow: 8px 0 32px rgba(0,0,0,0.7);
+    box-shadow: 8px 0 32px hsl(var(--nav-bg) / 0.35);
   }
   .main-content {
     grid-column: 1;

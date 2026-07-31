@@ -7,7 +7,7 @@
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
 <meta name="description" content="Bulle Cloud Safety Steward — real-time incident intelligence and worker rights for Seattle app-based drivers." />
-<meta name="theme-color" content="#000000" />
+<meta name="theme-color" content="#061A3A" />
 <meta name="color-scheme" content="dark" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -19,100 +19,140 @@
 <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 <style>
   /* ============================================================
-     BULLE CLOUD · SAFETY STEWARD — MONOCHROMATIC DESIGN SYSTEM
-     Enterprise SaaS · Black canvas · White/silver accents
+     BULLE CONSULTING · SAFETY STEWARD — BRAND DESIGN SYSTEM
+     White canvas · deep-navy chrome · brand-teal accents
      ============================================================ */
 
   :root {
-    /* === BULLE CLOUD MONOCHROMATIC DESIGN SYSTEM ===
-       Dark grayscale palette. White/silver accents. No gradients.
-       Hierarchy expressed through typography weight, spacing, and grayscale weight.
-       Severity differentiation uses grayscale weight + icon + label position. */
+    /* === BULLE CONSULTING BRAND PALETTE ===
+       Brand teal   #20BAD1  interactive emphasis
+       Deep navy    #061A3A  headings, nav chrome, data labels
+       Charcoal     #222222  body text and table content
+       Teal tint    #EFF7F8  section/card backgrounds, alternating rows, hover
+       White        #FFFFFF  page canvas, surfaces on tinted sections
 
-    /* === SURFACES === Dark grayscale hierarchy */
-    --bg-0: #000000;        /* Primary background — page canvas */
-    --bg-1: #121212;        /* Secondary surfaces — cards, sidebar */
-    --bg-2: #1C1C1C;        /* Tertiary surfaces — inputs, inner panels, header */
-    --bg-3: #262626;        /* Hover states, table header tint, subtle zones */
-    --surface:       #121212;
-    --surface-elev:  #1C1C1C;
-    --surface-hover: #262626;
+       Contrast note that governs the whole file: #20BAD1 on #FFFFFF is only
+       2.33:1, so brand teal can never carry or be text on a light surface.
+       Two teal tokens therefore exist — `--accent-solid` is the exact brand
+       teal, used only for fills, and `--accent` is a same-hue darker shade
+       (#157B8A, 4.96:1 on white) used wherever teal must be legible as text.
+       On the navy chrome that split is unnecessary: teal scores 7.40:1 there,
+       so the `.sidebar`/`.app-header` block below re-points `--accent` at the
+       full brand teal. */
 
-    /* === BORDERS === Hairline neutral grays */
-    --border-subtle:  #2E2E2E;   /* Hairline separators inside cards */
-    --border-default: #4D4D4D;   /* Standard borders on inputs and cards */
-    --border-strong:  #808080;   /* Emphasized borders, focus, active */
+    /* === SURFACES === */
+    --bg-0: #FFFFFF;        /* Page canvas */
+    --bg-1: #EFF7F8;        /* Cards, raised panels — light teal tint */
+    --bg-2: #FFFFFF;        /* White surfaces sitting on tinted cards: inputs, pills */
+    --bg-3: #D6F0F3;        /* Hover, table header, alternating rows — deeper tint */
+    --surface:       #EFF7F8;
+    --surface-elev:  #FFFFFF;
+    --surface-hover: #D6F0F3;
 
-    /* === TEXT === Six-step grayscale */
-    --text-primary:   #FFFFFF;   /* Headings, key values, primary text */
-    --text-secondary: #D9D9D9;   /* Body copy, descriptions */
-    --text-tertiary:  #A6A6A6;   /* Labels, metadata */
-    --text-muted:     #8C8C8C;   /* Placeholder, captions, disabled */
-    --text-subtle:    #808080;   /* Decorative, very low emphasis */
+    /* Navy chrome. Kept separate from the surface ramp because the sidebar and
+       header are the only inverted surfaces in the app. */
+    --nav-bg: #061A3A;
 
-    /* === PRIMARY CTA === Pure white on black */
-    --cta-bg:        #FFFFFF;
-    --cta-text:      #000000;
-    --cta-bg-hover:  #D9D9D9;
-    --cta-bg-active: #C0C0C0;
+    /* === BORDERS === Brand teal at reduced opacity, flattened over white so a
+       border looks identical whether it sits on #FFFFFF or on a tinted card. */
+    --border-subtle:  #E0F5F9;   /* teal @14% — hairline separators inside cards */
+    --border-default: #C7EEF4;   /* teal @25% — inputs and card edges */
+    --border-strong:  #20BAD1;   /* full brand teal — emphasis, active */
 
-    /* === ACCENT === Removed in monochromatic system.
-       Variables remapped to grayscale so existing markup using them
-       falls back to neutral. Anywhere "accent" appears in the UI,
-       it now reads as white emphasis instead of teal highlight. */
-    --accent:               #FFFFFF;
-    --accent-hover:         #C0C0C0;
-    --accent-subtle:        #262626;
-    --accent-subtle-hover:  #333333;
-    --accent-border:        #808080;
-    --accent-deep:          #FFFFFF;
-    --seattle-gold:         #C0C0C0;   /* Was gold; now silver emphasis */
+    /* === TEXT === */
+    --text-primary:   #061A3A;   /* Navy — H1–H3, card titles, key values      17.26:1 */
+    --text-secondary: #222222;   /* Charcoal — body copy, table content        15.91:1 */
+    --text-tertiary:  #44536B;   /* Labels, data captions                       7.79:1 */
+    --text-muted:     #5D6A7F;   /* Placeholder, metadata                       5.48:1 */
+    --text-subtle:    #657081;   /* 5.01:1 on white · 4.62:1 on the #EFF7F8 tint */
 
-    /* === SEVERITY === Grayscale weighted by severity (brightest = most severe).
-       Always paired with an icon and a text label so meaning never depends
-       on color alone — accessible to colorblind users by design. */
-    --sev-fatal:   #FFFFFF;   /* Most severe = brightest */
-    --sev-robbery: #D9D9D9;
-    --sev-injury:  #A6A6A6;
-    --sev-assault: #808080;
+    /* === PRIMARY CTA === Brand teal fill, navy label (7.40:1).
+       Deliberately not white-on-teal, which is 2.33:1 and fails at every size. */
+    --cta-bg:        #20BAD1;
+    --cta-text:      #061A3A;
+    --cta-bg-hover:  #1CA1B5;
+    --cta-bg-active: #1A99AC;
 
-    /* === STATUS === Open uses bright, closed uses muted */
-    --status-open:   #FFFFFF;   /* Brightest = needs attention */
-    --status-closed: #8C8C8C;   /* Muted = resolved, low emphasis */
+    /* === ACCENT === See the contrast note above for why there are two teals. */
+    --accent:               #157B8A;   /* Teal ink — links, emphasis text on light */
+    --accent-solid:         #20BAD1;   /* Exact brand teal — fills, bars, indicators */
+    --accent-hover:         #10606C;
+    --accent-subtle:        #EFF7F8;
+    --accent-subtle-hover:  #D6F0F3;
+    --accent-border:        #20BAD1;
+    --accent-deep:          #061A3A;
+    --seattle-gold:         #157B8A;
+
+    /* === 3-TIER RISK SCALE ===
+       Amber and magenta appear here and nowhere else in the interface, so they
+       keep their alerting meaning. Each tier is always rendered with an icon or
+       a text label, so meaning never depends on colour alone.
+
+       `-fill` is the exact specified colour, used for solid fills and borders.
+       `-ink`  is a same-hue shade that reaches 4.5:1 on the tier's own badge
+               fill; for high risk the specified colour already passes, so it
+               is unchanged.
+       `-bg`   is the 10% tint of the tier colour, pre-flattened over white. */
+    --risk-low-fill:  #20BAD1;   --risk-low-ink:  #157B8A;   --risk-low-bg:  #E9F8FA;
+    --risk-mod-fill:  #F2A035;   --risk-mod-ink:  #A5620B;   --risk-mod-bg:  #FEF6EB;
+    --risk-high-fill: #C2185B;   --risk-high-ink: #C2185B;   --risk-high-bg: #F9E8EF;
+
+    /* Incident severities mapped onto the three tiers. High = the driver was
+       physically attacked; moderate = threatened during a forcible theft;
+       low = a policy/legal record describing no active threat. The four
+       `.sev-dot` shapes below stay distinct so the collapsed tiers remain
+       individually readable without colour. */
+    --sev-fatal:    var(--risk-high-fill);
+    --sev-injury:   var(--risk-high-fill);
+    --sev-assault:  var(--risk-high-fill);
+    --sev-robbery:  var(--risk-mod-fill);
+    --sev-incident: var(--risk-low-fill);
+
+    /* === CHART SERIES === Generic (non-risk) sequence.
+       3rd and 4th are brand teal mixed toward white by 60% and 30%. */
+    --chart-1: #20BAD1;
+    --chart-2: #061A3A;
+    --chart-3: #A6E3ED;
+    --chart-4: #63CFDF;
+    --chart-grid: #D6F0F3;
+
+    /* === STATUS === Navy weight, not severity colour: an open case is not a
+       risk tier and must not borrow amber or magenta. */
+    --status-open:   #061A3A;   /* Navy — needs attention */
+    --status-closed: #5D6A7F;   /* Muted — resolved, low emphasis */
 
     /* === FUNCTIONAL SYSTEM COLORS ===
-       Reserved for non-decorative status feedback only:
-       success confirmations, validation errors, warning callouts, info banners.
-       Each comes with a foreground for text-on-tinted-bg and a tint for backgrounds.
-       Never used for branding, navigation, charts, or general accenting. */
-    --success-fg:    #D9D9D9;   /* Light silver — confirmations, "live" status, sent state */
-    --success-tint:  #1F1F1F;   /* Dark tint background for success banners */
-    --success-bd:    #4D4D4D;
+       Non-decorative status feedback only. Built from teal/navy because the
+       amber and magenta of the risk scale are reserved for incident severity;
+       these states are distinguished by icon, label and border weight. */
+    --success-fg:    #157B8A;   /* Teal ink — confirmations, "live" status, sent state */
+    --success-tint:  #EFF7F8;
+    --success-bd:    #20BAD1;
 
-    --warning-fg:    #E5E5E5;   /* Near-white — caution, "estimated" data, draft state */
-    --warning-tint:  #262626;
-    --warning-bd:    #666666;
+    --warning-fg:    #061A3A;   /* Navy — caution, "estimated" data, draft state */
+    --warning-tint:  #EFF7F8;
+    --warning-bd:    #20BAD1;
 
-    --error-fg:      #FFFFFF;   /* Pure white — validation errors, critical failures, destructive */
-    --error-tint:    #2E2E2E;
-    --error-bd:      #808080;
+    --error-fg:      #061A3A;   /* Navy on a heavy navy border — validation, failures */
+    --error-tint:    #EFF7F8;
+    --error-bd:      #061A3A;
 
-    --info-fg:       #C0C0C0;   /* Silver — informational, neutral notices, links in content */
-    --info-tint:     #1F1F1F;
-    --info-bd:       #4D4D4D;
+    --info-fg:       #157B8A;   /* Teal ink — informational notices, links in content */
+    --info-tint:     #EFF7F8;
+    --info-bd:       #C7EEF4;
 
-    /* Legacy semantic state aliases — mapped to grayscale */
-    --state-critical: #FFFFFF;
-    --state-warning:  #D9D9D9;
-    --state-notice:   #A6A6A6;
-    --state-resolved: #8C8C8C;
+    /* Legacy semantic state aliases */
+    --state-critical: #061A3A;
+    --state-warning:  #157B8A;
+    --state-notice:   #44536B;
+    --state-resolved: #5D6A7F;
 
-    /* === ELEVATION === Subtle shadows only.
-       Enterprise aesthetic prefers borders over shadow. */
-    --shadow-xs: 0 1px 0 rgba(0, 0, 0, 0.4);
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-    --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.55);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+    /* === ELEVATION === Navy-tinted so shadows read as depth on a white canvas
+       rather than as gray haze. */
+    --shadow-xs: 0 1px 0 rgba(6, 26, 58, 0.05);
+    --shadow-sm: 0 1px 2px rgba(6, 26, 58, 0.08);
+    --shadow-md: 0 2px 6px rgba(6, 26, 58, 0.10);
+    --shadow-lg: 0 8px 24px rgba(6, 26, 58, 0.12);
 
     /* === MOTION === Unchanged */
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -123,6 +163,53 @@
     --radius-md: 6px;
     --radius-lg: 8px;
     --radius-xl: 10px;
+  }
+
+  /* === NAVY CHROME SCOPE ===
+     The sidebar and header are the only inverted surfaces. Rather than
+     rewriting every descendant rule, the surface/text/border tokens are
+     re-pointed here, so anything inside them that already reads a token is
+     re-themed for a navy background automatically. Every value below is
+     checked against #061A3A. */
+  .sidebar,
+  .app-header {
+    --bg-0: #061A3A;
+    --bg-1: #061A3A;
+    --bg-2: #1A2C4A;          /* white @8% over navy — pills, inputs   13.97:1 w/ white */
+    --bg-3: #243552;          /* white @12% over navy — hover          12.31:1 w/ white */
+    --surface: #061A3A;
+    --surface-elev: #1A2C4A;
+    --surface-hover: #243552;
+
+    --border-subtle:  #1A2C4A;
+    --border-default: #2E3F5A;
+    --border-strong:  #20BAD1;
+
+    --text-primary:   #FFFFFF;   /* 17.26:1 on navy */
+    --text-secondary: #EFF7F8;   /* 15.89:1 */
+    --text-tertiary:  #C0CBD2;   /* 10.45:1 */
+    --text-muted:     #96A3B0;   /*  6.71:1 */
+    --text-subtle:    #8694A3;   /*  5.57:1 */
+
+    /* Brand teal is 7.40:1 on navy, so the nav gets the real thing. */
+    --accent:               #20BAD1;
+    --accent-hover:         #63CFDF;
+    --accent-subtle:        #1A2C4A;
+    --accent-subtle-hover:  #243552;
+    --accent-border:        #20BAD1;
+    --accent-deep:          #EFF7F8;
+
+    --success-fg:   #20BAD1;  --success-tint: #1A2C4A;  --success-bd: #20BAD1;
+    --warning-fg:   #EFF7F8;  --warning-tint: #1A2C4A;  --warning-bd: #20BAD1;
+    --error-fg:     #FFFFFF;  --error-tint:   #243552;  --error-bd:   #FFFFFF;
+    --info-fg:      #20BAD1;  --info-tint:    #1A2C4A;  --info-bd:    #2E3F5A;
+
+    --status-open:   #FFFFFF;
+    --status-closed: #96A3B0;
+
+    /* Active nav sits on navy, so the teal fill carries navy text (7.40:1). */
+    --cta-bg: #20BAD1;
+    --cta-text: #061A3A;
   }
 
   * { box-sizing: border-box; }
@@ -155,7 +242,7 @@
   }
 
   .sidebar {
-    background: var(--bg-1);
+    background: var(--nav-bg);
     border-right: 1px solid var(--border-default);
     position: relative;
     display: flex;
@@ -359,7 +446,7 @@
     justify-content: space-between;
     padding: 16px 28px;
     border-bottom: 1px solid var(--border-default);
-    background: var(--bg-1);
+    background: var(--nav-bg);
     flex-shrink: 0;
     gap: 24px;
   }
@@ -433,19 +520,19 @@
   }
 
   /* ============= PULSE & BADGES ============= */
-  /* Pulse dot: neutral gray — no accent color per monochromatic system */
+  /* Pulse dot: brand teal, with a teal halo instead of the old white one. */
   .pulse-dot {
     width: 7px; height: 7px;
     border-radius: 50%;
-    background: var(--text-secondary);
-    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.45);
+    background: var(--accent-solid);
+    box-shadow: 0 0 0 0 rgba(32, 186, 209, 0.45);
     animation: pulse 1.8s infinite;
     display: inline-block;
   }
   @keyframes pulse {
-    0%   { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.45); }
-    70%  { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+    0%   { box-shadow: 0 0 0 0 rgba(32, 186, 209, 0.45); }
+    70%  { box-shadow: 0 0 0 8px rgba(32, 186, 209, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(32, 186, 209, 0); }
   }
 
   /* ============= MAIN CONTENT ============= */
@@ -556,12 +643,15 @@
     cursor: pointer;
   }
 
-  /* ============= SEVERITY DOTS & CHIPS =============
-     Each severity uses a distinct visual treatment beyond grayscale weight,
-     so the four levels remain instantly distinguishable in pure monochrome.
-     Fatal: filled solid white ring · Robbery: filled light gray with inner ring
-     Injury: ring outline only (medium) · Assault: small filled circle (light) */
+  /* ============= SEVERITY DOTS & RISK BADGES =============
+     Three risk tiers carry the colour (low/moderate/high), but each of the
+     five underlying incident types keeps a distinct dot SHAPE, so types that
+     collapse into the same tier stay distinguishable and meaning never rests
+     on colour alone. Every dot is also accompanied by its text label.
+     Fatal: filled + outer ring · Robbery: filled with inner ring
+     Injury: ring outline only · Assault / Incident: small filled circle */
   .sev-dot {
+    --dot-gap: var(--bg-1);
     width: 12px; height: 12px;
     border-radius: 50%;
     display: inline-block;
@@ -570,11 +660,11 @@
   }
   .sev-dot.sev-fatal {
     background: var(--sev-fatal);
-    box-shadow: 0 0 0 2px var(--bg-1), 0 0 0 3px var(--sev-fatal);
+    box-shadow: 0 0 0 2px var(--dot-gap), 0 0 0 3px var(--sev-fatal);
   }
   .sev-dot.sev-robbery {
     background: var(--sev-robbery);
-    border: 2px solid var(--bg-1);
+    border: 2px solid var(--dot-gap);
     box-shadow: 0 0 0 1px var(--sev-robbery);
     width: 14px; height: 14px;
   }
@@ -588,8 +678,40 @@
     width: 8px; height: 8px;
   }
   .sev-dot.sev-incident {
-    background: var(--text-tertiary);
+    background: var(--sev-incident);
     width: 8px; height: 8px;
+  }
+  /* Risk badge on a light surface: severity colour as the border, a 10% tint
+     of it as the fill, and same-hue text that clears WCAG AA on that tint. */
+  .risk-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 9px 2px 7px;
+    border-radius: 999px;
+    border: 1px solid;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: capitalize;
+    white-space: nowrap;
+  }
+  .risk-badge.risk-low {
+    background: var(--risk-low-bg);
+    border-color: var(--risk-low-fill);
+    color: var(--risk-low-ink);
+    --dot-gap: var(--risk-low-bg);
+  }
+  .risk-badge.risk-mod {
+    background: var(--risk-mod-bg);
+    border-color: var(--risk-mod-fill);
+    color: var(--risk-mod-ink);
+    --dot-gap: var(--risk-mod-bg);
+  }
+  .risk-badge.risk-high {
+    background: var(--risk-high-bg);
+    border-color: var(--risk-high-fill);
+    color: var(--risk-high-ink);
+    --dot-gap: var(--risk-high-bg);
   }
   .chip {
     display: inline-flex;
@@ -667,7 +789,7 @@
   .leaflet-control-attribution,
   .leaflet-control-attribution a {
     color: var(--text-tertiary) !important;
-    background: rgba(0, 0, 0, 0.75) !important;
+    background: rgba(255, 255, 255, 0.85) !important;
     font-size: 10px !important;
     padding: 2px 6px !important;
     border-radius: 3px 0 0 0 !important;
@@ -709,7 +831,7 @@
     height: 14px;
     border-radius: 50%;
     border: 2px solid var(--bg-2);
-    box-shadow: 0 0 0 1.5px var(--text-primary), 0 2px 4px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 0 1.5px var(--text-primary), 0 2px 4px rgba(6, 26, 58, 0.35);
     z-index: 2;
     transition: transform 0.15s var(--ease-out);
   }
@@ -736,7 +858,7 @@
     color: var(--text-primary) !important;
     border: 1px solid var(--border-default) !important;
     border-radius: var(--radius-md) !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+    box-shadow: var(--shadow-lg), var(--shadow-sm) !important;
     padding: 0 !important;
   }
   .leaflet-popup-content {
@@ -902,11 +1024,11 @@
   .calc-input::placeholder { color: var(--text-muted); }
   .calc-input:hover { border-color: var(--border-strong); }
   .calc-input:focus {
-    border-color: var(--text-primary);
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
+    border-color: var(--accent-solid);
+    box-shadow: 0 0 0 3px rgba(32, 186, 209, 0.28);
   }
   select.calc-input {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23A6A6A6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23157B8A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 10px center;
     padding-right: 32px;
@@ -1071,8 +1193,8 @@
   }
   .nav-item.active .kbd-hint {
     background: transparent;
-    border-color: var(--accent-border);
-    color: var(--accent);
+    border-color: var(--cta-text);
+    color: var(--cta-text);
   }
 
   /* ============= RTL SUPPORT FOR ARABIC / FARSI / PASHTO ============= */
@@ -1125,9 +1247,9 @@
   @media print {
     .sidebar, .app-header, #translate-btn, #refresh-btn, .search-wrapper { display: none !important; }
     main#page { padding: 0 !important; overflow: visible !important; }
-    .card { break-inside: avoid; box-shadow: none; border-color: #ccc; }
-    body { background: white; color: black; }
-    * { color: black !important; background: white !important; border-color: #ccc !important; }
+    .card { break-inside: avoid; box-shadow: none; border-color: #C7EEF4; }
+    body { background: #FFFFFF; color: #222222; }
+    * { color: #222222 !important; background: #FFFFFF !important; border-color: #C7EEF4 !important; }
   }
 
   /* ============= CUSTOM TRANSLATE DROPDOWN ============= */
@@ -1472,7 +1594,7 @@
     <div class="sidebar-brand">
       <div class="sidebar-brand-logo">
         <div class="sidebar-brand-mark">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#061A3A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
           </svg>
         </div>
@@ -1594,7 +1716,21 @@ function googleTranslateElementInit() {
 <script>
 'use strict';
 
-const SEV = { fatal: 'var(--sev-fatal)', injury: 'var(--sev-injury)', robbery: 'var(--sev-robbery)', assault: 'var(--sev-assault)', incident: 'var(--text-secondary)' };
+const SEV = { fatal: 'var(--sev-fatal)', injury: 'var(--sev-injury)', robbery: 'var(--sev-robbery)', assault: 'var(--sev-assault)', incident: 'var(--sev-incident)' };
+
+/* Incident types collapse onto the three brand risk tiers.
+   high: the driver suffered bodily harm or was physically attacked.
+   mod:  the driver was threatened during a forcible theft.
+   low:  regulatory / court / news records describing no active threat. */
+const RISK_TIER = { fatal: 'high', injury: 'high', assault: 'high', robbery: 'mod', incident: 'low', policy: 'low', other: 'low' };
+const RISK_LABEL = { high: 'High risk', mod: 'Moderate risk', low: 'Low risk' };
+function riskTier(sev) { return RISK_TIER[String(sev || '').toLowerCase()] || 'low'; }
+function riskBadge(sev) {
+  const s = String(sev || 'incident').toLowerCase();
+  const t = riskTier(s);
+  return `<span class="risk-badge risk-${t}" title="${escapeHtml(RISK_LABEL[t])}">`
+       + `<span class="sev-dot sev-${escapeHtml(s)}"></span>${escapeHtml(s)}</span>`;
+}
 
 const NAV = [
   { href: '#/',              label: 'Overview',      subtitle: 'Seattle Metro · 2024–Present',                    icon: 'grid' },
@@ -1619,7 +1755,7 @@ const ICONS = {
   book:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
   dollar:    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
   shieldLg:  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
-  warning:   '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--sev-fatal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  warning:   '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
   check:     '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
   phone:     '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z"/></svg>',
   mail:      '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',
@@ -1725,18 +1861,21 @@ const hotspots = [
   { name: 'Georgetown', value: 9 },    { name: 'Belltown', value: 7 },
 ];
 
+/* Risk-level chart: uses the severity scale, not the generic sequence. */
 const severityData = [
-  { name: 'Assault',  value: 54, color: 'var(--sev-assault)' },
-  { name: 'Robbery',  value: 41, color: 'var(--sev-robbery)' },
-  { name: 'Injury',   value: 37, color: 'var(--sev-injury)' },
-  { name: 'Fatal',    value: 15, color: 'var(--sev-fatal)' },
+  { name: 'Assault',  value: 54, color: 'var(--risk-high-fill)' },
+  { name: 'Robbery',  value: 41, color: 'var(--risk-mod-fill)' },
+  { name: 'Injury',   value: 37, color: 'var(--risk-high-fill)' },
+  { name: 'Fatal',    value: 15, color: 'var(--risk-high-fill)' },
 ];
 
+/* Non-risk chart: generic brand sequence — teal, navy, then teal mixed
+   toward white by 60% and 30%. */
 const platformData = [
-  { name: 'Uber',        value: 62, fill: 'var(--text-primary)' },    /* #000 */
-  { name: 'Lyft',        value: 41, fill: 'var(--text-secondary)' },  /* #4F4F4F */
-  { name: 'DoorDash',    value: 28, fill: 'var(--text-tertiary)' },   /* #757575 */
-  { name: 'Amazon Flex', value: 16, fill: 'var(--text-muted)' },      /* #9E9E9E */
+  { name: 'Uber',        value: 62, fill: 'var(--chart-1)' },
+  { name: 'Lyft',        value: 41, fill: 'var(--chart-2)' },
+  { name: 'DoorDash',    value: 28, fill: 'var(--chart-3)' },
+  { name: 'Amazon Flex', value: 16, fill: 'var(--chart-4)' },
 ];
 
 const trendData = [
@@ -1847,7 +1986,7 @@ function initMap(containerId, list) {
   // Enable scroll zoom only after user interacts with the map (click)
   currentMap.once('click', () => currentMap.scrollWheelZoom.enable());
 
-  const primaryTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+  const primaryTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
     maxZoom: 19,
     subdomains: ['a', 'b', 'c', 'd'],
     attribution: '© OpenStreetMap contributors © CARTO'
@@ -1859,7 +1998,7 @@ function initMap(containerId, list) {
     fellBack = true;
     try {
       currentMap.removeLayer(primaryTiles);
-      L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
         maxZoom: 16,
         attribution: 'Tiles © Esri'
       }).addTo(currentMap);
@@ -1913,12 +2052,12 @@ function initMap(containerId, list) {
   const dashcamLabels = {
     'confirmed':   { text: 'Full coverage',   color: 'var(--text-primary)' },
     'driver-only': { text: 'Driver-facing',    color: 'var(--text-tertiary)' },
-    'none':        { text: 'No dashcam',       color: 'var(--sev-injury)' },
+    'none':        { text: 'No dashcam',       color: 'var(--text-muted)' },
   };
 
   const markers = [];
   list.forEach(inc => {
-    const color = SEV[inc.severity];
+    const color = `var(--risk-${riskTier(inc.severity)}-fill)`;
     const isOpen = inc.status === 'Open';
     const html = `
       <div class="map-pin-wrapper ${isOpen ? 'is-open' : ''}">
@@ -2009,9 +2148,9 @@ function hotspotsHTML() {
   const max = hotspots[0].value;
   return hotspots.map((h, i) => {
     const pct = Math.round(h.value / max * 100);
-    const topColor = i === 0 ? 'var(--sev-fatal)' : 'var(--text-muted)';
+    const topColor = i === 0 ? 'var(--accent-solid)' : 'var(--border-default)';
     const nameColor = i === 0 ? 'var(--text-primary)' : 'var(--text-tertiary)';
-    const valColor  = i === 0 ? 'var(--sev-fatal)' : 'var(--text-tertiary)';
+    const valColor  = i === 0 ? 'var(--accent)' : 'var(--text-tertiary)';
     return `
       <div>
         <div style="display:flex; justify-content:space-between; font-size:10px; margin-bottom:4px;">
@@ -2111,15 +2250,15 @@ function trendChartHTML() {
 
 function incidentTableHTML(list) {
   const statusColors = {
-    'Open':     { bg: 'var(--bg-3)',  fg: 'var(--sev-injury)' },
-    'Closed':   { bg: 'var(--bg-2)',  fg: 'var(--text-primary)' },
+    'Open':     { bg: 'var(--bg-3)',  fg: 'var(--status-open)' },
+    'Closed':   { bg: 'var(--bg-2)',  fg: 'var(--status-closed)' },
     'Reported': { bg: 'var(--bg-3)',  fg: 'var(--accent)' },
   };
   const _defaultStatus = { bg: 'var(--bg-2)', fg: 'var(--text-tertiary)' };
   const dashcamDisplay = {
     'confirmed':   { label: 'Full',   color: 'var(--accent)',       title: 'Driver-facing and cabin cameras confirmed' },
     'driver-only': { label: 'Driver', color: 'var(--text-tertiary)', title: 'Driver-facing camera only' },
-    'none':        { label: 'None',   color: 'var(--sev-injury)',    title: 'No dashcam evidence on record' },
+    'none':        { label: 'None',   color: 'var(--text-muted)',    title: 'No dashcam evidence on record' },
   };
   return `
     <div style="overflow-x:auto;">
@@ -2139,9 +2278,7 @@ function incidentTableHTML(list) {
                 <div style="color: var(--text-primary);">${escapeHtml(inc.date)}</div>
                 <div style="font-size:10.5px; color: var(--text-muted); margin-top:2px;" class="notranslate">${escapeHtml(inc.time || '—')}</div>
               </td>
-              <td><span style="display:inline-flex; align-items:center; gap:6px; text-transform:capitalize;">
-                <span class="sev-dot sev-${escapeHtml(inc.severity)}"></span>${escapeHtml(inc.severity)}
-              </span></td>
+              <td>${riskBadge(inc.severity)}</td>
               <td style="color: var(--text-primary);">${escapeHtml(inc.platform)}</td>
               <td>
                 <div style="color: var(--text-primary);">${escapeHtml(inc.neighborhood)}</div>
@@ -2150,7 +2287,7 @@ function incidentTableHTML(list) {
               <td style="color: var(--text-secondary); max-width:260px;">${escapeHtml(inc.desc)}</td>
               <td>
                 ${dash
-                  ? `<span class="chip" title="${dash.title}" style="background: rgba(255,255,255,0.08); color: ${dash.color}; display:inline-flex; align-items:center; gap:5px; white-space:nowrap;">
+                  ? `<span class="chip" title="${dash.title}" style="background: var(--bg-1); border: 1px solid var(--border-default); color: ${dash.color}; display:inline-flex; align-items:center; gap:5px; white-space:nowrap;">
                       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
                       ${dash.label}
                     </span>`
@@ -2265,9 +2402,9 @@ function pageOverview() {
           <div class="card-header">
             <span style="font-size:11px; font-weight:500; color:var(--text-primary);">Incident Map</span>
             <div style="display:flex; gap:12px; font-size:9px; color:var(--text-tertiary); text-transform: capitalize;">
-              ${Object.keys(SEV).map(k => `
+              ${['low','mod','high'].map(t => `
                 <span style="display:flex; align-items:center; gap:4px;">
-                  <span style="width:6px;height:6px;border-radius:50%;background:${SEV[k]};"></span>${k}
+                  <span style="width:6px;height:6px;border-radius:50%;background:var(--risk-${t}-fill);"></span>${RISK_LABEL[t]}
                 </span>`).join('')}
             </div>
           </div>
@@ -2330,7 +2467,7 @@ function pageOverview() {
       <div class="card" style="padding:16px; background: var(--bg-3); border-color: var(--border-default);">
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
           ${ICONS.warning}
-          <span style="font-size:11px; font-weight:600; color:var(--sev-fatal);">Safety Advisories</span>
+          <span style="font-size:11px; font-weight:600; color:var(--text-primary);">Safety Advisories</span>
         </div>
         <div style="display:flex; flex-direction:column; gap:6px; font-size:10px; color: var(--text-secondary); line-height:1.55;">
           <div style="display:flex; gap:6px;"><span>·</span><span>Rainier Beach / South Seattle: elevated incident concentration, particularly late night.</span></div>
@@ -2358,9 +2495,9 @@ function pageCrimeMap() {
             <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">${incidents.length} incidents mapped across Seattle Metro</div>
           </div>
           <div style="display:flex; gap:12px; font-size:10px; text-transform:capitalize;">
-            ${Object.keys(SEV).map(k => `
+            ${['low','mod','high'].map(t => `
               <span style="display:flex; align-items:center; gap:6px; color:var(--text-secondary);">
-                <span style="width:10px; height:10px; border-radius:50%; background:${SEV[k]};"></span>${k}
+                <span style="width:10px; height:10px; border-radius:50%; background:var(--risk-${t}-fill);"></span>${RISK_LABEL[t]}
               </span>`).join('')}
           </div>
         </div>
@@ -2416,11 +2553,10 @@ function pageLive() {
       </div>
       <div class="card" style="padding:16px;">
         ${liveFeed.map((e, i) => `
-          <div class="live-row ${i===0?'new':''}" style="border-left-color:${SEV[e.type] || 'var(--text-muted)'};">
+          <div class="live-row ${i===0?'new':''}" style="border-left-color:var(--risk-${riskTier(e.type)}-fill);">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
               <div style="display:flex; align-items:center; gap:8px;">
-                <span class="sev-dot sev-${escapeHtml(e.type || 'assault')}"></span>
-                <span style="font-size:11px; color:var(--text-primary); font-weight:500; text-transform:capitalize;">${escapeHtml(e.type || 'incident')}</span>
+                ${riskBadge(e.type || 'incident')}
                 <span style="font-size:10px; color:var(--text-tertiary);">·</span>
                 <span style="font-size:10px; color:var(--text-tertiary);">${escapeHtml(e.platform || 'SPD')}</span>
               </div>
@@ -2869,9 +3005,9 @@ function pageAnalytics() {
   const hoursHTML = hourBins.map((count, hour) => {
     const intensity = count / maxHour;
     const color = intensity === 0 ? 'var(--bg-3)'
-                : intensity < 0.35 ? 'var(--text-muted)'       /* low: #9E9E9E */
-                : intensity < 0.7  ? 'var(--text-secondary)'   /* medium: #4F4F4F */
-                : 'var(--text-primary)';                        /* high: #000000 */
+                : intensity < 0.35 ? 'var(--chart-3)'
+                : intensity < 0.7  ? 'var(--chart-4)'
+                : 'var(--chart-1)';
     const isPeak = hour === peakHour && count > 0;
     return `
       <div style="display:flex; flex-direction:column; align-items:center; gap:4px; flex:1; min-width:0;">
@@ -2987,7 +3123,7 @@ function pageAnalytics() {
             ${repeatLocations.map(loc => `
               <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 14px; background: var(--bg-1); border:1px solid ${loc.severity === 'high' ? 'var(--border-strong)' : 'var(--border-default)'}; border-radius: var(--radius-md);">
                 <div style="display:flex; gap:10px; align-items:center;">
-                  <div style="width:8px; height:8px; border-radius:50%; background: ${loc.severity === 'high' ? 'var(--sev-fatal)' : 'var(--sev-assault)'};"></div>
+                  <div style="width:8px; height:8px; border-radius:50%; background: ${loc.severity === 'high' ? 'var(--risk-high-fill)' : 'var(--risk-mod-fill)'};"></div>
                   <div>
                     <div style="font-size:13px; font-weight:550; color: var(--text-primary);">${loc.name}</div>
                     <div style="font-size:11px; color: var(--text-muted); margin-top:2px;">${loc.severity === 'high' ? 'Elevated risk cluster' : 'Monitored cluster'}</div>
@@ -3922,7 +4058,7 @@ function render() {
     page.scrollTop = 0;
   } catch (err) {
     console.error('Render error:', err);
-    page.innerHTML = `<div class="card" style="padding:20px; color:var(--sev-injury);">Error rendering page: ${escapeHtml(err.message)}</div>`;
+    page.innerHTML = `<div class="card" style="padding:20px; color:var(--error-fg);">Error rendering page: ${escapeHtml(err.message)}</div>`;
   }
 }
 
