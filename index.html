@@ -2563,9 +2563,9 @@ function pageLive() {
               <span class="pulse-dot"></span>
               <span style="font-size:12px; font-weight:600; color:var(--text-primary);">Live Incident Activity</span>
             </div>
-            <div style="font-size:10px; color:var(--text-tertiary); margin-top:4px; margin-left:14px;">Real-time incident reports · auto-refresh every 5 min</div>
+            <div style="font-size:10px; color:var(--text-tertiary); margin-top:4px; margin-left:14px;">SPD 911 dispatch calls · violent-crime types · auto-refresh every 5 min</div>
           </div>
-          <div style="font-size:10px; color:var(--text-tertiary); font-variant-numeric:tabular-nums;">Updated just now</div>
+          <div style="font-size:10px; color:var(--text-tertiary); font-variant-numeric:tabular-nums;">${escapeHtml(liveFeedStatusText())}</div>
         </div>
       </div>
       <div class="card" style="padding:16px;">
@@ -2577,17 +2577,17 @@ function pageLive() {
                 <span style="font-size:10px; color:var(--text-tertiary);">·</span>
                 <span style="font-size:10px; color:var(--text-tertiary);">${escapeHtml(e.platform || 'SPD')}</span>
               </div>
-              <span style="font-size:10px; color:var(--text-tertiary); font-variant-numeric:tabular-nums;">${escapeHtml(e.time)}</span>
+              <span style="font-size:10px; color:var(--text-tertiary); font-variant-numeric:tabular-nums;">${escapeHtml(e.time_iso ? relTime(e.time_iso) : e.time)}</span>
             </div>
-            <div style="font-size:11px; color:var(--text-secondary); margin-left:14px;">${e.desc}</div>
-            <div style="font-size:10px; color:var(--text-tertiary); margin-left:14px; margin-top:2px;">${e.loc}</div>
+            <div style="font-size:11px; color:var(--text-secondary); margin-left:14px;">${escapeHtml(e.desc)}</div>
+            <div style="font-size:10px; color:var(--text-tertiary); margin-left:14px; margin-top:2px;">${escapeHtml(e.loc)}</div>
           </div>`).join('')}
       </div>
       <div class="card" style="padding:14px; background: var(--bg-3); border-color: var(--border-default);">
         <div style="display:flex; gap:10px; align-items:flex-start;">
           <span style="color:var(--text-primary); margin-top:2px;">${ICONS.check}</span>
           <div style="font-size:11px; color:var(--text-secondary); line-height:1.55;">
-            Entries update from the Seattle Police Department's public blotter feed. Individual rideshare connection is inferred from location, time, and description and may not be independently verified.
+            Entries are fetched directly from the Seattle Police Department's <a href="https://data.seattle.gov/Public-Safety/SPD-911-Call-Data/33kz-ixgy" target="_blank" rel="noopener" style="color:var(--accent);">SPD 911 Call Data</a> on the City of Seattle open data portal (assault, robbery, carjacking, weapon, and shots-fired call types). SPD publishes dispatch records with a review lag of roughly 1–4 days, so "newest" reflects the latest released record, not this minute. Any rideshare connection is inferred and not independently verified.
           </div>
         </div>
       </div>
@@ -4221,6 +4221,88 @@ const LIVE_DATA_URL   = 'incidents.json';
 const LIVE_REFRESH_MS = 5 * 60 * 1000;
 let lastLiveUpdate = null;
 
+// === SPD LIVE CRIME FEED (data.seattle.gov · Socrata SODA API) ===
+// The Seattle Police Department publishes 911 dispatch data ("SPD 911 Call
+// Data", dataset 33kz-ixgy) on the city's open data portal. The API sends
+// Access-Control-Allow-Origin: *, so the browser can query it directly — no
+// backend needed on GitHub Pages. SPD releases records with roughly a 1–4 day
+// review lag; timestamps are Pacific local time.
+const SPD_LIVE_URL     = 'https://data.seattle.gov/resource/33kz-ixgy.json';
+const SPD_DATASET_PAGE = 'https://data.seattle.gov/Public-Safety/SPD-911-Call-Data/33kz-ixgy';
+let liveFeedMeta = { source: 'snapshot', fetchedAt: null, newestIso: null };
+
+function relTime(iso) {
+  const d = iso instanceof Date ? iso : new Date(iso);
+  if (isNaN(d)) return '';
+  const s = Math.max(0, (Date.now() - d.getTime()) / 1000);
+  if (s < 90) return 'just now';
+  if (s < 3600) return Math.round(s / 60) + ' min ago';
+  if (s < 129600) return Math.round(s / 3600) + ' hr ago';
+  const days = Math.round(s / 86400);
+  return days + (days === 1 ? ' day ago' : ' days ago');
+}
+
+function spdClassify(t) {
+  t = (t || '').toUpperCase();
+  if (t.includes('ROBBERY') || t.includes('CARJACK')) return 'robbery';
+  if (t.includes('SHOT') || t.includes('STAB')) return 'injury';
+  if (t.includes('ASSAULT') || t.includes('ASLT') || t.includes('FIGHT') || t.includes('THREAT')) return 'assault';
+  return 'incident';
+}
+
+function titleCaseWords(s) {
+  return String(s || '').toLowerCase().replace(/\b[a-z]/g, c => c.toUpperCase());
+}
+
+function spdHumanize(t) {
+  return titleCaseWords(String(t || '').replace(/\s*-\s*/g, ' – ').replace(/,\s*/g, ', '));
+}
+
+async function fetchSpdLiveFeed() {
+  const where =
+    "(final_call_type like '%ASSAULT%' OR final_call_type like 'ASLT%' OR " +
+    "final_call_type like '%ROBBERY%' OR final_call_type like '%CARJACK%' OR " +
+    "final_call_type like '%WEAPON%' OR final_call_type like '%SHOTS%' OR " +
+    "final_call_type like '%FIGHT%')";
+  const params = new URLSearchParams({
+    '$select': 'cad_event_number,final_call_type,cad_event_original_time_queued,dispatch_neighborhood,dispatch_address,dispatch_precinct',
+    '$where': where,
+    '$order': 'cad_event_original_time_queued DESC',
+    '$limit': '25',
+  });
+  try {
+    const resp = await fetch(SPD_LIVE_URL + '?' + params.toString(), { cache: 'no-store' });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status + ' from data.seattle.gov');
+    const rows = await resp.json();
+    if (!Array.isArray(rows) || rows.length === 0) throw new Error('no rows returned');
+    liveFeed = rows.map(r => ({
+      time: relTime(r.cad_event_original_time_queued),
+      time_iso: r.cad_event_original_time_queued,
+      type: spdClassify(r.final_call_type),
+      platform: 'SPD 911',
+      loc: [titleCaseWords(r.dispatch_neighborhood), titleCaseWords(r.dispatch_address)].filter(Boolean).join(' · '),
+      desc: spdHumanize(r.final_call_type),
+      source: 'SPD 911 Call Data',
+      url: SPD_DATASET_PAGE,
+    }));
+    liveFeedMeta = { source: 'spd-live', fetchedAt: new Date(), newestIso: rows[0].cad_event_original_time_queued };
+    if ((location.hash || '#/').indexOf('#/live') === 0) render();
+    return true;
+  } catch (err) {
+    console.error('[SafetySteward] SPD live feed unavailable — showing last bundled snapshot.', err);
+    liveFeedMeta = { source: 'snapshot', fetchedAt: null, newestIso: null };
+    if ((location.hash || '#/').indexOf('#/live') === 0) render();
+    return false;
+  }
+}
+
+function liveFeedStatusText() {
+  if (liveFeedMeta.source === 'spd-live' && liveFeedMeta.newestIso) {
+    return 'Newest SPD report ' + relTime(liveFeedMeta.newestIso);
+  }
+  return 'Snapshot data — live SPD query unavailable';
+}
+
 async function fetchLiveData() {
   try {
     const resp = await fetch(LIVE_DATA_URL + '?t=' + Date.now(), { cache: 'no-store' });
@@ -4308,7 +4390,7 @@ function init() {
     const origText = label ? label.textContent : 'Refresh';
     if (label) label.textContent = 'Refreshing…';
     btn.disabled = true;
-    fetchLiveData().finally(() => {
+    Promise.allSettled([fetchLiveData(), fetchSpdLiveFeed()]).finally(() => {
       if (label) label.textContent = origText;
       btn.disabled = false;
     });
@@ -4325,6 +4407,9 @@ function init() {
   // Kick off live data fetch — runs on load and every 5 min
   fetchLiveData();
   setInterval(fetchLiveData, LIVE_REFRESH_MS);
+  // Live SPD crime feed (client-side query to data.seattle.gov)
+  fetchSpdLiveFeed();
+  setInterval(fetchSpdLiveFeed, LIVE_REFRESH_MS);
 }
 
 if (document.readyState === 'loading') {
