@@ -1389,7 +1389,10 @@
 
   /* ============= RESPONSIVE: MOBILE (≤768px) ============= */
   @media (max-width: 768px) {
-    html, body { overflow-x: hidden; font-size: 14px; }
+    /* height:auto lets the DOCUMENT scroll (not the body element), so
+       window.scrollTo, browser address-bar collapse, and scroll restoration
+       all behave natively on phones. */
+    html, body { overflow-x: hidden; font-size: 14px; height: auto; }
 
     /* --- Layout: stack sidebar above main content --- */
     .dashboard-layout {
@@ -1442,10 +1445,17 @@
     .nav-item svg { width: 14px; height: 14px; }
     .nav-item .kbd-hint { display: none; }
     .nav-item.active::before { display: none; }
+    /* Active tab: solid darker brand teal with white text — inside .sidebar,
+       --accent-subtle resolves to navy (#1A2C4A) while the inherited text
+       color is also navy (#061A3A), which made the active label invisible.
+       White on #0E6E7E is 6.0:1 (WCAG AA). */
     .nav-item.active {
-      background: var(--accent-subtle);
-      border: 1px solid var(--accent-border);
+      background: #0E6E7E;
+      border: 1px solid #20BAD1;
+      color: #FFFFFF;
+      font-weight: 600;
     }
+    .nav-item.active svg { color: #FFFFFF; opacity: 1; }
 
     /* --- Main content fills width --- */
     .main-content { overflow: visible; display: block !important; }
@@ -2142,6 +2152,11 @@ function renderNav() {
   const active = NAV.find(n => n.href === hash) || NAV[0];
   document.getElementById('page-title').textContent = active.label;
   document.getElementById('page-subtitle').textContent = active.subtitle;
+  // Keep the active pill visible in the horizontal mobile nav strip.
+  const activeEl = document.querySelector('#nav .nav-item.active');
+  if (activeEl && activeEl.scrollIntoView) {
+    activeEl.scrollIntoView({ block: 'nearest', inline: 'center' });
+  }
 }
 
 function hotspotsHTML() {
@@ -2284,7 +2299,9 @@ function incidentTableHTML(list) {
                 <div style="color: var(--text-primary);">${escapeHtml(inc.neighborhood)}</div>
                 <div style="color: var(--text-muted); font-size:11px; margin-top:2px;">${escapeHtml(inc.location)}</div>
               </td>
-              <td style="color: var(--text-secondary); max-width:260px;">${escapeHtml(inc.desc)}</td>
+              <td style="color: var(--text-secondary); max-width:260px; min-width:200px;" title="${escapeHtml(inc.desc)}">
+                <div style="display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">${escapeHtml(inc.desc)}</div>
+              </td>
               <td>
                 ${dash
                   ? `<span class="chip" title="${dash.title}" style="background: var(--bg-1); border: 1px solid var(--border-default); color: ${dash.color}; display:inline-flex; align-items:center; gap:5px; white-space:nowrap;">
@@ -4056,6 +4073,10 @@ function render() {
     }, 0);
     wireCopyables();
     page.scrollTop = 0;
+    // On mobile the document (not main#page) is the scroll container.
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
   } catch (err) {
     console.error('Render error:', err);
     page.innerHTML = `<div class="card" style="padding:20px; color:var(--error-fg);">Error rendering page: ${escapeHtml(err.message)}</div>`;
