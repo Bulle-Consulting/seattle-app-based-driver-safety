@@ -1,0 +1,55 @@
+# Syncs the static site to bullecloud.com (HostGator) so it can no longer
+# silently fall behind main — see DEPLOYMENT.md §4.4.
+#
+# Requires three repository secrets (Settings → Secrets and variables → Actions):
+#   HOSTGATOR_FTP_SERVER    e.g. ftp.bullecloud.com or the server's hostname/IP from cPanel
+#   HOSTGATOR_FTP_USERNAME  a cPanel FTP account (create one scoped to public_html)
+#   HOSTGATOR_FTP_PASSWORD  that account's password
+name: Deploy to HostGator
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - index.html
+      - incidents.json
+      - .github/workflows/deploy-hostgator.yml
+  workflow_dispatch:
+
+concurrency:
+  group: hostgator-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Only the two files production actually serves (DEPLOYMENT.md §1) are
+      # uploaded; nothing on the host outside this set is touched or deleted.
+      - name: Stage files
+        run: |
+          mkdir -p deploy
+          cp index.html incidents.json deploy/
+
+      - name: Upload via FTPS
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.HOSTGATOR_FTP_SERVER }}
+          username: ${{ secrets.HOSTGATOR_FTP_USERNAME }}
+          password: ${{ secrets.HOSTGATOR_FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: deploy/
+          server-dir: public_html/
+          state-name: .ftp-deploy-sync-state.json
+
+      - name: Verify live site
+        run: |
+          curl -sS -o /dev/null -w 'index.html: %{http_code} %{content_type}\n' https://bullecloud.com/
+          code_type=$(curl -sS -o /dev/null -w '%{http_code} %{content_type}' https://bullecloud.com/incidents.json)
+          echo "incidents.json: $code_type"
+          case "$code_type" in
+            "200 application/json"*) ;;
+            *) echo "::error::incidents.json is not being served as JSON — deployment is broken (see DEPLOYMENT.md §5)"; exit 1 ;;
+          esac
