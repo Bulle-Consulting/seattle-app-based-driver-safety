@@ -24,16 +24,34 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      # Until the HOSTGATOR_* secrets exist this workflow cannot deploy; skip
+      # with a loud warning instead of failing, so a red X on main always
+      # means a real breakage rather than pending one-time setup.
+      - name: Check FTP secrets
+        id: config
+        env:
+          FTP_SERVER: ${{ secrets.HOSTGATOR_FTP_SERVER }}
+        run: |
+          if [ -n "$FTP_SERVER" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::HOSTGATOR_* secrets are not configured — deploy skipped, bullecloud.com was NOT updated. See DEPLOYMENT.md §4.4 for setup."
+          fi
+
       - uses: actions/checkout@v4
+        if: steps.config.outputs.configured == 'true'
 
       # Only the two files production actually serves (DEPLOYMENT.md §1) are
       # uploaded; nothing on the host outside this set is touched or deleted.
       - name: Stage files
+        if: steps.config.outputs.configured == 'true'
         run: |
           mkdir -p deploy
           cp index.html incidents.json deploy/
 
       - name: Upload via FTPS
+        if: steps.config.outputs.configured == 'true'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.HOSTGATOR_FTP_SERVER }}
@@ -45,6 +63,7 @@ jobs:
           state-name: .ftp-deploy-sync-state.json
 
       - name: Verify live site
+        if: steps.config.outputs.configured == 'true'
         run: |
           curl -sS -o /dev/null -w 'index.html: %{http_code} %{content_type}\n' https://bullecloud.com/
           code_type=$(curl -sS -o /dev/null -w '%{http_code} %{content_type}' https://bullecloud.com/incidents.json)
