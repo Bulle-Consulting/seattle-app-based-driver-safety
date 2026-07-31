@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { RISK_TIERS, riskTier, riskLabel } from "@/lib/severity";
 
 const CLS: Record<string, string> = {
   fatal: "badge-fatal", injury: "badge-injury", robbery: "badge-robbery",
@@ -11,8 +12,17 @@ const LABELS: Record<string, string> = {
 export function SeverityBadge({ severity }: { severity: string }) {
   const s = severity?.toLowerCase() ?? "other";
   return (
-    <span className={cn("text-[9px] font-medium px-2 py-0.5 rounded inline-block", CLS[s] ?? "badge-other")}>
+    <span
+      className={cn("text-[9px] font-medium px-2 py-0.5 rounded inline-flex items-center gap-1", CLS[s] ?? "badge-other")}
+      title={riskLabel(s)}
+    >
+      <span
+        aria-hidden="true"
+        className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+        style={{ background: RISK_TIERS[riskTier(s)].fill }}
+      />
       {LABELS[s] ?? severity}
+      <span className="sr-only"> — {riskLabel(s)}</span>
     </span>
   );
 }

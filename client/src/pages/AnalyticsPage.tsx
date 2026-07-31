@@ -8,23 +8,27 @@ import {
 } from "recharts";
 import { AlertTriangle, Video, FileText } from "lucide-react";
 import type { Incident } from "@shared/schema";
+import { BRAND, CHART_SERIES, CHART_AXIS, CHART_GRID } from "@/lib/brand";
+import { RISK_TIERS } from "@/lib/severity";
 
-const ACCENT = "#FFFFFF";
-const ACCENT_DIM = "#A6A6A6";
+const ACCENT = BRAND.teal;
+// Brand teal is 2.33:1 on white — anything that is text or an icon uses the ink variant.
+const ACCENT_INK = BRAND.tealInk;
+const ACCENT_DIM = CHART_SERIES[3];
 const PLT_COLORS: Record<string, string> = {
-  Uber: "#A6A6A6",
-  Lyft: "#FFFFFF",
-  DoorDash: "#8C8C8C",
-  "Amazon Flex": "#C0C0C0",
+  Uber: CHART_SERIES[0],
+  Lyft: CHART_SERIES[1],
+  DoorDash: CHART_SERIES[2],
+  "Amazon Flex": CHART_SERIES[3],
 };
 
 const Tip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="chart-tooltip">
-      <p className="font-medium text-[#FFFFFF] mb-0.5">{label}</p>
+      <p className="font-medium text-[#061A3A] mb-0.5">{label}</p>
       {payload.map((p: any, i: number) => (
-        <p key={i} className="text-[10px]" style={{ color: p.color || p.fill || ACCENT }}>
+        <p key={i} className="text-[10px]" style={{ color: p.color || p.fill || ACCENT_INK }}>
           {p.name}: <span className="font-medium">{p.value}</span>
         </p>
       ))}
@@ -36,10 +40,10 @@ function SectionCard({ title, subtitle, children }: {
   title: string; subtitle?: string; children: React.ReactNode;
 }) {
   return (
-    <div className="bg-[#121212] border border-[#4D4D4D] rounded-md p-4">
+    <div className="bg-[#FFFFFF] border border-[#C7EEF4] rounded-md p-4">
       <div className="mb-3">
-        <div className="text-[11px] font-semibold text-[#FFFFFF]">{title}</div>
-        {subtitle && <div className="text-[9px] text-[#A6A6A6] mt-0.5">{subtitle}</div>}
+        <div className="text-[11px] font-semibold text-[#061A3A]">{title}</div>
+        {subtitle && <div className="text-[9px] text-[#44536B] mt-0.5">{subtitle}</div>}
       </div>
       {children}
     </div>
@@ -59,22 +63,24 @@ function TimeHeatmap({ byHour }: { byHour: Record<string, number> }) {
     <SectionCard title="Incident Time Distribution" subtitle="When incidents occur (24-hour clock)">
       <ResponsiveContainer width="100%" height={180}>
         <BarChart data={data} margin={{ top: 4, right: 4, left: -16, bottom: 4 }}>
-          <XAxis dataKey="label" tick={{ fontSize: 8, fill: "#A6A6A6" }} axisLine={false} tickLine={false}
+          <XAxis dataKey="label" tick={{ fontSize: 8, fill: CHART_AXIS }} axisLine={false} tickLine={false}
             interval={1} angle={-45} textAnchor="end" height={36} />
-          <YAxis tick={{ fontSize: 8, fill: "#A6A6A6" }} axisLine={false} tickLine={false} width={22} />
+          <YAxis tick={{ fontSize: 8, fill: CHART_AXIS }} axisLine={false} tickLine={false} width={22} />
           <Tooltip content={<Tip />} />
           <Bar dataKey="count" name="Incidents" radius={[2, 2, 0, 0]}>
             {data.map((entry, i) => {
               const intensity = max > 0 ? entry.count / max : 0;
-              // silver ramp: dark gray (#3D3D3D) -> brand white (#FFFFFF)
-              const v = Math.round(61 + intensity * (255 - 61));
-              const color = entry.count === 0 ? "#262626" : `rgb(${v},${v},${v})`;
+              // Teal ramp: light tint #EFF7F8 -> brand teal #20BAD1
+              const mix = (a: number, b: number) => Math.round(a + intensity * (b - a));
+              const color = entry.count === 0
+                ? BRAND.tint
+                : `rgb(${mix(239, 32)},${mix(247, 186)},${mix(248, 209)})`;
               return <Cell key={i} fill={color} opacity={entry.count === 0 ? 0.6 : 1} />;
             })}
           </Bar>
         </BarChart>
       </ResponsiveContainer>
-      <p className="text-[9px] text-[#A6A6A6] mt-2 leading-relaxed">
+      <p className="text-[9px] text-[#44536B] mt-2 leading-relaxed">
         Based on incidents with recorded times. Not all incidents have time data.
       </p>
     </SectionCard>
@@ -116,18 +122,18 @@ function QuarterlyTrend({ byQuarter }: { byQuarter: Record<string, number> }) {
     <SectionCard title="Quarterly Trend & Forecast" subtitle="Incidents per quarter with linear projection">
       <ResponsiveContainer width="100%" height={180}>
         <BarChart data={data} margin={{ top: 4, right: 4, left: -16, bottom: 4 }}>
-          <XAxis dataKey="label" tick={{ fontSize: 8, fill: "#A6A6A6" }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fontSize: 8, fill: "#A6A6A6" }} axisLine={false} tickLine={false} width={22} />
-          <CartesianGrid strokeDasharray="2 3" stroke="#4D4D4D" vertical={false} />
+          <XAxis dataKey="label" tick={{ fontSize: 8, fill: CHART_AXIS }} axisLine={false} tickLine={false} />
+          <YAxis tick={{ fontSize: 8, fill: CHART_AXIS }} axisLine={false} tickLine={false} width={22} />
+          <CartesianGrid strokeDasharray="2 3" stroke={CHART_GRID} vertical={false} />
           <Tooltip content={<Tip />} />
           <Bar dataKey="value" name="Incidents" fill={ACCENT} opacity={0.8} radius={[2, 2, 0, 0]} />
           <Bar dataKey="forecast" name="Forecast" fill={ACCENT_DIM} opacity={0.5} radius={[2, 2, 0, 0]}
             strokeDasharray="4 2" stroke={ACCENT} strokeWidth={1} />
           <ReferenceLine
             x={nextQ}
-            stroke="#A6A6A6"
+            stroke={BRAND.tealInk}
             strokeDasharray="4 2"
-            label={{ value: "Forecast", fontSize: 8, fill: "#A6A6A6", position: "top" }}
+            label={{ value: "Forecast", fontSize: 8, fill: CHART_AXIS, position: "top" }}
           />
         </BarChart>
       </ResponsiveContainer>
@@ -138,22 +144,22 @@ function QuarterlyTrend({ byQuarter }: { byQuarter: Record<string, number> }) {
 // ── C) Platform Comparison ──────────────────────────────────────────────────
 function PlatformComparison({ byPlatform }: { byPlatform: Record<string, number> }) {
   const data = Object.entries(byPlatform)
-    .map(([name, value]) => ({ name, value, fill: PLT_COLORS[name] ?? "#A6A6A6" }))
+    .map(([name, value]) => ({ name, value, fill: PLT_COLORS[name] ?? CHART_SERIES[3] }))
     .sort((a, b) => b.value - a.value);
 
   return (
     <SectionCard title="Platform Comparison" subtitle="Incident count per platform">
       <ResponsiveContainer width="100%" height={140}>
         <BarChart data={data} layout="vertical" margin={{ top: 2, right: 16, left: 0, bottom: 2 }}>
-          <XAxis type="number" tick={{ fontSize: 8, fill: "#A6A6A6" }} axisLine={false} tickLine={false} />
-          <YAxis dataKey="name" type="category" tick={{ fontSize: 9, fill: "#A6A6A6" }} axisLine={false} tickLine={false} width={72} />
+          <XAxis type="number" tick={{ fontSize: 8, fill: CHART_AXIS }} axisLine={false} tickLine={false} />
+          <YAxis dataKey="name" type="category" tick={{ fontSize: 9, fill: CHART_AXIS }} axisLine={false} tickLine={false} width={72} />
           <Tooltip content={<Tip />} />
           <Bar dataKey="value" name="Incidents" radius={[0, 3, 3, 0]}>
             {data.map((e, i) => <Cell key={i} fill={e.fill} opacity={0.8} />)}
           </Bar>
         </BarChart>
       </ResponsiveContainer>
-      <p className="text-[9px] text-[#A6A6A6] mt-2 leading-relaxed">
+      <p className="text-[9px] text-[#44536B] mt-2 leading-relaxed">
         Counts are not normalized by active driver population.
       </p>
     </SectionCard>
@@ -168,7 +174,7 @@ function RepeatLocations({ repeatLocations }: { repeatLocations: [string, number
   return (
     <SectionCard title="Repeat Incident Locations" subtitle="Neighborhoods with 2+ incidents">
       {sorted.length === 0 ? (
-        <p className="text-[10px] text-[#A6A6A6]">No repeat locations recorded.</p>
+        <p className="text-[10px] text-[#44536B]">No repeat locations recorded.</p>
       ) : (
         <div className="space-y-2">
           {sorted.map(([neighborhood, count]) => {
@@ -179,15 +185,16 @@ function RepeatLocations({ repeatLocations }: { repeatLocations: [string, number
                 data-testid={`repeat-loc-${neighborhood}`}
                 className="flex items-center gap-2.5 px-3 py-2 rounded-md border"
                 style={{
-                  background: isHigh ? "#333333" : "#1F1F1F",
-                  borderColor: isHigh ? "#808080" : "#4D4D4D",
+                  background: isHigh ? RISK_TIERS.high.bg : BRAND.tint,
+                  borderColor: isHigh ? RISK_TIERS.high.fill : BRAND.border,
                 }}
+                title={isHigh ? "Elevated risk cluster" : "Monitored cluster"}
               >
-                <AlertTriangle size={12} style={{ color: isHigh ? "#FFFFFF" : "#A6A6A6" }} />
-                <span className="flex-1 text-[11px] text-[#FFFFFF] font-medium">{neighborhood}</span>
+                <AlertTriangle size={12} style={{ color: isHigh ? RISK_TIERS.high.ink : BRAND.ink2 }} />
+                <span className="flex-1 text-[11px] font-medium" style={{ color: BRAND.navy }}>{neighborhood}</span>
                 <span
                   className="tabular-nums text-[13px] font-semibold"
-                  style={{ color: isHigh ? "#FFFFFF" : "#D9D9D9" }}
+                  style={{ color: isHigh ? RISK_TIERS.high.ink : BRAND.charcoal }}
                 >
                   {count}
                 </span>
@@ -202,13 +209,13 @@ function RepeatLocations({ repeatLocations }: { repeatLocations: [string, number
 
 // ── E) Case Tracker ─────────────────────────────────────────────────────────
 const CASE_STATUS_COLORS: Record<string, { bg: string; color: string; border: string }> = {
-  pending:    { bg: "#1F1F1F", color: "#A6A6A6", border: "#4D4D4D" },
-  arraigned:  { bg: "#1F1F1F", color: "#C0C0C0", border: "#666666" },
-  arrested:   { bg: "#1F1F1F", color: "#C0C0C0", border: "#666666" },
-  convicted:  { bg: "#E5E5E5", color: "#000000", border: "#E5E5E5" },
-  sentenced:  { bg: "#FFFFFF", color: "#000000", border: "#FFFFFF" },
-  charged:    { bg: "#1F1F1F", color: "#C0C0C0", border: "#666666" },
-  resolved:   { bg: "#1F1F1F", color: "#D9D9D9", border: "#666666" },
+  pending:    { bg: BRAND.tint,     color: BRAND.ink2,    border: BRAND.border },
+  arraigned:  { bg: BRAND.tint,     color: BRAND.tealInk, border: BRAND.border },
+  arrested:   { bg: BRAND.tint,     color: BRAND.tealInk, border: BRAND.border },
+  convicted:  { bg: BRAND.tintDeep, color: BRAND.navy,    border: BRAND.teal },
+  sentenced:  { bg: BRAND.teal,     color: BRAND.navy,    border: BRAND.teal },
+  charged:    { bg: BRAND.tint,     color: BRAND.tealInk, border: BRAND.border },
+  resolved:   { bg: BRAND.tint,     color: BRAND.charcoal, border: BRAND.border },
 };
 
 function CaseTracker({ incidents }: { incidents: Incident[] }) {
@@ -219,38 +226,38 @@ function CaseTracker({ incidents }: { incidents: Incident[] }) {
   return (
     <SectionCard title="Court Case Tracker" subtitle="Incidents with active or resolved cases">
       {caseIncidents.length === 0 ? (
-        <p className="text-[10px] text-[#A6A6A6]">No case data available.</p>
+        <p className="text-[10px] text-[#44536B]">No case data available.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-[11px]">
             <thead>
-              <tr className="bg-[#1A1A1A] border-b border-[#4D4D4D]">
+              <tr className="bg-[#FFFFFF] border-b border-[#C7EEF4]">
                 {["Date", "Type", "Suspect", "Case #", "Status", "Sentence"].map(h => (
-                  <th key={h} className="px-3 py-2 text-left text-[9px] font-medium text-[#A6A6A6] uppercase tracking-wider whitespace-nowrap">{h}</th>
+                  <th key={h} className="px-3 py-2 text-left text-[9px] font-medium text-[#44536B] uppercase tracking-wider whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#4D4D4D]">
+            <tbody className="divide-y divide-[#C7EEF4]">
               {caseIncidents.map(inc => {
                 const caseStatus = (inc as any).caseStatus ?? "";
-                const statusStyle = CASE_STATUS_COLORS[caseStatus?.toLowerCase()] ?? { bg: "transparent", color: "#A6A6A6", border: "#4D4D4D" };
+                const statusStyle = CASE_STATUS_COLORS[caseStatus?.toLowerCase()] ?? { bg: "transparent", color: BRAND.ink2, border: BRAND.border };
                 return (
-                  <tr key={inc.id} data-testid={`case-row-${inc.id}`} className="hover:bg-white/[0.06] transition-colors">
-                    <td className="px-3 py-2.5 tabular-nums text-[#D9D9D9] whitespace-nowrap">
+                  <tr key={inc.id} data-testid={`case-row-${inc.id}`} className="hover:bg-[#EFF7F8] transition-colors">
+                    <td className="px-3 py-2.5 tabular-nums text-[#222222] whitespace-nowrap">
                       {new Date(inc.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                     </td>
-                    <td className="px-3 py-2.5 text-[#FFFFFF] font-medium max-w-[140px] truncate">{inc.type}</td>
-                    <td className="px-3 py-2.5 text-[#D9D9D9]">{(inc as any).suspectName ?? "—"}</td>
-                    <td className="px-3 py-2.5 text-[#D9D9D9] tabular-nums">{(inc as any).caseNumber ?? "—"}</td>
+                    <td className="px-3 py-2.5 text-[#061A3A] font-medium max-w-[140px] truncate">{inc.type}</td>
+                    <td className="px-3 py-2.5 text-[#222222]">{(inc as any).suspectName ?? "—"}</td>
+                    <td className="px-3 py-2.5 text-[#222222] tabular-nums">{(inc as any).caseNumber ?? "—"}</td>
                     <td className="px-3 py-2.5">
                       {caseStatus ? (
                         <span className="px-2 py-0.5 rounded text-[9px] font-medium capitalize"
                           style={{ background: statusStyle.bg, color: statusStyle.color, border: `1px solid ${statusStyle.border}` }}>
                           {caseStatus}
                         </span>
-                      ) : <span className="text-[#A6A6A6]">—</span>}
+                      ) : <span className="text-[#44536B]">—</span>}
                     </td>
-                    <td className="px-3 py-2.5 text-[#D9D9D9]">{(inc as any).sentence ?? "—"}</td>
+                    <td className="px-3 py-2.5 text-[#222222]">{(inc as any).sentence ?? "—"}</td>
                   </tr>
                 );
               })}
@@ -271,27 +278,27 @@ function EvidenceTracker({ incidents }: { incidents: Incident[] }) {
   return (
     <SectionCard title="Evidence Tracker" subtitle="Dashcam & video documentation">
       <div className="flex items-center gap-4 mb-4">
-        <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "#1F1F1F", border: "2px solid #4D4D4D" }}>
-          <Video size={22} style={{ color: ACCENT }} />
+        <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: BRAND.tint, border: `2px solid ${BRAND.border}` }}>
+          <Video size={22} style={{ color: ACCENT_INK }} />
         </div>
         <div>
-          <div className="text-[22px] font-semibold tabular-nums text-[#FFFFFF]">
-            {withVideo} <span className="text-[14px] text-[#A6A6A6] font-normal">of {total}</span>
+          <div className="text-[22px] font-semibold tabular-nums text-[#061A3A]">
+            {withVideo} <span className="text-[14px] text-[#44536B] font-normal">of {total}</span>
           </div>
-          <div className="text-[11px] text-[#D9D9D9]">incidents have video/dashcam evidence</div>
+          <div className="text-[11px] text-[#222222]">incidents have video/dashcam evidence</div>
         </div>
         <div className="ml-auto text-right">
-          <div className="text-[26px] font-semibold tabular-nums" style={{ color: ACCENT }}>{pct}%</div>
-          <div className="text-[9px] text-[#A6A6A6]">coverage rate</div>
+          <div className="text-[26px] font-semibold tabular-nums" style={{ color: ACCENT_INK }}>{pct}%</div>
+          <div className="text-[9px] text-[#44536B]">coverage rate</div>
         </div>
       </div>
-      <div className="h-2 rounded-full bg-[#333333] mb-4">
+      <div className="h-2 rounded-full bg-[#D6F0F3] mb-4">
         <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: ACCENT, opacity: 0.8 }} />
       </div>
-      <div className="flex items-start gap-2.5 px-3 py-2.5 rounded-md border border-[#4D4D4D] bg-[#262626]/30">
-        <FileText size={12} style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
-        <p className="text-[10px] text-[#D9D9D9] leading-relaxed">
-          <span className="font-medium text-[#FFFFFF]">Seattle Rideshare Drivers Association</span> advocates for mandatory dashcams in all app-based vehicles to improve evidence collection and driver safety.
+      <div className="flex items-start gap-2.5 px-3 py-2.5 rounded-md border border-[#C7EEF4] bg-[#EFF7F8]/30">
+        <FileText size={12} style={{ color: ACCENT_INK }} className="mt-0.5 shrink-0" />
+        <p className="text-[10px] text-[#222222] leading-relaxed">
+          <span className="font-medium text-[#061A3A]">Seattle Rideshare Drivers Association</span> advocates for mandatory dashcams in all app-based vehicles to improve evidence collection and driver safety.
         </p>
       </div>
     </SectionCard>
@@ -323,7 +330,7 @@ export default function AnalyticsPage() {
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {Array(4).fill(0).map((_, i) => (
-                <div key={i} className="bg-[#121212] border border-[#4D4D4D] rounded-md p-4 h-60">
+                <div key={i} className="bg-[#FFFFFF] border border-[#C7EEF4] rounded-md p-4 h-60">
                   <Skeleton className="h-4 w-40 mb-3" />
                   <Skeleton className="h-40 w-full" />
                 </div>
@@ -347,7 +354,7 @@ export default function AnalyticsPage() {
             </>
           )}
 
-          <div className="text-[9px] text-[#A6A6A6] pb-2">
+          <div className="text-[9px] text-[#44536B] pb-2">
             bullecloud.com · Analytics data derived from verified incident database
           </div>
         </main>
