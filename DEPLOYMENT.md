@@ -14,7 +14,7 @@ did not match reality.
 | Surface | What serves it | What it is |
 |---|---|---|
 | GitHub Pages | `Bulle-Consulting/seattle-app-based-driver-safety`, branch `main`, path `/` (Pages "legacy" build — no Actions workflow) | The single-file `index.html` at the repo root |
-| `bullecloud.com` | Apache / HostGator | A copy of the same root `index.html` |
+| `bullecloud.com` | Apache / HostGator, synced from `main` by `.github/workflows/deploy-hostgator.yml` (FTPS on push; needs the `HOSTGATOR_*` secrets from §4.4) | A copy of the same root `index.html` |
 | `safetysteward.bullecloud.com` | **nothing — NXDOMAIN** | Advertised as the API base URL but never registered |
 | `/api/*` | **nothing** | The Express server in `server/` is never hosted |
 
@@ -81,9 +81,12 @@ This writes two copies and prints the counts:
 3. `npm run check` and `npm run build`
 4. Commit **both** `shared/seed-data.ts` and `incidents.json`.
 5. Merging to `main` publishes to GitHub Pages automatically.
-6. **Manually** copy the updated `index.html` + `incidents.json` to HostGator for
-   `bullecloud.com` — there is no automation for that host.
+6. The `Deploy to HostGator` workflow uploads `index.html` + `incidents.json` to
+   `bullecloud.com` automatically on the same push, **provided the `HOSTGATOR_*` secrets are
+   configured** (§4.4). If they are not, that host must still be updated by hand.
 7. Verify: `curl -sSf https://<host>/incidents.json | head -c 200` returns JSON, not HTML.
+   (The workflow's last step performs this check against `bullecloud.com` and fails the run
+   if it regresses.)
 
 ### Failure is now visible, not silent
 
@@ -185,8 +188,23 @@ app (it currently sends no CORS headers). Until then the static fallback in §3 
 
 ### 4.4 Automate the `bullecloud.com` (HostGator) copy
 
-That host is updated by hand, so it can silently fall behind `main`. Either add a deploy step
-(rsync/FTP from CI) or make it a CNAME to GitHub Pages so there is one artifact instead of two.
+The deploy step now exists: `.github/workflows/deploy-hostgator.yml` uploads `index.html` and
+`incidents.json` over FTPS on every push to `main` that touches them (or on manual dispatch).
+It is inert until a human with cPanel access creates three **repository secrets**
+(GitHub → Settings → Secrets and variables → Actions):
+
+| Secret | Value |
+|---|---|
+| `HOSTGATOR_FTP_SERVER` | The FTP hostname from cPanel (usually `ftp.bullecloud.com`) |
+| `HOSTGATOR_FTP_USERNAME` | A cPanel FTP account — create one **scoped to `public_html`** rather than using the main cPanel login |
+| `HOSTGATOR_FTP_PASSWORD` | That account's password |
+
+Then run the workflow once by hand (Actions → Deploy to HostGator → Run workflow) and confirm
+its final verification step passes.
+
+The longer-term alternative remains making `bullecloud.com` a CNAME to GitHub Pages so there is
+one artifact instead of two — that is a DNS + Pages-settings change, and would make this
+workflow unnecessary.
 
 ### 4.5 Optional: restore a live SPD data feed
 
