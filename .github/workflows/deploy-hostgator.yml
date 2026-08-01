@@ -3,7 +3,9 @@
 #
 # Requires three repository secrets (Settings → Secrets and variables → Actions):
 #   HOSTGATOR_FTP_SERVER    e.g. ftp.bullecloud.com or the server's hostname/IP from cPanel
-#   HOSTGATOR_FTP_USERNAME  a cPanel FTP account (create one scoped to public_html)
+#   HOSTGATOR_FTP_USERNAME  a cPanel FTP account whose Directory is the site's
+#                           document root (e.g. bullecloud.com), so this workflow
+#                           can upload to ./ without knowing the folder name
 #   HOSTGATOR_FTP_PASSWORD  that account's password
 name: Deploy to HostGator
 
@@ -59,7 +61,10 @@ jobs:
           password: ${{ secrets.HOSTGATOR_FTP_PASSWORD }}
           protocol: ftps
           local-dir: deploy/
-          server-dir: public_html/
+          # The FTP account is scoped to the site's document root (the
+          # cPanel FTP account's Directory, e.g. bullecloud.com), so upload
+          # to the account root rather than assuming a folder name here.
+          server-dir: ./
           state-name: .ftp-deploy-sync-state.json
 
       - name: Verify live site
