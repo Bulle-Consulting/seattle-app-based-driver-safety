@@ -196,7 +196,7 @@ It is inert until a human with cPanel access creates three **repository secrets*
 | Secret | Value |
 |---|---|
 | `HOSTGATOR_FTP_SERVER` | The FTP hostname from cPanel (usually `ftp.bullecloud.com`) |
-| `HOSTGATOR_FTP_USERNAME` | A cPanel FTP account — create one **scoped to `public_html`** rather than using the main cPanel login |
+| `HOSTGATOR_FTP_USERNAME` | A cPanel FTP account (e.g. `deploy@bullecloud.com`) — create one whose **Directory is the site's document root** (on this account that folder is `bullecloud.com`) rather than using the main cPanel login. The workflow uploads to the account's root, so the account's Directory determines where files land. |
 | `HOSTGATOR_FTP_PASSWORD` | That account's password |
 
 Then run the workflow once by hand (Actions → Deploy to HostGator → Run workflow) and confirm
