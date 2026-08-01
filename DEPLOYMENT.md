@@ -206,12 +206,25 @@ The longer-term alternative remains making `bullecloud.com` a CNAME to GitHub Pa
 one artifact instead of two — that is a DNS + Pages-settings change, and would make this
 workflow unnecessary.
 
-### 4.5 Optional: restore a live SPD data feed
+### 4.5 Live SPD data feed — now largely in place (client-side)
 
-The original `scrape.php` cron job is gone (§2). Replacing it means new work: a scheduled job
-that pulls SPD Blotter / SPD Open Data, applies the verification rules in `README.md`, and
-writes an `incidents.json` in the shape `script/generate-incidents-json.ts` emits. Until then
-the site must keep describing its data as a verified snapshot rather than live.
+The original `scrape.php` cron job is gone (§2) and was **not** recreated. Instead,
+`index.html` now queries the City of Seattle open data portal (Socrata) directly from the
+browser — the API sends `Access-Control-Allow-Origin: *`, so no backend or cron is needed:
+
+| Feature | Dataset | Refresh |
+|---|---|---|
+| Live Feed page | SPD 911 Call Data (`33kz-ixgy`), violent call types | on load + every 5 min |
+| Crime Map + Incidents list | SPD Crime Data: 2008-Present (`tazs-3rd5`), homicide/assault/robbery/kidnapping, last 30 days, plotted from SPD's 100-block coordinates | on load + every 5 min |
+
+Live records are additive: they are labeled "SPD Open Data (live)" / "SPD 911" in the UI and
+shown **alongside** the curated dataset, which remains the verified record and the sole input
+to Overview/Analytics statistics. If data.seattle.gov is unreachable the site falls back to
+the curated dataset only and says so; `.github/workflows/verify-spd-data.yml` re-validates
+both queries (fields, filters, row availability) on every `index.html` change and weekly.
+
+**Note (drift):** this live-SPD layer exists only in `index.html`, not in the undeployed
+`client/` React app — see the drift warning in §1.
 
 ### 4.6 Consider deploying `client/` (see §1)
 

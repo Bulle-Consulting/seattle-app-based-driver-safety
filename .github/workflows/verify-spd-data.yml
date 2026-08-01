@@ -1,0 +1,77 @@
+# Proves the two data.seattle.gov queries index.html makes client-side still
+# work: the SPD 911 Call Data live feed (33kz-ixgy) and the SPD Crime Data
+# map/incident records (tazs-3rd5). Runs when index.html changes and weekly,
+# so a schema change on the city portal surfaces here instead of as a silent
+# fallback-to-snapshot on the live site.
+name: Verify SPD live data sources
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - index.html
+      - .github/workflows/verify-spd-data.yml
+  schedule:
+    - cron: '17 14 * * 1'
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Query both SPD datasets with the exact fields the site uses
+        run: |
+          python3 - <<'EOF'
+          import json, sys, urllib.parse, urllib.request
+          from datetime import datetime, timedelta, timezone
+
+          def check(name, url, params, required_fields, expect_rows):
+              full = url + '?' + urllib.parse.urlencode(params)
+              req = urllib.request.Request(full, headers={'Accept': 'application/json'})
+              with urllib.request.urlopen(req, timeout=30) as resp:
+                  body = resp.read()
+              rows = json.loads(body)
+              if not isinstance(rows, list):
+                  sys.exit(f'::error::{name}: response is not a JSON array: {body[:300]!r}')
+              if expect_rows and not rows:
+                  sys.exit(f'::error::{name}: query returned 0 rows — filters or dataset may have changed')
+              if rows:
+                  missing = [f for f in required_fields if f not in rows[0]]
+                  if missing:
+                      sys.exit(f'::error::{name}: fields missing from response: {missing} — '
+                               f'index.html expects them; got keys {sorted(rows[0])}')
+              print(f'{name}: OK ({len(rows)} rows, fields verified)')
+
+          check(
+              'SPD 911 Call Data (Live Feed)',
+              'https://data.seattle.gov/resource/33kz-ixgy.json',
+              {
+                  '$select': 'cad_event_number,final_call_type,cad_event_original_time_queued,'
+                             'dispatch_neighborhood,dispatch_address,dispatch_precinct',
+                  '$where': "(final_call_type like '%ASSAULT%' OR final_call_type like 'ASLT%' OR "
+                            "final_call_type like '%ROBBERY%' OR final_call_type like '%CARJACK%' OR "
+                            "final_call_type like '%WEAPON%' OR final_call_type like '%SHOTS%' OR "
+                            "final_call_type like '%FIGHT%')",
+                  '$order': 'cad_event_original_time_queued DESC',
+                  '$limit': '5',
+              },
+              ['cad_event_number', 'final_call_type', 'cad_event_original_time_queued'],
+              expect_rows=True,
+          )
+
+          since = (datetime.now(timezone.utc) - timedelta(days=30)).strftime('%Y-%m-%dT%H:%M:%S')
+          check(
+              'SPD Crime Data (Crime Map / Incidents)',
+              'https://data.seattle.gov/resource/tazs-3rd5.json',
+              {
+                  '$select': 'offense_id,offense,offense_parent_group,offense_start_datetime,'
+                             'report_datetime,mcpp,_100_block_address,latitude,longitude',
+                  '$where': f"report_datetime > '{since}' AND offense_parent_group in"
+                            "('HOMICIDE OFFENSES','ASSAULT OFFENSES','ROBBERY','KIDNAPPING/ABDUCTION')",
+                  '$order': 'report_datetime DESC',
+                  '$limit': '5',
+              },
+              ['offense', 'offense_parent_group', 'report_datetime', 'latitude', 'longitude'],
+              expect_rows=True,
+          )
+          EOF
