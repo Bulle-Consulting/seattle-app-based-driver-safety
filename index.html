@@ -2526,8 +2526,8 @@ function pageCrimeMap() {
         <div style="display:flex; gap:10px; align-items:flex-start;">
           <span style="color:var(--text-primary); margin-top:2px;">${ICONS.check}</span>
           <div style="font-size:11px; color:var(--text-secondary); line-height:1.55;">
-            The map combines the curated, independently verified incident record with recent violent-crime
-            reports (homicide, assault, robbery, kidnapping) pulled live from the Seattle Police Department's
+            The map combines the curated, independently verified incident record with the last 30 days of
+            reports SPD categorizes as violent crime, pulled live from the Seattle Police Department's
             <a href="${SPD_CRIME_DATASET_PAGE}" target="_blank" rel="noopener" style="color:var(--accent);">SPD Crime Data</a>
             on the City of Seattle open data portal. Live records are labeled "SPD Open Data (live)" in pin popups,
             refresh every 5 minutes, and carry coordinates offset to the 100 block by SPD for privacy. Any
@@ -4364,9 +4364,7 @@ async function fetchSpdCrimeRecords() {
   const since = new Date(Date.now() - SPD_CRIME_WINDOW_DAYS * 86400000)
     .toISOString().slice(0, 19);
   const where =
-    "report_date_time > '" + since + "' AND " +
-    "(offense_category like '%HOMICIDE%' OR offense_category like '%ASSAULT%' OR " +
-    "offense_category like '%ROBBERY%' OR offense_category like '%KIDNAP%')";
+    "report_date_time > '" + since + "' AND offense_category = 'VIOLENT CRIME'";
   const params = new URLSearchParams({
     '$select': 'offense_id,offense_category,offense_sub_category,nibrs_offense_code_description,offense_date,report_date_time,neighborhood,block_address,latitude,longitude',
     '$where': where,

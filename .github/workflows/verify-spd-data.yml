@@ -25,19 +25,6 @@ jobs:
           import json, sys, urllib.parse, urllib.request
           from datetime import datetime, timedelta, timezone
 
-          def peek(label, url, params):
-              full = url + '?' + urllib.parse.urlencode(params)
-              req = urllib.request.Request(full, headers={'Accept': 'application/json'})
-              try:
-                  with urllib.request.urlopen(req, timeout=30) as resp:
-                      print(label, '=>', resp.read().decode()[:1500])
-              except urllib.error.HTTPError as e:
-                  print(label, 'HTTP', e.code, e.read().decode('utf-8','replace')[:400])
-
-          T = 'https://data.seattle.gov/resource/tazs-3rd5.json'
-          peek('distinct categories', T, {'$select': 'offense_category,count(*)', '$group': 'offense_category', '$limit': '40'})
-          peek('newest row', T, {'$select': 'offense_category,offense_date,report_date_time', '$order': 'report_date_time DESC', '$limit': '2'})
-
           def check(name, url, params, required_fields, expect_rows):
               full = url + '?' + urllib.parse.urlencode(params)
               req = urllib.request.Request(full, headers={'Accept': 'application/json'})
@@ -84,9 +71,7 @@ jobs:
                   '$select': 'offense_id,offense_category,offense_sub_category,'
                              'nibrs_offense_code_description,offense_date,report_date_time,'
                              'neighborhood,block_address,latitude,longitude',
-                  '$where': f"report_date_time > '{since}' AND "
-                            "(upper(offense_category) like '%HOMICIDE%' OR upper(offense_category) like '%ASSAULT%' OR "
-                            "upper(offense_category) like '%ROBBERY%' OR upper(offense_category) like '%KIDNAP%')",
+                  '$where': f"report_date_time > '{since}' AND offense_category = 'VIOLENT CRIME'",
                   '$order': 'report_date_time DESC',
                   '$limit': '5',
               },
