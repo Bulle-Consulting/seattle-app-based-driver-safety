@@ -77,3 +77,5 @@ jobs:
             "200 application/json"*) ;;
             *) echo "::error::incidents.json is not being served as JSON — deployment is broken (see DEPLOYMENT.md §5)"; exit 1 ;;
           esac
+
+# First configured deploy triggered 2026-08-01.
