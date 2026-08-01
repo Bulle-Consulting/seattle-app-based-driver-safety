@@ -7,7 +7,7 @@ name: Verify SPD live data sources
 
 on:
   push:
-    branches: [main]
+    branches: [main, claude/repo-changes-sync-tirj2o]
     paths:
       - index.html
       - .github/workflows/verify-spd-data.yml
@@ -28,8 +28,12 @@ jobs:
           def check(name, url, params, required_fields, expect_rows):
               full = url + '?' + urllib.parse.urlencode(params)
               req = urllib.request.Request(full, headers={'Accept': 'application/json'})
-              with urllib.request.urlopen(req, timeout=30) as resp:
-                  body = resp.read()
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as resp:
+                      body = resp.read()
+              except urllib.error.HTTPError as e:
+                  detail = e.read().decode('utf-8', 'replace')[:600]
+                  sys.exit(f'::error::{name}: HTTP {e.code} from data.seattle.gov — {detail}')
               rows = json.loads(body)
               if not isinstance(rows, list):
                   sys.exit(f'::error::{name}: response is not a JSON array: {body[:300]!r}')
