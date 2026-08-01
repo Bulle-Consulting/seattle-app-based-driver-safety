@@ -28,8 +28,12 @@ jobs:
           def check(name, url, params, required_fields, expect_rows):
               full = url + '?' + urllib.parse.urlencode(params)
               req = urllib.request.Request(full, headers={'Accept': 'application/json'})
-              with urllib.request.urlopen(req, timeout=30) as resp:
-                  body = resp.read()
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as resp:
+                      body = resp.read()
+              except urllib.error.HTTPError as e:
+                  detail = e.read().decode('utf-8', 'replace')[:600]
+                  sys.exit(f'::error::{name}: HTTP {e.code} from data.seattle.gov — {detail}')
               rows = json.loads(body)
               if not isinstance(rows, list):
                   sys.exit(f'::error::{name}: response is not a JSON array: {body[:300]!r}')
@@ -64,14 +68,14 @@ jobs:
               'SPD Crime Data (Crime Map / Incidents)',
               'https://data.seattle.gov/resource/tazs-3rd5.json',
               {
-                  '$select': 'offense_id,offense,offense_parent_group,offense_start_datetime,'
-                             'report_datetime,mcpp,_100_block_address,latitude,longitude',
-                  '$where': f"report_datetime > '{since}' AND offense_parent_group in"
-                            "('HOMICIDE OFFENSES','ASSAULT OFFENSES','ROBBERY','KIDNAPPING/ABDUCTION')",
-                  '$order': 'report_datetime DESC',
+                  '$select': 'offense_id,offense_category,offense_sub_category,'
+                             'nibrs_offense_code_description,offense_date,report_date_time,'
+                             'neighborhood,block_address,latitude,longitude',
+                  '$where': f"report_date_time > '{since}' AND offense_category = 'VIOLENT CRIME'",
+                  '$order': 'report_date_time DESC',
                   '$limit': '5',
               },
-              ['offense', 'offense_parent_group', 'report_datetime', 'latitude', 'longitude'],
+              ['offense_category', 'report_date_time', 'latitude', 'longitude'],
               expect_rows=True,
           )
           EOF

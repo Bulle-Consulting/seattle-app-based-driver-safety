@@ -2526,8 +2526,8 @@ function pageCrimeMap() {
         <div style="display:flex; gap:10px; align-items:flex-start;">
           <span style="color:var(--text-primary); margin-top:2px;">${ICONS.check}</span>
           <div style="font-size:11px; color:var(--text-secondary); line-height:1.55;">
-            The map combines the curated, independently verified incident record with recent violent-crime
-            reports (homicide, assault, robbery, kidnapping) pulled live from the Seattle Police Department's
+            The map combines the curated, independently verified incident record with the last 30 days of
+            reports SPD categorizes as violent crime, pulled live from the Seattle Police Department's
             <a href="${SPD_CRIME_DATASET_PAGE}" target="_blank" rel="noopener" style="color:var(--accent);">SPD Crime Data</a>
             on the City of Seattle open data portal. Live records are labeled "SPD Open Data (live)" in pin popups,
             refresh every 5 minutes, and carry coordinates offset to the 100 block by SPD for privacy. Any
@@ -4364,12 +4364,11 @@ async function fetchSpdCrimeRecords() {
   const since = new Date(Date.now() - SPD_CRIME_WINDOW_DAYS * 86400000)
     .toISOString().slice(0, 19);
   const where =
-    "report_datetime > '" + since + "' AND " +
-    "offense_parent_group in('HOMICIDE OFFENSES','ASSAULT OFFENSES','ROBBERY','KIDNAPPING/ABDUCTION')";
+    "report_date_time > '" + since + "' AND offense_category = 'VIOLENT CRIME'";
   const params = new URLSearchParams({
-    '$select': 'offense_id,offense,offense_parent_group,offense_start_datetime,report_datetime,mcpp,_100_block_address,latitude,longitude',
+    '$select': 'offense_id,offense_category,offense_sub_category,nibrs_offense_code_description,offense_date,report_date_time,neighborhood,block_address,latitude,longitude',
     '$where': where,
-    '$order': 'report_datetime DESC',
+    '$order': 'report_date_time DESC',
     '$limit': '250',
   });
   try {
@@ -4380,7 +4379,7 @@ async function fetchSpdCrimeRecords() {
     spdRecords = rows.map(r => {
       const lat = parseFloat(r.latitude), lng = parseFloat(r.longitude);
       if (!(lat > 46.5 && lat < 48.5 && lng > -123.5 && lng < -121.5)) return null;
-      const when = new Date(r.offense_start_datetime || r.report_datetime);
+      const when = new Date(r.offense_date || r.report_date_time);
       if (isNaN(when)) return null;
       return {
         id: 'spd-' + (r.offense_id || Math.abs(lat * 1e6 ^ lng * 1e6)),
@@ -4388,11 +4387,11 @@ async function fetchSpdCrimeRecords() {
         time: when.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }),
         _ts: when.getTime(),
         lat, lng,
-        severity: spdCrimeSeverity(r.offense_parent_group, r.offense),
+        severity: spdCrimeSeverity(r.offense_category, r.offense_sub_category),
         platform: 'Unverified',
-        neighborhood: titleCaseWords(r.mcpp) || 'Seattle',
-        location: titleCaseWords(r._100_block_address) || 'Location withheld',
-        desc: spdHumanize(r.offense) + ' reported (live SPD record)',
+        neighborhood: titleCaseWords(r.neighborhood) || 'Seattle',
+        location: titleCaseWords(r.block_address) || 'Location withheld',
+        desc: spdHumanize(r.nibrs_offense_code_description || r.offense_sub_category || r.offense_category) + ' reported (live SPD record)',
         status: 'Reported',
         source: 'SPD Open Data (live)',
         dashcam: null,
@@ -4402,7 +4401,7 @@ async function fetchSpdCrimeRecords() {
     spdMapMeta = {
       source: 'spd-live',
       fetchedAt: new Date(),
-      newestIso: rows.length ? (rows[0].report_datetime || null) : null,
+      newestIso: rows.length ? (rows[0].report_date_time || null) : null,
     };
     const h = location.hash || '#/';
     if (h === '#/' || h === '' || h === '#' || h === '#/map' || h === '#/incidents') render();
