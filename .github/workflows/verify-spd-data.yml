@@ -7,7 +7,7 @@ name: Verify SPD live data sources
 
 on:
   push:
-    branches: [main, claude/repo-changes-sync-tirj2o]
+    branches: [main]
     paths:
       - index.html
       - .github/workflows/verify-spd-data.yml
