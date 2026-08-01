@@ -25,14 +25,6 @@ jobs:
           import json, sys, urllib.parse, urllib.request
           from datetime import datetime, timedelta, timezone
 
-          def dump_schema(name, url):
-              req = urllib.request.Request(url + '?%24limit=1', headers={'Accept': 'application/json'})
-              with urllib.request.urlopen(req, timeout=30) as resp:
-                  rows = json.loads(resp.read())
-              print(f'{name}: actual columns = {sorted(rows[0].keys()) if rows else "NO ROWS"}')
-
-          dump_schema('tazs-3rd5', 'https://data.seattle.gov/resource/tazs-3rd5.json')
-
           def check(name, url, params, required_fields, expect_rows):
               full = url + '?' + urllib.parse.urlencode(params)
               req = urllib.request.Request(full, headers={'Accept': 'application/json'})
@@ -76,14 +68,16 @@ jobs:
               'SPD Crime Data (Crime Map / Incidents)',
               'https://data.seattle.gov/resource/tazs-3rd5.json',
               {
-                  '$select': 'offense_id,offense,offense_parent_group,offense_start_datetime,'
-                             'report_datetime,mcpp,_100_block_address,latitude,longitude',
-                  '$where': f"report_datetime > '{since}' AND offense_parent_group in"
-                            "('HOMICIDE OFFENSES','ASSAULT OFFENSES','ROBBERY','KIDNAPPING/ABDUCTION')",
-                  '$order': 'report_datetime DESC',
+                  '$select': 'offense_id,offense_category,offense_sub_category,'
+                             'nibrs_offense_code_description,offense_date,report_date_time,'
+                             'neighborhood,block_address,latitude,longitude',
+                  '$where': f"report_date_time > '{since}' AND "
+                            "(offense_category like '%HOMICIDE%' OR offense_category like '%ASSAULT%' OR "
+                            "offense_category like '%ROBBERY%' OR offense_category like '%KIDNAP%')",
+                  '$order': 'report_date_time DESC',
                   '$limit': '5',
               },
-              ['offense', 'offense_parent_group', 'report_datetime', 'latitude', 'longitude'],
+              ['offense_category', 'report_date_time', 'latitude', 'longitude'],
               expect_rows=True,
           )
           EOF
