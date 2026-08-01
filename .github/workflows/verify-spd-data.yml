@@ -25,6 +25,14 @@ jobs:
           import json, sys, urllib.parse, urllib.request
           from datetime import datetime, timedelta, timezone
 
+          def dump_schema(name, url):
+              req = urllib.request.Request(url + '?%24limit=1', headers={'Accept': 'application/json'})
+              with urllib.request.urlopen(req, timeout=30) as resp:
+                  rows = json.loads(resp.read())
+              print(f'{name}: actual columns = {sorted(rows[0].keys()) if rows else "NO ROWS"}')
+
+          dump_schema('tazs-3rd5', 'https://data.seattle.gov/resource/tazs-3rd5.json')
+
           def check(name, url, params, required_fields, expect_rows):
               full = url + '?' + urllib.parse.urlencode(params)
               req = urllib.request.Request(full, headers={'Accept': 'application/json'})
